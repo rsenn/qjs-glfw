@@ -6,7 +6,7 @@ typedef struct {
   int height;
 } GLFWSize;
 
-JSClassID glfw_size_class_id;
+extern JSClassID glfw_size_class_id;
 JSValue glfw_size_new_instance(JSContext* ctx, GLFWSize* size);
 int glfw_size_init(JSContext* ctx, JSModuleDef* m);
 int glfw_size_export(JSContext* ctx, JSModuleDef* m);

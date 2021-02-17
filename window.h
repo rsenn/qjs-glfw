@@ -1,7 +1,7 @@
 #ifndef GLFW_MODULE_WINDOW
 #define GLFW_MODULE_WINDOW 1
 
-JSClassID glfw_window_class_id;
+extern JSClassID glfw_window_class_id;
 int glfw_window_init(JSContext* ctx, JSModuleDef* m);
 int glfw_window_export(JSContext* ctx, JSModuleDef* m);
 
