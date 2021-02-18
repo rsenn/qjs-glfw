@@ -5,6 +5,8 @@
 
 #include "window.h"
 
+JSClassID glfw_window_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_window_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
   int width, height;

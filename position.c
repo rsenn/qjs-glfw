@@ -2,6 +2,8 @@
 
 #include "position.h"
 
+JSClassID glfw_position_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWPosition* position = js_mallocz(ctx, sizeof(*position));

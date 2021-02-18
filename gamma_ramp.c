@@ -2,6 +2,8 @@
 
 #include "gamma_ramp.h"
 
+JSClassID glfw_gamma_ramp_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_gamma_ramp_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");

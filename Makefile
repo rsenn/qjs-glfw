@@ -7,6 +7,8 @@ LIBS=-lquickjs -lglfw
 SRCS=$(wildcard *.c)
 OBJS=$(patsubst %.c,%.o,$(SRCS))
 
+prefix = /usr/local
+
 .PHONY: build
 build: glfw.so
 
@@ -19,3 +21,7 @@ glfw.so: $(OBJS)
 .PHONY: clean
 clean:
 	rm -f *.so *.o
+
+install:
+	install -d $(DESTDIR)$(prefix)/lib/quickjs
+	install -m 755 glfw.so $(DESTDIR)$(prefix)/lib/quickjs

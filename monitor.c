@@ -7,6 +7,8 @@
 
 #include "monitor.h"
 
+JSClassID glfw_monitor_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_monitor_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst *argv) {
   return glfw_monitor_new_instance(ctx, glfwGetPrimaryMonitor());

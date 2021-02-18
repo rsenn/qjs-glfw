@@ -2,6 +2,8 @@
 
 #include "size.h"
 
+JSClassID glfw_size_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWSize* size;

@@ -2,6 +2,8 @@
 
 #include "scale.h"
 
+JSClassID glfw_scale_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_scale_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWScale* scale;

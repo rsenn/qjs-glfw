@@ -2,6 +2,8 @@
 
 #include "workarea.h"
 
+JSClassID glfw_workarea_class_id = 0;
+
 // Constructor/Destructor
 JSValue glfw_workarea_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWWorkArea* workarea = js_mallocz(ctx, sizeof(*workarea));
