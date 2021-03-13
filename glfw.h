@@ -8,9 +8,10 @@
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
-static JSValue glfw_throw(JSContext* ctx) {
+static JSValue
+glfw_throw(JSContext* ctx) {
   const char* message;
-  if (glfwGetError(&message) != GLFW_NO_ERROR) {
+  if(glfwGetError(&message) != GLFW_NO_ERROR) {
     JSValue error = JS_NewString(ctx, message);
     JS_Throw(ctx, error);
   }
