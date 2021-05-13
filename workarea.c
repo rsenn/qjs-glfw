@@ -74,6 +74,33 @@ glfw_workarea_set_position_or_size(JSContext* ctx, JSValueConst this_val, JSValu
   return JS_UNDEFINED;
 }
 
+static JSValue
+glfw_workarea_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSAtom atom;
+  GLFWWorkArea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
+  if(!workarea)
+    return JS_EXCEPTION;
+
+  arr = JS_NewArray(ctx);
+  JS_SetPropertyUint32(ctx, arr, 0, JS_NewInt32(ctx, workarea->position->x));
+  JS_SetPropertyUint32(ctx, arr, 1, JS_NewInt32(ctx, workarea->position->y));
+  JS_SetPropertyUint32(ctx, arr, 2, JS_NewInt32(ctx, workarea->size->width));
+  JS_SetPropertyUint32(ctx, arr, 3, JS_NewInt32(ctx, workarea->size->height));
+
+  atom = js_iterator_atom(ctx);
+  iter = JS_GetProperty(ctx, arr, atom);
+  JS_FreeAtom(ctx, atom);
+
+  if(JS_IsFunction(ctx, iter))
+    generator = JS_Call(ctx, iter, arr, 0, 0);
+
+  JS_FreeValue(ctx, iter);
+  JS_FreeValue(ctx, arr);
+
+  return generator;
+}
+
 // Initialization
 JSClassDef glfw_workarea_class_def = {
     "WorkArea",
@@ -83,6 +110,7 @@ JSClassDef glfw_workarea_class_def = {
 const JSCFunctionListEntry glfw_workarea_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("position", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 0),
     JS_CGETSET_MAGIC_DEF("size", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 1),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_workarea_iterator),
 };
 
 JSValue glfw_workarea_proto, glfw_workarea_class;
