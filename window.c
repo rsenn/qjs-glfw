@@ -41,7 +41,7 @@ typedef struct WindowContext {
 } WindowContext;
 
 static void
-glfw_handle_charfun(GLFWwindow* w, unsigned int c) {
+glfw_handle_char(GLFWwindow* w, unsigned int c) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_CHAR];
   JSValueConst args[] = {JS_NewUint32(wc->ctx, c)};
@@ -50,7 +50,7 @@ glfw_handle_charfun(GLFWwindow* w, unsigned int c) {
 }
 
 static void
-glfw_handle_charmodsfun(GLFWwindow* w, unsigned int c, int mods) {
+glfw_handle_charmods(GLFWwindow* w, unsigned int c, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_CHAR_MODS];
   JSValueConst args[] = {JS_NewUint32(wc->ctx, c), JS_NewInt32(wc->ctx, mods)};
@@ -59,7 +59,7 @@ glfw_handle_charmodsfun(GLFWwindow* w, unsigned int c, int mods) {
 }
 
 static void
-glfw_handle_cursorenterfun(GLFWwindow* w, int cur) {
+glfw_handle_cursorenter(GLFWwindow* w, int cur) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_CURSOR_ENTER];
   JSValueConst args[] = {JS_NewUint32(wc->ctx, cur)};
@@ -68,7 +68,7 @@ glfw_handle_cursorenterfun(GLFWwindow* w, int cur) {
 }
 
 static void
-glfw_handle_cursorposfun(GLFWwindow* w, double x, double y) {
+glfw_handle_cursorpos(GLFWwindow* w, double x, double y) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_CURSOR_POS];
   JSValueConst args[] = {JS_NewInt32(wc->ctx, x), JS_NewInt32(wc->ctx, y)};
@@ -77,14 +77,14 @@ glfw_handle_cursorposfun(GLFWwindow* w, double x, double y) {
 }
 
 static void
-glfw_handle_dropfun(GLFWwindow* w, int argc, const char* argv[]) {
+glfw_handle_drop(GLFWwindow* w, int argc, const char* argv[]) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_DROP];
 }
 
-// static void glfw_handle_errorfun(int,const char*) {}
+// static void glfw_handle_error(int,const char*) {}
 static void
-glfw_handle_framebuffersizefun(GLFWwindow* w, int width, int height) {
+glfw_handle_framebuffersize(GLFWwindow* w, int width, int height) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_FRAMEBUFFER_SIZE];
   JSValueConst args[] = {JS_NewUint32(wc->ctx, width), JS_NewUint32(wc->ctx, height)};
@@ -92,9 +92,9 @@ glfw_handle_framebuffersizefun(GLFWwindow* w, int width, int height) {
   JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
-// static void glfw_handle_joystickfun(int,int) {}
+// static void glfw_handle_joystick(int,int) {}
 static void
-glfw_handle_keyfun(GLFWwindow* w, int key, int scancode, int action, int mods) {
+glfw_handle_key(GLFWwindow* w, int key, int scancode, int action, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_KEY];
   JSValueConst args[] = {JS_NewInt32(wc->ctx, key), JS_NewInt32(wc->ctx, scancode), JS_NewInt32(wc->ctx, action), JS_NewInt32(wc->ctx, mods)};
@@ -103,12 +103,12 @@ glfw_handle_keyfun(GLFWwindow* w, int key, int scancode, int action, int mods) {
 }
 
 /*static void
-glfw_handle_monitorfun(GLFWmonitor* m, int event) {
+glfw_handle_monitor(GLFWmonitor* m, int event) {
   WindowContext* wc = glfwGetMonitorUserPointer(w);
 }
 */
 static void
-glfw_handle_mousebuttonfun(GLFWwindow* w, int button, int action, int mods) {
+glfw_handle_mousebutton(GLFWwindow* w, int button, int action, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_MOUSE_BUTTON];
   JSValueConst args[] = {JS_NewInt32(wc->ctx, button), JS_NewInt32(wc->ctx, action), JS_NewInt32(wc->ctx, mods)};
@@ -117,7 +117,7 @@ glfw_handle_mousebuttonfun(GLFWwindow* w, int button, int action, int mods) {
 }
 
 static void
-glfw_handle_scrollfun(GLFWwindow* w, double xoffset, double yoffset) {
+glfw_handle_scroll(GLFWwindow* w, double xoffset, double yoffset) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_SCROLL];
   JSValueConst args[] = {JS_NewFloat64(wc->ctx, xoffset), JS_NewFloat64(wc->ctx, yoffset)};
@@ -126,7 +126,7 @@ glfw_handle_scrollfun(GLFWwindow* w, double xoffset, double yoffset) {
 }
 
 static void
-glfw_handle_windowclosefun(GLFWwindow* w) {
+glfw_handle_windowclose(GLFWwindow* w) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_CLOSE];
   JSValueConst args[] = {JS_UNDEFINED};
@@ -135,7 +135,7 @@ glfw_handle_windowclosefun(GLFWwindow* w) {
 }
 
 static void
-glfw_handle_windowcontentscalefun(GLFWwindow* w, float sx, float sy) {
+glfw_handle_windowcontentscale(GLFWwindow* w, float sx, float sy) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_CONTENT_SCALE];
   JSValueConst args[] = {JS_NewFloat64(wc->ctx, sx), JS_NewFloat64(wc->ctx, sy)};
@@ -144,7 +144,7 @@ glfw_handle_windowcontentscalefun(GLFWwindow* w, float sx, float sy) {
 }
 
 static void
-glfw_handle_windowfocusfun(GLFWwindow* w, int focused) {
+glfw_handle_windowfocus(GLFWwindow* w, int focused) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_FOCUS];
   JSValueConst args[] = {JS_NewBool(wc->ctx, focused)};
@@ -153,7 +153,7 @@ glfw_handle_windowfocusfun(GLFWwindow* w, int focused) {
 }
 
 static void
-glfw_handle_windowiconifyfun(GLFWwindow* w, int iconified) {
+glfw_handle_windowiconify(GLFWwindow* w, int iconified) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_ICONIFY];
   JSValueConst args[] = {JS_NewBool(wc->ctx, iconified)};
@@ -162,7 +162,7 @@ glfw_handle_windowiconifyfun(GLFWwindow* w, int iconified) {
 }
 
 static void
-glfw_handle_windowmaximizefun(GLFWwindow* w, int iconified) {
+glfw_handle_windowmaximize(GLFWwindow* w, int iconified) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_MAXIMIZE];
   JSValueConst args[] = {JS_NewBool(wc->ctx, iconified)};
@@ -171,7 +171,7 @@ glfw_handle_windowmaximizefun(GLFWwindow* w, int iconified) {
 }
 
 static void
-glfw_handle_windowposfun(GLFWwindow* w, int x, int y) {
+glfw_handle_windowpos(GLFWwindow* w, int x, int y) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_POS];
   JSValueConst args[] = {JS_NewInt32(wc->ctx, x), JS_NewInt32(wc->ctx, y)};
@@ -180,7 +180,7 @@ glfw_handle_windowposfun(GLFWwindow* w, int x, int y) {
 }
 
 static void
-glfw_handle_windowrefreshfun(GLFWwindow* w) {
+glfw_handle_windowrefresh(GLFWwindow* w) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_REFRESH];
   JSValueConst args[] = {JS_UNDEFINED};
@@ -189,7 +189,7 @@ glfw_handle_windowrefreshfun(GLFWwindow* w) {
 }
 
 static void
-glfw_handle_windowsizefun(GLFWwindow* w, int width, int height) {
+glfw_handle_windowsize(GLFWwindow* w, int width, int height) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_WINDOW_SIZE];
   JSValueConst args[] = {JS_NewUint32(wc->ctx, width), JS_NewUint32(wc->ctx, height)};
@@ -442,71 +442,71 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
 
     switch(magic) {
       case CALLBACK_WINDOW_POS: {
-        glfwSetWindowPosCallback(window, enable ? &glfw_handle_windowposfun : 0);
+        glfwSetWindowPosCallback(window, enable ? &glfw_handle_windowpos : 0);
         break;
       }
       case CALLBACK_WINDOW_SIZE: {
-        glfwSetWindowSizeCallback(window, enable ? &glfw_handle_windowsizefun : 0);
+        glfwSetWindowSizeCallback(window, enable ? &glfw_handle_windowsize : 0);
         break;
       }
       case CALLBACK_WINDOW_CLOSE: {
-        glfwSetWindowCloseCallback(window, enable ? &glfw_handle_windowclosefun : 0);
+        glfwSetWindowCloseCallback(window, enable ? &glfw_handle_windowclose : 0);
         break;
       }
       case CALLBACK_WINDOW_REFRESH: {
-        glfwSetWindowRefreshCallback(window, enable ? &glfw_handle_windowrefreshfun : 0);
+        glfwSetWindowRefreshCallback(window, enable ? &glfw_handle_windowrefresh : 0);
         break;
       }
       case CALLBACK_WINDOW_FOCUS: {
-        glfwSetWindowFocusCallback(window, enable ? &glfw_handle_windowfocusfun : 0);
+        glfwSetWindowFocusCallback(window, enable ? &glfw_handle_windowfocus : 0);
         break;
       }
       case CALLBACK_WINDOW_ICONIFY: {
-        glfwSetWindowIconifyCallback(window, enable ? &glfw_handle_windowiconifyfun : 0);
+        glfwSetWindowIconifyCallback(window, enable ? &glfw_handle_windowiconify : 0);
         break;
       }
       case CALLBACK_WINDOW_MAXIMIZE: {
-        glfwSetWindowMaximizeCallback(window, enable ? &glfw_handle_windowmaximizefun : 0);
+        glfwSetWindowMaximizeCallback(window, enable ? &glfw_handle_windowmaximize : 0);
         break;
       }
       case CALLBACK_FRAMEBUFFER_SIZE: {
-        glfwSetFramebufferSizeCallback(window, enable ? &glfw_handle_framebuffersizefun : 0);
+        glfwSetFramebufferSizeCallback(window, enable ? &glfw_handle_framebuffersize : 0);
         break;
       }
       case CALLBACK_WINDOW_CONTENT_SCALE: {
-        glfwSetWindowContentScaleCallback(window, enable ? &glfw_handle_windowcontentscalefun : 0);
+        glfwSetWindowContentScaleCallback(window, enable ? &glfw_handle_windowcontentscale : 0);
         break;
       }
       case CALLBACK_MOUSE_BUTTON: {
-        glfwSetMouseButtonCallback(window, enable ? &glfw_handle_mousebuttonfun : 0);
+        glfwSetMouseButtonCallback(window, enable ? &glfw_handle_mousebutton : 0);
         break;
       }
       case CALLBACK_CURSOR_POS: {
-        glfwSetCursorPosCallback(window, enable ? &glfw_handle_cursorposfun : 0);
+        glfwSetCursorPosCallback(window, enable ? &glfw_handle_cursorpos : 0);
         break;
       }
       case CALLBACK_CURSOR_ENTER: {
-        glfwSetCursorEnterCallback(window, enable ? &glfw_handle_cursorenterfun : 0);
+        glfwSetCursorEnterCallback(window, enable ? &glfw_handle_cursorenter : 0);
         break;
       }
       case CALLBACK_SCROLL: {
-        glfwSetScrollCallback(window, enable ? &glfw_handle_scrollfun : 0);
+        glfwSetScrollCallback(window, enable ? &glfw_handle_scroll : 0);
         break;
       }
       case CALLBACK_KEY: {
-        glfwSetKeyCallback(window, enable ? &glfw_handle_keyfun : 0);
+        glfwSetKeyCallback(window, enable ? &glfw_handle_key : 0);
         break;
       }
       case CALLBACK_CHAR: {
-        glfwSetCharCallback(window, enable ? &glfw_handle_charfun : 0);
+        glfwSetCharCallback(window, enable ? &glfw_handle_char : 0);
         break;
       }
       case CALLBACK_CHAR_MODS: {
-        glfwSetCharModsCallback(window, enable ? &glfw_handle_charmodsfun : 0);
+        glfwSetCharModsCallback(window, enable ? &glfw_handle_charmods : 0);
         break;
       }
       case CALLBACK_DROP: {
-        glfwSetDropCallback(window, enable ? &glfw_handle_dropfun : 0);
+        glfwSetDropCallback(window, enable ? &glfw_handle_drop : 0);
         break;
       }
     }
@@ -543,6 +543,13 @@ JSClassDef glfw_window_class_def = {
 
 #define MAKE_TRIGGER_METHOD_ENTRY(NativeName, JSName) JS_CFUNC_DEF(#JSName, 0, glfw_window_##JSName),
 
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                                                                              \
+  {                                                                                                                                                                                                    \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                                           \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                                                                                   \
+    }                                                                                                                                                                                                  \
+  }
+
 const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CFUNC_DEF("makeContextCurrent", 0, glfw_window_make_context_current),
     JS_CFUNC_DEF("swapBuffers", 0, glfw_window_swap_buffers),
@@ -553,23 +560,23 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
-    JS_CGETSET_MAGIC_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
-    JS_CGETSET_MAGIC_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
-    JS_CGETSET_MAGIC_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
-    JS_CGETSET_MAGIC_DEF("handleRefresh", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_REFRESH),
-    JS_CGETSET_MAGIC_DEF("handleFocus", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_FOCUS),
-    JS_CGETSET_MAGIC_DEF("handleIconify", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_ICONIFY),
-    JS_CGETSET_MAGIC_DEF("handleMaximize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_MAXIMIZE),
-    JS_CGETSET_MAGIC_DEF("handleFramebufferSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_FRAMEBUFFER_SIZE),
-    JS_CGETSET_MAGIC_DEF("handleContentScale", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CONTENT_SCALE),
-    JS_CGETSET_MAGIC_DEF("handleMouseButton", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_MOUSE_BUTTON),
-    JS_CGETSET_MAGIC_DEF("handleCursorPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_POS),
-    JS_CGETSET_MAGIC_DEF("handleCursorEnter", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_ENTER),
-    JS_CGETSET_MAGIC_DEF("handleScroll", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_SCROLL),
-    JS_CGETSET_MAGIC_DEF("handleKey", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_KEY),
-    JS_CGETSET_MAGIC_DEF("handleChar", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR),
-    JS_CGETSET_MAGIC_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
-    JS_CGETSET_MAGIC_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
+    JS_CGETSET_ENUMERABLE_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
+    JS_CGETSET_ENUMERABLE_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
+    JS_CGETSET_ENUMERABLE_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
+    JS_CGETSET_ENUMERABLE_DEF("handleRefresh", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_REFRESH),
+    JS_CGETSET_ENUMERABLE_DEF("handleFocus", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_FOCUS),
+    JS_CGETSET_ENUMERABLE_DEF("handleIconify", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_ICONIFY),
+    JS_CGETSET_ENUMERABLE_DEF("handleMaximize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_MAXIMIZE),
+    JS_CGETSET_ENUMERABLE_DEF("handleFramebufferSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_FRAMEBUFFER_SIZE),
+    JS_CGETSET_ENUMERABLE_DEF("handleContentScale", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CONTENT_SCALE),
+    JS_CGETSET_ENUMERABLE_DEF("handleMouseButton", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_MOUSE_BUTTON),
+    JS_CGETSET_ENUMERABLE_DEF("handleCursorPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_POS),
+    JS_CGETSET_ENUMERABLE_DEF("handleCursorEnter", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_ENTER),
+    JS_CGETSET_ENUMERABLE_DEF("handleScroll", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_SCROLL),
+    JS_CGETSET_ENUMERABLE_DEF("handleKey", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_KEY),
+    JS_CGETSET_ENUMERABLE_DEF("handleChar", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR),
+    JS_CGETSET_ENUMERABLE_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
+    JS_CGETSET_ENUMERABLE_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
     //  TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
 };
 
@@ -607,19 +614,10 @@ glfw_window_constructor(JSContext* ctx) {
 JSValue
 glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
   GLFWwindow* window = glfwCreateWindow(width, height, title, monitor, share);
-  WindowContext* wc;
-  int i;
   if(window == NULL) {
     glfw_throw(ctx);
     return JS_EXCEPTION;
   }
-
-  if((wc = js_mallocz(ctx, sizeof(WindowContext)))) {
-    for(i = 0; i < _CALLBACK_LAST; i++) wc->handlers.list[i] = JS_UNDEFINED;
-
-    wc->ctx = ctx;
-  }
-  glfwSetWindowUserPointer(window, wc);
 
   return glfw_window_new_instance(ctx, window);
 }
@@ -628,6 +626,7 @@ JSValue
 glfw_window_new_instance(JSContext* ctx, GLFWwindow* window) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
+  WindowContext* wc;
 
   proto = JS_GetPropertyStr(ctx, glfw_window_class, "prototype");
   if(JS_IsException(proto))
@@ -639,6 +638,16 @@ glfw_window_new_instance(JSContext* ctx, GLFWwindow* window) {
     goto fail;
 
   JS_SetOpaque(obj, window);
+
+  if((wc = js_mallocz(ctx, sizeof(WindowContext)))) {
+    int i;
+    for(i = 0; i < _CALLBACK_LAST; i++) wc->handlers.list[i] = JS_UNDEFINED;
+
+    wc->ctx = ctx;
+    wc->this_val = JS_DupValue(ctx, obj);
+  }
+
+  glfwSetWindowUserPointer(window, wc);
 
   return obj;
 fail:
