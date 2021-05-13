@@ -31,10 +31,8 @@ enum CallbackID {
 typedef struct WindowContext {
   union {
     struct {
-      JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler, window_focus_handler,
-          window_iconify_handler, window_maximize_handler, framebuffer_size_handler, window_content_scale_handler,
-          mouse_button_handler, cursor_pos_handler, cursor_enter_handler, scroll_handler, key_handler, char_handler,
-          char_mods_handler, drop_handler;
+      JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler, window_focus_handler, window_iconify_handler, window_maximize_handler, framebuffer_size_handler,
+          window_content_scale_handler, mouse_button_handler, cursor_pos_handler, cursor_enter_handler, scroll_handler, key_handler, char_handler, char_mods_handler, drop_handler;
     };
     JSValue list[_CALLBACK_LAST];
   } handlers;
@@ -360,6 +358,9 @@ JSValue
 glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
   WindowContext* wc;
+  BOOL enable;
+  JSValue ret = JS_UNDEFINED;
+
   if(!window)
     return JS_EXCEPTION;
 
@@ -369,29 +370,102 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
 
     wc->handlers.list[magic] = JS_DupValue(ctx, value);
 
-    return JS_NewBool(ctx, JS_IsFunction(ctx, wc->handlers.list[magic]));
+    enable = JS_IsFunction(ctx, wc->handlers.list[magic]);
+
+    ret = JS_NewBool(ctx, enable);
+    
+    switch(magic) {
+      case CALLBACK_WINDOW_POS: {
+        glfwSetWindowPosCallback(window, enable ? &glfw_handle_windowposfun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_SIZE: {
+        glfwSetWindowSizeCallback(window, enable ? &glfw_handle_windowsizefun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_CLOSE: {
+        glfwSetWindowCloseCallback(window, enable ? &glfw_handle_windowclosefun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_REFRESH: {
+        glfwSetWindowRefreshCallback(window, enable ? &glfw_handle_windowrefreshfun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_FOCUS: {
+        glfwSetWindowFocusCallback(window, enable ? &glfw_handle_windowfocusfun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_ICONIFY: {
+        glfwSetWindowIconifyCallback(window, enable ? &glfw_handle_windowiconifyfun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_MAXIMIZE: {
+        glfwSetWindowMaximizeCallback(window, enable ? &glfw_handle_windowmaximizefun : 0);
+        break;
+      }
+      case CALLBACK_FRAMEBUFFER_SIZE: {
+        glfwSetFramebufferSizeCallback(window, enable ? &glfw_handle_framebuffersizefun : 0);
+        break;
+      }
+      case CALLBACK_WINDOW_CONTENT_SCALE: {
+        glfwSetWindowContentScaleCallback(window, enable ? &glfw_handle_windowcontentscalefun : 0);
+        break;
+      }
+      case CALLBACK_MOUSE_BUTTON: {
+        glfwSetMouseButtonCallback(window, enable ? &glfw_handle_mousebuttonfun : 0);
+        break;
+      }
+      case CALLBACK_CURSOR_POS: {
+        glfwSetCursorPosCallback(window, enable ? &glfw_handle_cursorposfun : 0);
+        break;
+      }
+      case CALLBACK_CURSOR_ENTER: {
+        glfwSetCursorEnterCallback(window, enable ? &glfw_handle_cursorenterfun : 0);
+        break;
+      }
+      case CALLBACK_SCROLL: {
+        glfwSetScrollCallback(window, enable ? &glfw_handle_scrollfun : 0);
+        break;
+      }
+      case CALLBACK_KEY: {
+        glfwSetKeyCallback(window, enable ? &glfw_handle_keyfun : 0);
+        break;
+      }
+      case CALLBACK_CHAR: {
+        glfwSetCharCallback(window, enable ? &glfw_handle_charfun : 0);
+        break;
+      }
+      case CALLBACK_CHAR_MODS: {
+        glfwSetCharModsCallback(window, enable ? &glfw_handle_charmodsfun : 0);
+        break;
+      }
+      case CALLBACK_DROP: {
+        glfwSetDropCallback(window, enable ? &glfw_handle_dropfun : 0);
+        break;
+      }
+    }
   }
 
-  return JS_UNDEFINED;
+  return ret;
 }
 
 // Generate a few simple methods with macros...because I'm lazy. :O
-#define TRIGGER_FUNCTIONS(V)                                                                                                   \
-  V(IconifyWindow, iconify)                                                                                                    \
-  V(RestoreWindow, restore)                                                                                                    \
-  V(MaximizeWindow, maximize)                                                                                                  \
-  V(ShowWindow, show)                                                                                                          \
-  V(HideWindow, hide)                                                                                                          \
-  V(FocusWindow, focus)                                                                                                        \
+#define TRIGGER_FUNCTIONS(V)                                                                                                                                                                           \
+  V(IconifyWindow, iconify)                                                                                                                                                                            \
+  V(RestoreWindow, restore)                                                                                                                                                                            \
+  V(MaximizeWindow, maximize)                                                                                                                                                                          \
+  V(ShowWindow, show)                                                                                                                                                                                  \
+  V(HideWindow, hide)                                                                                                                                                                                  \
+  V(FocusWindow, focus)                                                                                                                                                                                \
   V(RequestWindowAttention, requestAttention)
 
-#define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                                \
-  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                          \
-    GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);                                                   \
-    glfw##NativeName(window);                                                                                                  \
-    if(!window)                                                                                                                \
-      return JS_EXCEPTION;                                                                                                     \
-    return JS_UNDEFINED;                                                                                                       \
+#define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                                                                                                        \
+  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                                                                                                  \
+    GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);                                                                                                                           \
+    glfw##NativeName(window);                                                                                                                                                                          \
+    if(!window)                                                                                                                                                                                        \
+      return JS_EXCEPTION;                                                                                                                                                                             \
+    return JS_UNDEFINED;                                                                                                                                                                               \
   }
 TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD)
 #undef MAKE_TRIGGER_METHODS
@@ -413,17 +487,15 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
-    JS_CGETSET_MAGIC_DEF("handleWindowPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
-    JS_CGETSET_MAGIC_DEF("handleWindowSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
-    JS_CGETSET_MAGIC_DEF("handleWindowClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
-    JS_CGETSET_MAGIC_DEF("handleWindowRefresh", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_REFRESH),
-    JS_CGETSET_MAGIC_DEF("handleWindowFocus", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_FOCUS),
-    JS_CGETSET_MAGIC_DEF("handleWindowIconify", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_ICONIFY),
-    JS_CGETSET_MAGIC_DEF("handleWindowMaximize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_MAXIMIZE),
-    JS_CGETSET_MAGIC_DEF(
-        "handleFramebufferSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_FRAMEBUFFER_SIZE),
-    JS_CGETSET_MAGIC_DEF(
-        "handleWindowContentScale", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CONTENT_SCALE),
+    JS_CGETSET_MAGIC_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
+    JS_CGETSET_MAGIC_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
+    JS_CGETSET_MAGIC_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
+    JS_CGETSET_MAGIC_DEF("handleRefresh", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_REFRESH),
+    JS_CGETSET_MAGIC_DEF("handleFocus", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_FOCUS),
+    JS_CGETSET_MAGIC_DEF("handleIconify", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_ICONIFY),
+    JS_CGETSET_MAGIC_DEF("handleMaximize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_MAXIMIZE),
+    JS_CGETSET_MAGIC_DEF("handleFramebufferSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_FRAMEBUFFER_SIZE),
+    JS_CGETSET_MAGIC_DEF("handleContentScale", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CONTENT_SCALE),
     JS_CGETSET_MAGIC_DEF("handleMouseButton", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_MOUSE_BUTTON),
     JS_CGETSET_MAGIC_DEF("handleCursorPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_POS),
     JS_CGETSET_MAGIC_DEF("handleCursorEnter", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_ENTER),
@@ -432,7 +504,7 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("handleChar", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR),
     JS_CGETSET_MAGIC_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
     JS_CGETSET_MAGIC_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
-    TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
+    //  TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
 };
 
 #undef MAKE_TRIGGER_METHOD_ENTRY
