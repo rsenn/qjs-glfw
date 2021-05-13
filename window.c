@@ -37,43 +37,69 @@ typedef struct WindowContext {
     JSValue list[_CALLBACK_LAST];
   } handlers;
   JSContext* ctx;
+  JSValue this_val;
 } WindowContext;
 
 static void
 glfw_handle_charfun(GLFWwindow* w, unsigned int c) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_CHAR];
+  JSValueConst args[] = {JS_NewUint32(wc->ctx, c)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 1, args);
 }
 
 static void
 glfw_handle_charmodsfun(GLFWwindow* w, unsigned int c, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_CHAR_MODS];
+  JSValueConst args[] = {JS_NewUint32(wc->ctx, c), JS_NewInt32(wc->ctx, mods)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 static void
 glfw_handle_cursorenterfun(GLFWwindow* w, int cur) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_CURSOR_ENTER];
+  JSValueConst args[] = {JS_NewUint32(wc->ctx, cur)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 1, args);
 }
 
 static void
 glfw_handle_cursorposfun(GLFWwindow* w, double x, double y) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_CURSOR_POS];
+  JSValueConst args[] = {JS_NewInt32(wc->ctx, x), JS_NewInt32(wc->ctx, y)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 static void
 glfw_handle_dropfun(GLFWwindow* w, int argc, const char* argv[]) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_DROP];
 }
 
 // static void glfw_handle_errorfun(int,const char*) {}
 static void
 glfw_handle_framebuffersizefun(GLFWwindow* w, int width, int height) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_FRAMEBUFFER_SIZE];
+  JSValueConst args[] = {JS_NewUint32(wc->ctx, width), JS_NewUint32(wc->ctx, height)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 // static void glfw_handle_joystickfun(int,int) {}
 static void
 glfw_handle_keyfun(GLFWwindow* w, int key, int scancode, int action, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_KEY];
+  JSValueConst args[] = {JS_NewInt32(wc->ctx, key), JS_NewInt32(wc->ctx, scancode), JS_NewInt32(wc->ctx, action), JS_NewInt32(wc->ctx, mods)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 4, args);
 }
 
 /*static void
@@ -84,51 +110,91 @@ glfw_handle_monitorfun(GLFWmonitor* m, int event) {
 static void
 glfw_handle_mousebuttonfun(GLFWwindow* w, int button, int action, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_MOUSE_BUTTON];
+  JSValueConst args[] = {JS_NewInt32(wc->ctx, button), JS_NewInt32(wc->ctx, action), JS_NewInt32(wc->ctx, mods)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 3, args);
 }
 
 static void
 glfw_handle_scrollfun(GLFWwindow* w, double xoffset, double yoffset) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_SCROLL];
+  JSValueConst args[] = {JS_NewFloat64(wc->ctx, xoffset), JS_NewFloat64(wc->ctx, yoffset)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 static void
 glfw_handle_windowclosefun(GLFWwindow* w) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_CLOSE];
+  JSValueConst args[] = {JS_UNDEFINED};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 0, args);
 }
 
 static void
 glfw_handle_windowcontentscalefun(GLFWwindow* w, float sx, float sy) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_CONTENT_SCALE];
+  JSValueConst args[] = {JS_NewFloat64(wc->ctx, sx), JS_NewFloat64(wc->ctx, sy)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 static void
 glfw_handle_windowfocusfun(GLFWwindow* w, int focused) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_FOCUS];
+  JSValueConst args[] = {JS_NewBool(wc->ctx, focused)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 1, args);
 }
 
 static void
 glfw_handle_windowiconifyfun(GLFWwindow* w, int iconified) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_ICONIFY];
+  JSValueConst args[] = {JS_NewBool(wc->ctx, iconified)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 1, args);
 }
 
 static void
 glfw_handle_windowmaximizefun(GLFWwindow* w, int iconified) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_MAXIMIZE];
+  JSValueConst args[] = {JS_NewBool(wc->ctx, iconified)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 1, args);
 }
 
 static void
 glfw_handle_windowposfun(GLFWwindow* w, int x, int y) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_POS];
+  JSValueConst args[] = {JS_NewInt32(wc->ctx, x), JS_NewInt32(wc->ctx, y)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 static void
 glfw_handle_windowrefreshfun(GLFWwindow* w) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_REFRESH];
+  JSValueConst args[] = {JS_UNDEFINED};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 0, args);
 }
 
 static void
 glfw_handle_windowsizefun(GLFWwindow* w, int width, int height) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
+  JSValue callback = wc->handlers.list[CALLBACK_WINDOW_SIZE];
+  JSValueConst args[] = {JS_NewUint32(wc->ctx, width), JS_NewUint32(wc->ctx, height)};
+
+  JS_Call(wc->ctx, callback, wc->this_val, 2, args);
 }
 
 // Constructor/Destructor
@@ -373,7 +439,7 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
     enable = JS_IsFunction(ctx, wc->handlers.list[magic]);
 
     ret = JS_NewBool(ctx, enable);
-    
+
     switch(magic) {
       case CALLBACK_WINDOW_POS: {
         glfwSetWindowPosCallback(window, enable ? &glfw_handle_windowposfun : 0);
