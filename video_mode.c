@@ -79,10 +79,7 @@ glfw_video_mode_constructor(JSContext* ctx) {
     JS_NewClass(JS_GetRuntime(ctx), glfw_video_mode_class_id, &glfw_video_mode_class_def);
 
     glfw_video_mode_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               glfw_video_mode_proto,
-                               glfw_video_mode_proto_funcs,
-                               countof(glfw_video_mode_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, glfw_video_mode_proto, glfw_video_mode_proto_funcs, countof(glfw_video_mode_proto_funcs));
     JS_SetClassProto(ctx, glfw_video_mode_class_id, glfw_video_mode_proto);
 
     glfw_video_mode_class = JS_NewCFunction2(ctx, glfw_video_mode_ctor, "VideoMode", 2, JS_CFUNC_constructor, 0);

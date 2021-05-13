@@ -15,7 +15,7 @@ import {
   // Classes
   Window,
   Monitor
-} from 'glfw.so'
+} from 'glfw'
 
 Window.hint(CONTEXT_VERSION_MAJOR, 3)
 Window.hint(CONTEXT_VERSION_MINOR, 2)

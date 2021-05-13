@@ -52,10 +52,7 @@ glfw_gamma_ramp_constructor(JSContext* ctx) {
     JS_NewClass(JS_GetRuntime(ctx), glfw_gamma_ramp_class_id, &glfw_gamma_ramp_class_def);
 
     glfw_gamma_ramp_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx,
-                               glfw_gamma_ramp_proto,
-                               glfw_gamma_ramp_proto_funcs,
-                               countof(glfw_gamma_ramp_proto_funcs));
+    JS_SetPropertyFunctionList(ctx, glfw_gamma_ramp_proto, glfw_gamma_ramp_proto_funcs, countof(glfw_gamma_ramp_proto_funcs));
     JS_SetClassProto(ctx, glfw_gamma_ramp_class_id, glfw_gamma_ramp_proto);
 
     glfw_gamma_ramp_class = JS_NewCFunction2(ctx, glfw_gamma_ramp_ctor, "GammaRamp", 2, JS_CFUNC_constructor, 0);

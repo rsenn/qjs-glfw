@@ -73,6 +73,31 @@ glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magi
   return JS_UNDEFINED;
 }
 
+static JSValue
+glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSAtom atom;
+  GLFWScale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
+  if(!scale)
+    return JS_EXCEPTION;
+
+  arr = JS_NewArray(ctx);
+  JS_SetPropertyUint32(ctx, arr, 0, JS_NewInt32(ctx, scale->x));
+  JS_SetPropertyUint32(ctx, arr, 1, JS_NewInt32(ctx, scale->y));
+
+  atom = js_iterator_atom(ctx);
+  iter = JS_GetProperty(ctx, arr, atom);
+  JS_FreeAtom(ctx, atom);
+
+  if(JS_IsFunction(ctx, iter))
+    generator = JS_Call(ctx, iter, arr, 0, 0);
+
+  JS_FreeValue(ctx, iter);
+  JS_FreeValue(ctx, arr);
+
+  return generator;
+}
+
 // Initialization
 JSClassDef glfw_scale_class_def = {
     "Scale",
@@ -82,6 +107,7 @@ JSClassDef glfw_scale_class_def = {
 const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
     JS_CGETSET_MAGIC_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
+    JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_scale_iterator),
 };
 
 JSValue glfw_scale_proto, glfw_scale_class;

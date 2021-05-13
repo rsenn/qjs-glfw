@@ -235,6 +235,7 @@ glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc
   glfwMakeContextCurrent(window);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -271,6 +272,7 @@ glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_default_hints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   glfwDefaultWindowHints();
@@ -289,6 +291,7 @@ glfw_window_get_should_close(JSContext* ctx, JSValueConst this_val) {
   else
     return JS_FALSE;
 }
+
 JSValue
 glfw_window_set_should_close(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -328,6 +331,7 @@ glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst val
   glfwSetWindowPos(window, position->x, position->y);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -353,6 +357,7 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
   glfwSetWindowSize(window, size->width, size->height);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -363,6 +368,7 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   glfwGetWindowSize(window, &size->width, &size->height);
   return glfw_size_new_instance(ctx, size);
 }
+
 JSValue
 glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -373,6 +379,7 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   glfwGetFramebufferSize(window, &size->width, &size->height);
   return glfw_size_new_instance(ctx, size);
 }
+
 JSValue
 glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -386,6 +393,7 @@ glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst valu
   glfwSetWindowOpacity(window, opacity);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_get_opacity(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -393,6 +401,7 @@ glfw_window_get_opacity(JSContext* ctx, JSValueConst this_val) {
     return JS_EXCEPTION;
   return JS_NewFloat64(ctx, glfwGetWindowOpacity(window));
 }
+
 JSValue
 glfw_window_get_monitor(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
