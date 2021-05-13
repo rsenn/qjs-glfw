@@ -7,6 +7,132 @@
 
 JSClassID glfw_window_class_id = 0;
 
+enum CallbackID {
+  CALLBACK_WINDOW_POS = 0,
+  CALLBACK_WINDOW_SIZE,
+  CALLBACK_WINDOW_CLOSE,
+  CALLBACK_WINDOW_REFRESH,
+  CALLBACK_WINDOW_FOCUS,
+  CALLBACK_WINDOW_ICONIFY,
+  CALLBACK_WINDOW_MAXIMIZE,
+  CALLBACK_FRAMEBUFFER_SIZE,
+  CALLBACK_WINDOW_CONTENT_SCALE,
+  CALLBACK_MOUSE_BUTTON,
+  CALLBACK_CURSOR_POS,
+  CALLBACK_CURSOR_ENTER,
+  CALLBACK_SCROLL,
+  CALLBACK_KEY,
+  CALLBACK_CHAR,
+  CALLBACK_CHAR_MODS,
+  CALLBACK_DROP,
+  _CALLBACK_LAST
+};
+
+typedef struct WindowContext {
+  union {
+    struct {
+      JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler, window_focus_handler,
+          window_iconify_handler, window_maximize_handler, framebuffer_size_handler, window_content_scale_handler,
+          mouse_button_handler, cursor_pos_handler, cursor_enter_handler, scroll_handler, key_handler, char_handler,
+          char_mods_handler, drop_handler;
+    };
+    JSValue list[_CALLBACK_LAST];
+  } handlers;
+  JSContext* ctx;
+} WindowContext;
+
+static void
+glfw_handle_charfun(GLFWwindow* w, unsigned int c) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_charmodsfun(GLFWwindow* w, unsigned int c, int mods) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_cursorenterfun(GLFWwindow* w, int cur) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_cursorposfun(GLFWwindow* w, double x, double y) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_dropfun(GLFWwindow* w, int argc, const char* argv[]) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+// static void glfw_handle_errorfun(int,const char*) {}
+static void
+glfw_handle_framebuffersizefun(GLFWwindow* w, int width, int height) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+// static void glfw_handle_joystickfun(int,int) {}
+static void
+glfw_handle_keyfun(GLFWwindow* w, int key, int scancode, int action, int mods) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+/*static void
+glfw_handle_monitorfun(GLFWmonitor* m, int event) {
+  WindowContext* wc = glfwGetMonitorUserPointer(w);
+}
+*/
+static void
+glfw_handle_mousebuttonfun(GLFWwindow* w, int button, int action, int mods) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_scrollfun(GLFWwindow* w, double xoffset, double yoffset) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowclosefun(GLFWwindow* w) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowcontentscalefun(GLFWwindow* w, float sx, float sy) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowfocusfun(GLFWwindow* w, int focused) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowiconifyfun(GLFWwindow* w, int iconified) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowmaximizefun(GLFWwindow* w, int iconified) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowposfun(GLFWwindow* w, int x, int y) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowrefreshfun(GLFWwindow* w) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
+static void
+glfw_handle_windowsizefun(GLFWwindow* w, int width, int height) {
+  WindowContext* wc = glfwGetWindowUserPointer(w);
+}
+
 // Constructor/Destructor
 JSValue
 glfw_window_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
@@ -108,6 +234,7 @@ glfw_window_set_should_close(JSContext* ctx, JSValueConst this_val, JSValueConst
   glfwSetWindowShouldClose(window, shouldClose);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -123,6 +250,7 @@ glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value)
   glfwSetWindowTitle(window, title);
   return JS_UNDEFINED;
 }
+
 JSValue
 glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
@@ -215,23 +343,55 @@ glfw_window_get_monitor(JSContext* ctx, JSValueConst this_val) {
   return glfw_monitor_new_instance(ctx, monitor);
 }
 
+JSValue
+glfw_window_get_callback(JSContext* ctx, JSValueConst this_val, int magic) {
+  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  WindowContext* wc;
+  if(!window)
+    return JS_EXCEPTION;
+
+  if((wc = glfwGetWindowUserPointer(window)))
+    return JS_DupValue(ctx, wc->handlers.list[magic]);
+
+  return JS_UNDEFINED;
+}
+
+JSValue
+glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {
+  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  WindowContext* wc;
+  if(!window)
+    return JS_EXCEPTION;
+
+  if((wc = glfwGetWindowUserPointer(window))) {
+    if(!JS_IsUndefined(wc->handlers.list[magic]))
+      JS_FreeValue(ctx, wc->handlers.list[magic]);
+
+    wc->handlers.list[magic] = JS_DupValue(ctx, value);
+
+    return JS_NewBool(ctx, JS_IsFunction(ctx, wc->handlers.list[magic]));
+  }
+
+  return JS_UNDEFINED;
+}
+
 // Generate a few simple methods with macros...because I'm lazy. :O
-#define TRIGGER_FUNCTIONS(V)                                                                                           \
-  V(IconifyWindow, iconify)                                                                                            \
-  V(RestoreWindow, restore)                                                                                            \
-  V(MaximizeWindow, maximize)                                                                                          \
-  V(ShowWindow, show)                                                                                                  \
-  V(HideWindow, hide)                                                                                                  \
-  V(FocusWindow, focus)                                                                                                \
+#define TRIGGER_FUNCTIONS(V)                                                                                                   \
+  V(IconifyWindow, iconify)                                                                                                    \
+  V(RestoreWindow, restore)                                                                                                    \
+  V(MaximizeWindow, maximize)                                                                                                  \
+  V(ShowWindow, show)                                                                                                          \
+  V(HideWindow, hide)                                                                                                          \
+  V(FocusWindow, focus)                                                                                                        \
   V(RequestWindowAttention, requestAttention)
 
-#define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                        \
-  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                  \
-    GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);                                           \
-    glfw##NativeName(window);                                                                                          \
-    if(!window)                                                                                                        \
-      return JS_EXCEPTION;                                                                                             \
-    return JS_UNDEFINED;                                                                                               \
+#define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                                \
+  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                          \
+    GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);                                                   \
+    glfw##NativeName(window);                                                                                                  \
+    if(!window)                                                                                                                \
+      return JS_EXCEPTION;                                                                                                     \
+    return JS_UNDEFINED;                                                                                                       \
   }
 TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD)
 #undef MAKE_TRIGGER_METHODS
@@ -253,7 +413,27 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
-    TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)};
+    JS_CGETSET_MAGIC_DEF("handleWindowPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
+    JS_CGETSET_MAGIC_DEF("handleWindowSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
+    JS_CGETSET_MAGIC_DEF("handleWindowClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
+    JS_CGETSET_MAGIC_DEF("handleWindowRefresh", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_REFRESH),
+    JS_CGETSET_MAGIC_DEF("handleWindowFocus", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_FOCUS),
+    JS_CGETSET_MAGIC_DEF("handleWindowIconify", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_ICONIFY),
+    JS_CGETSET_MAGIC_DEF("handleWindowMaximize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_MAXIMIZE),
+    JS_CGETSET_MAGIC_DEF(
+        "handleFramebufferSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_FRAMEBUFFER_SIZE),
+    JS_CGETSET_MAGIC_DEF(
+        "handleWindowContentScale", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CONTENT_SCALE),
+    JS_CGETSET_MAGIC_DEF("handleMouseButton", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_MOUSE_BUTTON),
+    JS_CGETSET_MAGIC_DEF("handleCursorPos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_POS),
+    JS_CGETSET_MAGIC_DEF("handleCursorEnter", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CURSOR_ENTER),
+    JS_CGETSET_MAGIC_DEF("handleScroll", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_SCROLL),
+    JS_CGETSET_MAGIC_DEF("handleKey", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_KEY),
+    JS_CGETSET_MAGIC_DEF("handleChar", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR),
+    JS_CGETSET_MAGIC_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
+    JS_CGETSET_MAGIC_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
+    TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
+};
 
 #undef MAKE_TRIGGER_METHOD_ENTRY
 
@@ -287,13 +467,21 @@ glfw_window_constructor(JSContext* ctx) {
 }
 
 JSValue
-glfw_window_create_window(
-    JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
+glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
   GLFWwindow* window = glfwCreateWindow(width, height, title, monitor, share);
+  WindowContext* wc;
+  int i;
   if(window == NULL) {
     glfw_throw(ctx);
     return JS_EXCEPTION;
   }
+
+  if((wc = js_mallocz(ctx, sizeof(WindowContext)))) {
+    for(i = 0; i < _CALLBACK_LAST; i++) wc->handlers.list[i] = JS_UNDEFINED;
+
+    wc->ctx = ctx;
+  }
+  glfwSetWindowUserPointer(window, wc);
 
   return glfw_window_new_instance(ctx, window);
 }
