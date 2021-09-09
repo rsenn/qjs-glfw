@@ -145,7 +145,7 @@ const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
     JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
-    CONSTANTS(DEFINE_CONSTANT),
+    CONSTANTS(DEFINE_CONSTANT)
 };
 
 #undef CONSTANTS

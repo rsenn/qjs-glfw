@@ -229,7 +229,7 @@ glfw_window_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst
 // Instance Methods
 JSValue
 glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
   glfwMakeContextCurrent(window);
@@ -238,7 +238,7 @@ glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc
 
 JSValue
 glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
   glfwSwapBuffers(window);
@@ -282,7 +282,7 @@ glfw_window_default_hints(JSContext* ctx, JSValueConst this_val, int argc, JSVal
 // Properties
 JSValue
 glfw_window_get_should_close(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -294,7 +294,7 @@ glfw_window_get_should_close(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 glfw_window_set_should_close(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
   int shouldClose = JS_VALUE_GET_BOOL(value) == 1 ? GL_TRUE : GL_FALSE;
@@ -304,7 +304,7 @@ glfw_window_set_should_close(JSContext* ctx, JSValueConst this_val, JSValueConst
 
 JSValue
 glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -320,7 +320,7 @@ glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value)
 
 JSValue
 glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -334,7 +334,7 @@ glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst val
 
 JSValue
 glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -346,7 +346,7 @@ glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
 // TODO: magic these with position setter/getter?
 JSValue
 glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -360,7 +360,7 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
 
 JSValue
 glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -371,7 +371,7 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -382,7 +382,7 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -396,7 +396,7 @@ glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst valu
 
 JSValue
 glfw_window_get_opacity(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
   return JS_NewFloat64(ctx, glfwGetWindowOpacity(window));
@@ -404,7 +404,7 @@ glfw_window_get_opacity(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 glfw_window_get_monitor(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
 
@@ -418,7 +418,7 @@ glfw_window_get_monitor(JSContext* ctx, JSValueConst this_val) {
 
 JSValue
 glfw_window_get_callback(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   WindowContext* wc;
   if(!window)
     return JS_EXCEPTION;
@@ -430,8 +430,22 @@ glfw_window_get_callback(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 JSValue
+glfw_window_get_id(JSContext* ctx, JSValueConst this_val, int magic) {
+  GLFWwindow* window;
+  WindowContext* wc;
+  char buf[128];
+
+  if(!(window= glfw_window_data2(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  snprintf(buf, sizeof(buf), "%p", window);
+
+  return JS_NewString(ctx, buf);
+}
+
+JSValue
 glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {
-  GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);
+  GLFWwindow* window = glfw_window_data2(ctx, this_val);
   WindowContext* wc;
   BOOL enable;
   JSValue ret = JS_UNDEFINED;
@@ -536,7 +550,7 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
 
 #define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                                                                                                        \
   JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                                                                                                  \
-    GLFWwindow* window = JS_GetOpaque2(ctx, this_val, glfw_window_class_id);                                                                                                                           \
+    GLFWwindow* window = glfw_window_data2(ctx, this_val);                                                                                                                           \
     glfw##NativeName(window);                                                                                                                                                                          \
     if(!window)                                                                                                                                                                                        \
       return JS_EXCEPTION;                                                                                                                                                                             \
@@ -569,6 +583,7 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
+    JS_CGETSET_DEF("id", glfw_window_get_id, NULL),
     JS_CGETSET_ENUMERABLE_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
     JS_CGETSET_ENUMERABLE_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
     JS_CGETSET_ENUMERABLE_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
