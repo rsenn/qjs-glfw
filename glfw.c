@@ -84,69 +84,67 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   return JS_NewString(ctx, glfwGetVersionString());
 }
 
-#define CONSTANTS(V) \
-  V(FOCUSED) \
-  V(ICONIFIED) \
-  V(RESIZABLE) \
-  V(VISIBLE) \
-  V(DECORATED) \
-  V(AUTO_ICONIFY) \
-  V(FLOATING) \
-  V(MAXIMIZED) \
-  V(CENTER_CURSOR) \
-  V(TRANSPARENT_FRAMEBUFFER) \
-  V(HOVERED) \
-  V(FOCUS_ON_SHOW) \
-  V(RED_BITS) \
-  V(GREEN_BITS) \
-  V(BLUE_BITS) \
-  V(ALPHA_BITS) \
-  V(DEPTH_BITS) \
-  V(STENCIL_BITS) \
-  V(ACCUM_RED_BITS) \
-  V(ACCUM_GREEN_BITS) \
-  V(ACCUM_BLUE_BITS) \
-  V(ACCUM_ALPHA_BITS) \
-  V(AUX_BUFFERS) \
-  V(STEREO) \
-  V(SAMPLES) \
-  V(SRGB_CAPABLE) \
-  V(REFRESH_RATE) \
-  V(DOUBLEBUFFER) \
-  V(CLIENT_API) \
-  V(CONTEXT_VERSION_MAJOR) \
-  V(CONTEXT_VERSION_MINOR) \
-  V(CONTEXT_REVISION) \
-  V(CONTEXT_ROBUSTNESS) \
-  V(OPENGL_FORWARD_COMPAT) \
-  V(OPENGL_DEBUG_CONTEXT) \
-  V(OPENGL_PROFILE) \
-  V(CONTEXT_RELEASE_BEHAVIOR) \
-  V(CONTEXT_NO_ERROR) \
-  V(CONTEXT_CREATION_API) \
-  V(SCALE_TO_MONITOR) \
-  V(COCOA_RETINA_FRAMEBUFFER) \
-  V(COCOA_FRAME_NAME) \
-  V(COCOA_GRAPHICS_SWITCHING) \
-  V(X11_CLASS_NAME) \
-  V(X11_INSTANCE_NAME) \
-  V(OPENGL_CORE_PROFILE) \
-  V(VERSION_MAJOR) \
-  V(VERSION_MINOR) \
-  V(VERSION_REVISION) \
-  V(JOYSTICK_HAT_BUTTONS) \
-  V(COCOA_CHDIR_RESOURCES) \
+#define CONSTANTS(V)                                                                                                                                                                                   \
+  V(FOCUSED)                                                                                                                                                                                           \
+  V(ICONIFIED)                                                                                                                                                                                         \
+  V(RESIZABLE)                                                                                                                                                                                         \
+  V(VISIBLE)                                                                                                                                                                                           \
+  V(DECORATED)                                                                                                                                                                                         \
+  V(AUTO_ICONIFY)                                                                                                                                                                                      \
+  V(FLOATING)                                                                                                                                                                                          \
+  V(MAXIMIZED)                                                                                                                                                                                         \
+  V(CENTER_CURSOR)                                                                                                                                                                                     \
+  V(TRANSPARENT_FRAMEBUFFER)                                                                                                                                                                           \
+  V(HOVERED)                                                                                                                                                                                           \
+  V(FOCUS_ON_SHOW)                                                                                                                                                                                     \
+  V(RED_BITS)                                                                                                                                                                                          \
+  V(GREEN_BITS)                                                                                                                                                                                        \
+  V(BLUE_BITS)                                                                                                                                                                                         \
+  V(ALPHA_BITS)                                                                                                                                                                                        \
+  V(DEPTH_BITS)                                                                                                                                                                                        \
+  V(STENCIL_BITS)                                                                                                                                                                                      \
+  V(ACCUM_RED_BITS)                                                                                                                                                                                    \
+  V(ACCUM_GREEN_BITS)                                                                                                                                                                                  \
+  V(ACCUM_BLUE_BITS)                                                                                                                                                                                   \
+  V(ACCUM_ALPHA_BITS)                                                                                                                                                                                  \
+  V(AUX_BUFFERS)                                                                                                                                                                                       \
+  V(STEREO)                                                                                                                                                                                            \
+  V(SAMPLES)                                                                                                                                                                                           \
+  V(SRGB_CAPABLE)                                                                                                                                                                                      \
+  V(REFRESH_RATE)                                                                                                                                                                                      \
+  V(DOUBLEBUFFER)                                                                                                                                                                                      \
+  V(CLIENT_API)                                                                                                                                                                                        \
+  V(CONTEXT_VERSION_MAJOR)                                                                                                                                                                             \
+  V(CONTEXT_VERSION_MINOR)                                                                                                                                                                             \
+  V(CONTEXT_REVISION)                                                                                                                                                                                  \
+  V(CONTEXT_ROBUSTNESS)                                                                                                                                                                                \
+  V(OPENGL_FORWARD_COMPAT)                                                                                                                                                                             \
+  V(OPENGL_DEBUG_CONTEXT)                                                                                                                                                                              \
+  V(OPENGL_PROFILE)                                                                                                                                                                                    \
+  V(CONTEXT_RELEASE_BEHAVIOR)                                                                                                                                                                          \
+  V(CONTEXT_NO_ERROR)                                                                                                                                                                                  \
+  V(CONTEXT_CREATION_API)                                                                                                                                                                              \
+  V(SCALE_TO_MONITOR)                                                                                                                                                                                  \
+  V(COCOA_RETINA_FRAMEBUFFER)                                                                                                                                                                          \
+  V(COCOA_FRAME_NAME)                                                                                                                                                                                  \
+  V(COCOA_GRAPHICS_SWITCHING)                                                                                                                                                                          \
+  V(X11_CLASS_NAME)                                                                                                                                                                                    \
+  V(X11_INSTANCE_NAME)                                                                                                                                                                                 \
+  V(OPENGL_CORE_PROFILE)                                                                                                                                                                               \
+  V(VERSION_MAJOR)                                                                                                                                                                                     \
+  V(VERSION_MINOR)                                                                                                                                                                                     \
+  V(VERSION_REVISION)                                                                                                                                                                                  \
+  V(JOYSTICK_HAT_BUTTONS)                                                                                                                                                                              \
+  V(COCOA_CHDIR_RESOURCES)                                                                                                                                                                             \
   V(COCOA_MENUBAR)
 
 #define DEFINE_CONSTANT(Name) JS_PROP_INT32_DEF(#Name, GLFW_##Name, 0),
 
-const JSCFunctionListEntry glfw_exports[] = {
-    JS_CFUNC_DEF("poll", 2, glfw_poll_events),
-    JS_CFUNC_DEF("wait", 2, glfw_wait_events),
-    JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
-    JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
-    CONSTANTS(DEFINE_CONSTANT)
-};
+const JSCFunctionListEntry glfw_exports[] = {JS_CFUNC_DEF("poll", 2, glfw_poll_events),
+                                             JS_CFUNC_DEF("wait", 2, glfw_wait_events),
+                                             JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
+                                             JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
+                                             CONSTANTS(DEFINE_CONSTANT)};
 
 #undef CONSTANTS
 #undef DEFINE_CONSTANT
