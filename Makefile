@@ -3,12 +3,10 @@
 
 # Default target executed when no arguments are given to make.
 default_target: all
-
 .PHONY : default_target
 
 # Allow only one "make -f Makefile2" at a time, but pass parallelism.
 .NOTPARALLEL:
-
 
 #=============================================================================
 # Special targets provided by cmake.
@@ -16,29 +14,22 @@ default_target: all
 # Disable implicit rules so canonical targets will work.
 .SUFFIXES:
 
-
 # Disable VCS-based implicit rules.
 % : %,v
-
 
 # Disable VCS-based implicit rules.
 % : RCS/%
 
-
 # Disable VCS-based implicit rules.
 % : RCS/%,v
-
 
 # Disable VCS-based implicit rules.
 % : SCCS/s.%
 
-
 # Disable VCS-based implicit rules.
 % : s.%
 
-
 .SUFFIXES: .hpux_make_needs_suffix_list
-
 
 # Command-line flag to silence nested $(MAKE).
 $(VERBOSE)MAKESILENT = -s
@@ -48,7 +39,6 @@ $(VERBOSE).SILENT:
 
 # A target that is always out of date.
 cmake_force:
-
 .PHONY : cmake_force
 
 #=============================================================================
@@ -58,10 +48,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /opt/cmake-20201114/bin/cmake
+CMAKE_COMMAND = /opt/cmake-20201216/bin/cmake
 
 # The command to remove a file.
-RM = /opt/cmake-20201114/bin/cmake -E rm -f
+RM = /opt/cmake-20201216/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -78,37 +68,37 @@ CMAKE_BINARY_DIR = /home/roman/Projects/plot-cv
 # Special rule for the target install/strip
 install/strip: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/cmake-20201114/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip
 
 # Special rule for the target install/strip
 install/strip/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/opt/cmake-20201114/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/opt/cmake-20201114/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local
 
 # Special rule for the target install/local
 install/local/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/opt/cmake-20201114/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/opt/cmake-20201114/bin/cmake -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -P cmake_install.cmake
 .PHONY : install
 
 # Special rule for the target install
 install/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/opt/cmake-20201114/bin/cmake -P cmake_install.cmake
+	/opt/cmake-20201216/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
 # Special rule for the target list_install_components
@@ -118,29 +108,26 @@ list_install_components:
 
 # Special rule for the target list_install_components
 list_install_components/fast: list_install_components
-
 .PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/opt/cmake-20201114/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/opt/cmake-20201216/bin/cmake --regenerate-during-build -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
-
 .PHONY : rebuild_cache/fast
 
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/opt/cmake-20201114/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/opt/cmake-20201216/bin/cmake-gui -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
 edit_cache/fast: edit_cache
-
 .PHONY : edit_cache/fast
 
 # The main all target
@@ -157,7 +144,6 @@ clean:
 
 # The main clean target
 clean/fast: clean
-
 .PHONY : clean/fast
 
 # Prepare targets for installation.
@@ -182,7 +168,6 @@ quickjs/qjs-glfw/CMakeFiles/qjs-glfw.dir/rule:
 
 # Convenience name for target.
 qjs-glfw: quickjs/qjs-glfw/CMakeFiles/qjs-glfw.dir/rule
-
 .PHONY : qjs-glfw
 
 # fast build rule for target.
@@ -191,7 +176,6 @@ qjs-glfw/fast:
 .PHONY : qjs-glfw/fast
 
 gamma_ramp.o: gamma_ramp.c.o
-
 .PHONY : gamma_ramp.o
 
 # target to build an object file
@@ -200,7 +184,6 @@ gamma_ramp.c.o:
 .PHONY : gamma_ramp.c.o
 
 gamma_ramp.i: gamma_ramp.c.i
-
 .PHONY : gamma_ramp.i
 
 # target to preprocess a source file
@@ -209,7 +192,6 @@ gamma_ramp.c.i:
 .PHONY : gamma_ramp.c.i
 
 gamma_ramp.s: gamma_ramp.c.s
-
 .PHONY : gamma_ramp.s
 
 # target to generate assembly for a file
@@ -218,7 +200,6 @@ gamma_ramp.c.s:
 .PHONY : gamma_ramp.c.s
 
 glfw.o: glfw.c.o
-
 .PHONY : glfw.o
 
 # target to build an object file
@@ -227,7 +208,6 @@ glfw.c.o:
 .PHONY : glfw.c.o
 
 glfw.i: glfw.c.i
-
 .PHONY : glfw.i
 
 # target to preprocess a source file
@@ -236,7 +216,6 @@ glfw.c.i:
 .PHONY : glfw.c.i
 
 glfw.s: glfw.c.s
-
 .PHONY : glfw.s
 
 # target to generate assembly for a file
@@ -245,7 +224,6 @@ glfw.c.s:
 .PHONY : glfw.c.s
 
 monitor.o: monitor.c.o
-
 .PHONY : monitor.o
 
 # target to build an object file
@@ -254,7 +232,6 @@ monitor.c.o:
 .PHONY : monitor.c.o
 
 monitor.i: monitor.c.i
-
 .PHONY : monitor.i
 
 # target to preprocess a source file
@@ -263,7 +240,6 @@ monitor.c.i:
 .PHONY : monitor.c.i
 
 monitor.s: monitor.c.s
-
 .PHONY : monitor.s
 
 # target to generate assembly for a file
@@ -272,7 +248,6 @@ monitor.c.s:
 .PHONY : monitor.c.s
 
 position.o: position.c.o
-
 .PHONY : position.o
 
 # target to build an object file
@@ -281,7 +256,6 @@ position.c.o:
 .PHONY : position.c.o
 
 position.i: position.c.i
-
 .PHONY : position.i
 
 # target to preprocess a source file
@@ -290,7 +264,6 @@ position.c.i:
 .PHONY : position.c.i
 
 position.s: position.c.s
-
 .PHONY : position.s
 
 # target to generate assembly for a file
@@ -299,7 +272,6 @@ position.c.s:
 .PHONY : position.c.s
 
 scale.o: scale.c.o
-
 .PHONY : scale.o
 
 # target to build an object file
@@ -308,7 +280,6 @@ scale.c.o:
 .PHONY : scale.c.o
 
 scale.i: scale.c.i
-
 .PHONY : scale.i
 
 # target to preprocess a source file
@@ -317,7 +288,6 @@ scale.c.i:
 .PHONY : scale.c.i
 
 scale.s: scale.c.s
-
 .PHONY : scale.s
 
 # target to generate assembly for a file
@@ -326,7 +296,6 @@ scale.c.s:
 .PHONY : scale.c.s
 
 size.o: size.c.o
-
 .PHONY : size.o
 
 # target to build an object file
@@ -335,7 +304,6 @@ size.c.o:
 .PHONY : size.c.o
 
 size.i: size.c.i
-
 .PHONY : size.i
 
 # target to preprocess a source file
@@ -344,7 +312,6 @@ size.c.i:
 .PHONY : size.c.i
 
 size.s: size.c.s
-
 .PHONY : size.s
 
 # target to generate assembly for a file
@@ -353,7 +320,6 @@ size.c.s:
 .PHONY : size.c.s
 
 video_mode.o: video_mode.c.o
-
 .PHONY : video_mode.o
 
 # target to build an object file
@@ -362,7 +328,6 @@ video_mode.c.o:
 .PHONY : video_mode.c.o
 
 video_mode.i: video_mode.c.i
-
 .PHONY : video_mode.i
 
 # target to preprocess a source file
@@ -371,7 +336,6 @@ video_mode.c.i:
 .PHONY : video_mode.c.i
 
 video_mode.s: video_mode.c.s
-
 .PHONY : video_mode.s
 
 # target to generate assembly for a file
@@ -380,7 +344,6 @@ video_mode.c.s:
 .PHONY : video_mode.c.s
 
 window.o: window.c.o
-
 .PHONY : window.o
 
 # target to build an object file
@@ -389,7 +352,6 @@ window.c.o:
 .PHONY : window.c.o
 
 window.i: window.c.i
-
 .PHONY : window.i
 
 # target to preprocess a source file
@@ -398,7 +360,6 @@ window.c.i:
 .PHONY : window.c.i
 
 window.s: window.c.s
-
 .PHONY : window.s
 
 # target to generate assembly for a file
@@ -407,7 +368,6 @@ window.c.s:
 .PHONY : window.c.s
 
 workarea.o: workarea.c.o
-
 .PHONY : workarea.o
 
 # target to build an object file
@@ -416,7 +376,6 @@ workarea.c.o:
 .PHONY : workarea.c.o
 
 workarea.i: workarea.c.i
-
 .PHONY : workarea.i
 
 # target to preprocess a source file
@@ -425,7 +384,6 @@ workarea.c.i:
 .PHONY : workarea.c.i
 
 workarea.s: workarea.c.s
-
 .PHONY : workarea.s
 
 # target to generate assembly for a file
