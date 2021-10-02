@@ -2,8 +2,8 @@
 #define GLFW_MODULE_MAIN 1
 
 #include <GLFW/glfw3.h>
-#include <quickjs/quickjs.h>
-#include <quickjs/cutils.h>
+#include <quickjs.h>
+#include <cutils.h>
 #include <stdio.h>
 #include <stdlib.h>
 

@@ -1,5 +1,9 @@
 project(qjs-glfw C)
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
+
+find_quickjs()
+
 add_library(
   qjs-glfw SHARED
   gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h
