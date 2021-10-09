@@ -539,22 +539,22 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
 }
 
 // Generate a few simple methods with macros...because I'm lazy. :O
-#define TRIGGER_FUNCTIONS(V)                                                                                                                                                                           \
-  V(IconifyWindow, iconify)                                                                                                                                                                            \
-  V(RestoreWindow, restore)                                                                                                                                                                            \
-  V(MaximizeWindow, maximize)                                                                                                                                                                          \
-  V(ShowWindow, show)                                                                                                                                                                                  \
-  V(HideWindow, hide)                                                                                                                                                                                  \
-  V(FocusWindow, focus)                                                                                                                                                                                \
+#define TRIGGER_FUNCTIONS(V) \
+  V(IconifyWindow, iconify) \
+  V(RestoreWindow, restore) \
+  V(MaximizeWindow, maximize) \
+  V(ShowWindow, show) \
+  V(HideWindow, hide) \
+  V(FocusWindow, focus) \
   V(RequestWindowAttention, requestAttention)
 
-#define MAKE_TRIGGER_METHOD(NativeName, JSName)                                                                                                                                                        \
-  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {                                                                                                  \
-    GLFWwindow* window = glfw_window_data2(ctx, this_val);                                                                                                                                             \
-    glfw##NativeName(window);                                                                                                                                                                          \
-    if(!window)                                                                                                                                                                                        \
-      return JS_EXCEPTION;                                                                                                                                                                             \
-    return JS_UNDEFINED;                                                                                                                                                                               \
+#define MAKE_TRIGGER_METHOD(NativeName, JSName) \
+  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) { \
+    GLFWwindow* window = glfw_window_data2(ctx, this_val); \
+    glfw##NativeName(window); \
+    if(!window) \
+      return JS_EXCEPTION; \
+    return JS_UNDEFINED; \
   }
 TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD)
 #undef MAKE_TRIGGER_METHODS
@@ -566,11 +566,11 @@ JSClassDef glfw_window_class_def = {
 
 #define MAKE_TRIGGER_METHOD_ENTRY(NativeName, JSName) JS_CFUNC_DEF(#JSName, 0, glfw_window_##JSName),
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num)                                                                                                                              \
-  {                                                                                                                                                                                                    \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = {                                                           \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}}                                                                                                                   \
-    }                                                                                                                                                                                                  \
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num) \
+  { \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = { \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}} \
+    } \
   }
 
 const JSCFunctionListEntry glfw_window_proto_funcs[] = {
