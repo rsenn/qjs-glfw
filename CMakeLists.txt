@@ -1,11 +1,13 @@
 project(qjs-glfw C)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
-include(FindGLEW)
+#include(FindGLEW)
 include(FindPkgConfig)
 
-pkg_search_module(GLFW3 glfw3)
-message(STATUS "GLFW3_LIBRARY: ${GLFW3_LIBRARY}")
+pkg_search_module(GLEW glew)
+pkg_search_module(GLFW glfw3)
+message(STATUS "GLEW_LIBRARY: ${GLEW_LIBRARY}")
+message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 find_quickjs()
 
@@ -15,7 +17,7 @@ add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c mo
 set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "")
 
 target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
-target_link_libraries(qjs-glfw PRIVATE GLEW::glew ${GLFW3_LIBRARY} ${QUICKJS_LIBRARY})
+target_link_libraries(qjs-glfw PRIVATE ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
 install(TARGETS qjs-glfw DESTINATION lib/quickjs PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
                                                              GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
