@@ -255,7 +255,9 @@ glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 
   if(JS_IsString(argv[1])) {
     const char* value = JS_ToCString(ctx, argv[1]);
+#ifdef HAVE_GLFW_WINDOW_HINT_STRING
     glfwWindowHintString(key, value);
+#endif
   } else if(JS_IsBool(argv[1])) {
     int value = JS_VALUE_GET_BOOL(argv[1]) == 1 ? GL_TRUE : GL_FALSE;
     glfwWindowHint(key, value);
@@ -390,7 +392,9 @@ glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst valu
   if(JS_ToFloat64(ctx, &opacity, value))
     return JS_EXCEPTION;
 
+#ifdef HAVE_GLFW_SET_WINDOW_OPACITY
   glfwSetWindowOpacity(window, opacity);
+#endif
   return JS_UNDEFINED;
 }
 
@@ -399,7 +403,11 @@ glfw_window_get_opacity(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = glfw_window_data2(ctx, this_val);
   if(!window)
     return JS_EXCEPTION;
+#ifdef HAVE_GLFW_GET_WINDOW_OPACITY
   return JS_NewFloat64(ctx, glfwGetWindowOpacity(window));
+#else
+  return JS_UNDEFINED;
+#endif
 }
 
 JSValue
@@ -489,7 +497,9 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
         break;
       }
       case CALLBACK_WINDOW_MAXIMIZE: {
+#ifdef HAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK
         glfwSetWindowMaximizeCallback(window, enable ? &glfw_handle_windowmaximize : 0);
+#endif
         break;
       }
       case CALLBACK_FRAMEBUFFER_SIZE: {
@@ -497,7 +507,9 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
         break;
       }
       case CALLBACK_WINDOW_CONTENT_SCALE: {
+#ifdef HAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK
         glfwSetWindowContentScaleCallback(window, enable ? &glfw_handle_windowcontentscale : 0);
+#endif
         break;
       }
       case CALLBACK_MOUSE_BUTTON: {
@@ -545,8 +557,7 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
   V(MaximizeWindow, maximize) \
   V(ShowWindow, show) \
   V(HideWindow, hide) \
-  V(FocusWindow, focus) \
-  V(RequestWindowAttention, requestAttention)
+  V(FocusWindow, focus)
 
 #define MAKE_TRIGGER_METHOD(NativeName, JSName) \
   JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) { \
@@ -557,7 +568,10 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
     return JS_UNDEFINED; \
   }
 TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD)
-#undef MAKE_TRIGGER_METHODS
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+MAKE_TRIGGER_METHOD(RequestWindowAttention, requestAttention)
+#endif
+#undef MAKE_TRIGGER_METHOD
 
 // Initialization
 JSClassDef glfw_window_class_def = {

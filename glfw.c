@@ -5,6 +5,18 @@
 #include "window.h"
 #include "monitor.h"
 
+#ifdef HAVE_GLFW_GET_ERROR
+JSValue
+glfw_throw(JSContext* ctx) {
+  const char* message;
+  if(glfwGetError(&message) != GLFW_NO_ERROR) {
+    JSValue error = JS_NewString(ctx, message);
+    JS_Throw(ctx, error);
+  }
+  return JS_EXCEPTION;
+}
+#endif
+
 //
 // Top-level
 //
@@ -93,10 +105,6 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   V(AUTO_ICONIFY) \
   V(FLOATING) \
   V(MAXIMIZED) \
-  V(CENTER_CURSOR) \
-  V(TRANSPARENT_FRAMEBUFFER) \
-  V(HOVERED) \
-  V(FOCUS_ON_SHOW) \
   V(RED_BITS) \
   V(GREEN_BITS) \
   V(BLUE_BITS) \
@@ -124,27 +132,36 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   V(CONTEXT_RELEASE_BEHAVIOR) \
   V(CONTEXT_NO_ERROR) \
   V(CONTEXT_CREATION_API) \
+  V(OPENGL_CORE_PROFILE) \
+  V(VERSION_MAJOR) \
+  V(VERSION_MINOR) \
+  V(VERSION_REVISION)
+
+#define CONSTANTS2(V) \
+  V(CENTER_CURSOR) \
+  V(TRANSPARENT_FRAMEBUFFER) \
+  V(HOVERED) \
+  V(FOCUS_ON_SHOW) \
   V(SCALE_TO_MONITOR) \
   V(COCOA_RETINA_FRAMEBUFFER) \
   V(COCOA_FRAME_NAME) \
   V(COCOA_GRAPHICS_SWITCHING) \
   V(X11_CLASS_NAME) \
   V(X11_INSTANCE_NAME) \
-  V(OPENGL_CORE_PROFILE) \
-  V(VERSION_MAJOR) \
-  V(VERSION_MINOR) \
-  V(VERSION_REVISION) \
   V(JOYSTICK_HAT_BUTTONS) \
   V(COCOA_CHDIR_RESOURCES) \
   V(COCOA_MENUBAR)
 
 #define DEFINE_CONSTANT(Name) JS_PROP_INT32_DEF(#Name, GLFW_##Name, 0),
 
-const JSCFunctionListEntry glfw_exports[] = {JS_CFUNC_DEF("poll", 2, glfw_poll_events),
-                                             JS_CFUNC_DEF("wait", 2, glfw_wait_events),
-                                             JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
-                                             JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
-                                             CONSTANTS(DEFINE_CONSTANT)};
+const JSCFunctionListEntry glfw_exports[] = {
+    JS_CFUNC_DEF("poll", 2, glfw_poll_events),
+    JS_CFUNC_DEF("wait", 2, glfw_wait_events),
+    JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
+    JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
+    CONSTANTS(DEFINE_CONSTANT)
+    // CONSTANTS2(DEFINE_CONSTANT),
+};
 
 #undef CONSTANTS
 #undef DEFINE_CONSTANT
