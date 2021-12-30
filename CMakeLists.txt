@@ -1,6 +1,7 @@
 project(qjs-glfw C)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
 # include(FindGLEW)
 include(FindPkgConfig)
 include(CheckFunctionExists)
@@ -75,5 +76,17 @@ set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "")
 target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
 target_link_libraries(qjs-glfw PRIVATE ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
-install(TARGETS qjs-glfw DESTINATION lib/quickjs PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+
+
+
+if(NOT CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR lib)
+endif(NOT CMAKE_INSTALL_LIBDIR)
+if(NOT QUICKJS_C_MODULE_DIR)
+  set(QUICKJS_C_MODULE_DIR "${CMAKE_INSTALL_LIBDIR}/quickjs")
+endif(NOT QUICKJS_C_MODULE_DIR)
+
+message("QUICKJS_C_MODULE_DIR: ${QUICKJS_C_MODULE_DIR}")
+
+install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
                                                              GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
