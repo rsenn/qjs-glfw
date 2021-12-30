@@ -515,6 +515,188 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "position.c",
+			"settings":
+			{
+				"buffer_size": 4111,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "CMakeLists.txt",
+			"settings":
+			{
+				"buffer_size": 3417,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					31,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAAFEAAAAAAAAAUgAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAUQAAAAAAAABRAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					32,
+					1,
+					"paste",
+					null,
+					"AQAAAFIAAAAAAAAAkAAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAUgAAAAAAAABSAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					33,
+					1,
+					"left_delete",
+					null,
+					"AQAAAI8AAAAAAAAAjwAAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAAkAAAAAAAAACQAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					42,
+					1,
+					"insert",
+					{
+						"characters": "\n\n\n"
+					},
+					"AwAAAJYLAAAAAAAAlwsAAAAAAAAAAAAAlwsAAAAAAACYCwAAAAAAAAAAAACYCwAAAAAAAJkLAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAlgsAAAAAAACWCwAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					45,
+					1,
+					"paste",
+					null,
+					"AQAAAJkLAAAAAAAArAwAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAmQsAAAAAAACZCwAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					48,
+					1,
+					"paste",
+					null,
+					"AgAAANIMAAAAAAAA6wwAAAAAAAAAAAAA6wwAAAAAAADrDAAAAAAAAAsAAABsaWIvcXVpY2tqcw",
+					"AQAAAAAAAAABAAAA0gwAAAAAAADdDAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					72,
+					1,
+					"paste",
+					null,
+					"AgAAANkAAAAAAAAA8QAAAAAAAAAAAAAA8QAAAAAAAADxAAAAAAAAADoAAABwa2dfc2VhcmNoX21vZHVsZShHTEVXIGdsZXcpCnBrZ19zZWFyY2hfbW9kdWxlKEdMRlcgZ2xmdzMp",
+					"AQAAAAAAAAABAAAAEwEAAAAAAADZAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					79,
+					1,
+					"paste",
+					null,
+					"AgAAAJAAAAAAAAAABAEAAAAAAAAAAAAABAEAAAAAAAAEAQAAAAAAABQAAAAjIGluY2x1ZGUoRmluZEdMRVcpCg",
+					"AQAAAAAAAAABAAAAkAAAAAAAAACkAAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					80,
+					1,
+					"insert",
+					{
+						"characters": "\n\n"
+					},
+					"AgAAAAQBAAAAAAAABQEAAAAAAAAAAAAABQEAAAAAAAAGAQAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAABAEAAAAAAAAEAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					82,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAUBAAAAAAAABQEAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAABgEAAAAAAAAFAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					85,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AgAAAAUBAAAAAAAABgEAAAAAAAAAAAAABgEAAAAAAAAGAQAAAAAAABYAAABpbmNsdWRlKEZpbmRQa2dDb25maWcp",
+					"AQAAAAAAAAABAAAABQEAAAAAAAAbAQAAAAAAAAAAAAAA0IFA"
+				],
+				[
+					86,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAUBAAAAAAAABQEAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAABgEAAAAAAAAGAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					88,
+					1,
+					"left_delete",
+					null,
+					"AQAAAI8AAAAAAAAAjwAAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAAkAAAAAAAAACQAAAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					93,
+					1,
+					"left_delete",
+					null,
+					"AQAAAAMBAAAAAAAAAwEAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAABAEAAAAAAAAEAQAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					96,
+					1,
+					"cut",
+					null,
+					"AQAAAAQBAAAAAAAABAEAAAAAAAAdAAAAaW5jbHVkZShDaGVja0Z1bmN0aW9uRXhpc3RzKQo",
+					"AQAAAAAAAAABAAAABAEAAAAAAAAhAQAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					98,
+					1,
+					"paste",
+					null,
+					"AQAAAJQCAAAAAAAAsQIAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAlAIAAAAAAACUAgAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					99,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAALECAAAAAAAAsgIAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAsQIAAAAAAACxAgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					103,
+					1,
+					"left_delete",
+					null,
+					"AQAAABwBAAAAAAAAHAEAAAAAAAABAAAACg",
+					"AQAAAAAAAAABAAAAHQEAAAAAAAAdAQAAAAAAAAAAAAAAAAAA"
+				],
+				[
+					107,
+					1,
+					"left_delete",
+					null,
+					"AQAAAB4BAAAAAAAAHgEAAAAAAABbAAAAc2V0KEdMRVdfTElCUkFSWSAiJHtwa2djZmdfbGliX0dMRVdfZ2xldzMyfSIpCnNldChHTEZXX0xJQlJBUlkgIiR7cGtnY2ZnX2xpYl9HTEZXX2dsZnczfSIpCg",
+					"AQAAAAAAAAABAAAAHgEAAAAAAAB5AQAAAAAAAAAAAAAAAAAA"
+				]
+			]
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -672,7 +854,8 @@
 	},
 	"expanded_folders":
 	[
-		"/home/roman/Projects/plot-cv/quickjs/qjs-glfw"
+		"/home/roman/Projects/plot-cv/quickjs/qjs-glfw",
+		"/home/roman/Projects/plot-cv/quickjs/qjs-glfw/cmake"
 	],
 	"file_history":
 	[
@@ -842,6 +1025,97 @@
 		{
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "position.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4111,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 0,
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1640837745.26,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"stack_multiselect": false,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "CMakeLists.txt",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3417,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								285,
+								381
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "./",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								}
+							],
+							"function_name_status_row": 9,
+							"syntax": "Packages/User/Themes/CMake.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1640843972.62,
+							"tabs_extra_last_activated_sheet_index": 1,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
 			]
 		}
 	],
