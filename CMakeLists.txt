@@ -12,6 +12,7 @@ message(STATUS "GLEW_LIBRARY: ${GLEW_LIBRARY}")
 message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 find_quickjs()
+configure_quickjs()
 
 if(WIN32)
   add_definitions(-DGLFW_DLL)
