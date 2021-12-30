@@ -1,10 +1,7 @@
-# Find GLEW library and include paths for CMU462
-# This defines the following:
+# Find GLEW library and include paths for CMU462 This defines the following:
 #
-# GLEW_FOUND             If GLEW is found
-# GLEW_LIBRARY           GLEW libraries
-# GLEW_INCLUDE_DIR       GLEW include directories
-# GLEW_LIBRARY_DIR       GLEW library directories
+# GLEW_FOUND             If GLEW is found GLEW_LIBRARY           GLEW libraries GLEW_INCLUDE_DIR       GLEW include
+# directories GLEW_LIBRARY_DIR       GLEW library directories
 macro(find_glew)
   if(UNIX)
     set(GLEW_INC_NAMES glew.h)
@@ -50,7 +47,6 @@ macro(find_glew)
     message(STATUS "GLEW include directory: ${GLEW_INCLUDE_DIR}")
   endif(GLEW_LIBRARY)
 
-  # Set package standard args
-  #include(FindPackageHandleStandardArgs)
-  #FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLEW REQUIRED_VARS GLEW_LIBRARY GLEW_INCLUDE_DIR GLEW_LIBRARY_DIR VERSION_VAR GLEW_VERSION)
+  # Set package standard args include(FindPackageHandleStandardArgs) FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLEW
+  # REQUIRED_VARS GLEW_LIBRARY GLEW_INCLUDE_DIR GLEW_LIBRARY_DIR VERSION_VAR GLEW_VERSION)
 endmacro(find_glew)

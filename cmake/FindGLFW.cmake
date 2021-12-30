@@ -1,10 +1,7 @@
-# Find GLFW library and include paths for CMU462
-# This defines the following:
+# Find GLFW library and include paths for CMU462 This defines the following:
 #
-# GLFW_FOUND             If GLFW is found
-# GLFW_LIBRARY           GLFW libraries
-# GLFW_INCLUDE_DIR       GLFW include directories
-# GLFW_LIBRARY_DIR       GLFW library directories
+# GLFW_FOUND             If GLFW is found GLFW_LIBRARY           GLFW libraries GLFW_INCLUDE_DIR       GLFW include
+# directories GLFW_LIBRARY_DIR       GLFW library directories
 macro(find_glfw)
   if(UNIX)
     set(GLFW_INC_NAMES glfw3.h glfw.h)
@@ -50,7 +47,6 @@ macro(find_glfw)
     message(STATUS "GLFW include directory: ${GLFW_INCLUDE_DIR}")
   endif(GLFW_LIBRARY)
 
-  # Set package standard args
-  #include(FindPackageHandleStandardArgs)
-  #FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW REQUIRED_VARS GLFW_LIBRARY GLFW_INCLUDE_DIR GLFW_LIBRARY_DIR VERSION_VAR GLFW_VERSION)
+  # Set package standard args include(FindPackageHandleStandardArgs) FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW
+  # REQUIRED_VARS GLFW_LIBRARY GLFW_INCLUDE_DIR GLFW_LIBRARY_DIR VERSION_VAR GLFW_VERSION)
 endmacro(find_glfw)
