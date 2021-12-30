@@ -2,15 +2,12 @@ project(qjs-glfw C)
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
-# include(FindGLEW)
-include(FindPkgConfig)
-include(CheckFunctionExists)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLEW.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
 
-pkg_search_module(GLEW glew)
-pkg_search_module(GLFW glfw3)
+find_glew()
+find_glfw()
 
-set(GLEW_LIBRARY "${pkgcfg_lib_GLEW_glew32}")
-set(GLFW_LIBRARY "${pkgcfg_lib_GLFW_glfw3}")
 message(STATUS "GLEW_LIBRARY: ${GLEW_LIBRARY}")
 message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
@@ -22,6 +19,8 @@ endif(WIN32)
 
 list(APPEND CMAKE_REQUIRED_INCLUDES ${GLFW_INCLUDE_DIRS})
 list(APPEND CMAKE_REQUIRED_LIBRARIES ${GLFW_LIBRARIES})
+
+include(CheckFunctionExists)
 
 check_function_exists(glfwGetError GLFW_GET_ERROR)
 if(GLFW_GET_ERROR)
