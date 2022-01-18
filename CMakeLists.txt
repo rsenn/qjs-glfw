@@ -68,8 +68,10 @@ if(GLFW_REQUEST_WINDOW_ATTENTION)
   add_definitions(-DHAVE_GLFW_REQUEST_WINDOW_ATTENTION=1)
 endif(GLFW_REQUEST_WINDOW_ATTENTION)
 
-add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c
-                            scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
+add_library(
+  qjs-glfw SHARED
+  gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h
+  size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
 
 set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "")
 
@@ -85,4 +87,5 @@ if(NOT QUICKJS_C_MODULE_DIR)
 endif(NOT QUICKJS_C_MODULE_DIR)
 
 install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}"
-        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ
+                    WORLD_EXECUTE)
