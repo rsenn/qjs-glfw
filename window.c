@@ -653,8 +653,12 @@ JSValue
 glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
   GLFWwindow* window = glfwCreateWindow(width, height, title, monitor, share);
   if(window == NULL) {
+#ifdef HAVE_GLFW_GET_ERROR
     glfw_throw(ctx);
     return JS_EXCEPTION;
+#else
+    return JS_ThrowInternalError(ctx, "glfwCreateWindow failed");
+#endif
   }
 
   return glfw_window_new_instance(ctx, window);
