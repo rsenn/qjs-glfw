@@ -20,6 +20,14 @@ JSValue glfw_throw(JSContext* ctx);
 #define js_init_module js_init_module_qjsc_glfw
 #endif
 
+#if defined(_WIN32) || defined(__MINGW32__)
+#define VISIBLE __declspec(dllexport)
+#define HIDDEN
+#else
+#define VISIBLE __attribute__((visibility("default")))
+#define HIDDEN __attribute__((visibility("hidden")))
+#endif
+
 static inline JSAtom
 js_iterator_atom(JSContext* ctx) {
 
@@ -34,6 +42,6 @@ js_iterator_atom(JSContext* ctx) {
   return atom;
 }
 
-JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
+VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 
 #endif
