@@ -49,11 +49,12 @@ macro(find_glfw)
   set(GLFW_LIBRARY_DIR "${GLFW_LIBRARY_DIR}" CACHE FILEPATH "GLFW library directory")
   set(GLFW_INCLUDE_DIR "${GLFW_INCLUDE_DIR}" CACHE FILEPATH "GLFW include directory")
 
-  if(GLFW_LIBRARY)
+  if(NOT GLFW_CONFIGURATION_SHOWN)
     message(STATUS "GLFW library: ${GLFW_LIBRARY}")
     message(STATUS "GLFW library directory: ${GLFW_LIBRARY_DIR}")
     message(STATUS "GLFW include directory: ${GLFW_INCLUDE_DIR}")
-  endif(GLFW_LIBRARY)
+    set(GLFW_CONFIGURATION_SHOWN TRUE)
+  endif(NOT GLFW_CONFIGURATION_SHOWN)
 
   # Set package standard args include(FindPackageHandleStandardArgs)
   # FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW REQUIRED_VARS GLFW_LIBRARY
