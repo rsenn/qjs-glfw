@@ -13,7 +13,7 @@ macro(find_glew)
   endif(UNIX)
 
   # GLEW static library
-  find_library(GLEW_LIBRARY NAMES ${GLEW_LIB_NAMES} DOC "GLEW library")
+  find_library(GLEW_LIBRARY NAMES ${GLEW_LIB_NAMES} DOC "GLEW library" CMAKE_FIND_ROOT_PATH_BOTH)
 
   if(NOT GLEW_LIBRARY)
     include(FindPkgConfig)
@@ -34,7 +34,7 @@ macro(find_glew)
   # GLEW include dir
   if(NOT GLEW_INCLUDE_DIR)
     if(GLEW_LIBRARY_DIR)
-      string(REGEX REPLACE "/lib/.*" "/include" GLEW_INCLUDE_DIR
+      string(REGEX REPLACE "/lib/?.*" "/include" GLEW_INCLUDE_DIR
                            "${GLEW_LIBRARY_DIR}")
     else(GLEW_LIBRARY_DIR)
       find_path(GLEW_INCLUDE_DIR NAMES ${GLEW_INC_NAMES}
@@ -44,6 +44,11 @@ macro(find_glew)
 
   # Version
   set(GLEW_VERSION 1.13.0)
+
+  set(GLEW_LIBRARY "${GLEW_LIBRARY}" CACHE FILEPATH "GLEW library")
+  set(GLEW_LIBRARY_DIR "${GLEW_LIBRARY_DIR}" CACHE FILEPATH "GLEW library directory")
+  set(GLEW_INCLUDE_DIR "${GLEW_INCLUDE_DIR}" CACHE FILEPATH "GLEW include directory")
+
 
   if(GLEW_LIBRARY)
     message(STATUS "GLEW library: ${GLEW_LIBRARY}")

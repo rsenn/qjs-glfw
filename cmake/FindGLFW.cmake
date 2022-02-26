@@ -13,7 +13,7 @@ macro(find_glfw)
   endif(UNIX)
 
   # GLFW static library
-  find_library(GLFW_LIBRARY NAMES ${GLFW_LIB_NAMES} DOC "GLFW library")
+  find_library(GLFW_LIBRARY NAMES ${GLFW_LIB_NAMES} DOC "GLFW library" CMAKE_FIND_ROOT_PATH_BOTH)
 
   if(NOT GLFW_LIBRARY)
     include(FindPkgConfig)
@@ -34,7 +34,7 @@ macro(find_glfw)
   # GLFW include dir
   if(NOT GLFW_INCLUDE_DIR)
     if(GLFW_LIBRARY_DIR)
-      string(REGEX REPLACE "/lib/.*" "/include" GLFW_INCLUDE_DIR
+      string(REGEX REPLACE "/lib/?.*" "/include" GLFW_INCLUDE_DIR
                            "${GLFW_LIBRARY_DIR}")
     else(GLFW_LIBRARY_DIR)
       find_path(GLFW_INCLUDE_DIR NAMES ${GLFW_INC_NAMES}
@@ -44,6 +44,10 @@ macro(find_glfw)
 
   # Version
   set(GLFW_VERSION 3.1.1)
+
+  set(GLFW_LIBRARY "${GLFW_LIBRARY}" CACHE FILEPATH "GLFW library")
+  set(GLFW_LIBRARY_DIR "${GLFW_LIBRARY_DIR}" CACHE FILEPATH "GLFW library directory")
+  set(GLFW_INCLUDE_DIR "${GLFW_INCLUDE_DIR}" CACHE FILEPATH "GLFW include directory")
 
   if(GLFW_LIBRARY)
     message(STATUS "GLFW library: ${GLFW_LIBRARY}")
