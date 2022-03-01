@@ -108,7 +108,7 @@ const JSCFunctionListEntry glfw_size_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("width", glfw_size_get_axis, glfw_size_set_axis, 0),
     JS_CGETSET_MAGIC_DEF("height", glfw_size_get_axis, glfw_size_set_axis, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_size_iterator),
-JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWsize", JS_PROP_CONFIGURABLE),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWsize", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_size_proto, glfw_size_class;
