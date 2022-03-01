@@ -378,7 +378,7 @@ glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst val
   if(!window)
     return JS_EXCEPTION;
 
-  GLFWPosition* position = JS_GetOpaque2(ctx, value, glfw_position_class_id);
+  GLFWposition* position = JS_GetOpaque2(ctx, value, glfw_position_class_id);
   if(!position)
     return JS_EXCEPTION;
 
@@ -392,7 +392,7 @@ glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
   if(!window)
     return JS_EXCEPTION;
 
-  GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
+  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   glfwGetWindowPos(window, &position->x, &position->y);
   return glfw_position_new_instance(ctx, position);
 }
@@ -404,7 +404,7 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
   if(!window)
     return JS_EXCEPTION;
 
-  GLFWSize* size = JS_GetOpaque2(ctx, value, glfw_size_class_id);
+  GLFWsize* size = JS_GetOpaque2(ctx, value, glfw_size_class_id);
   if(!size)
     return JS_EXCEPTION;
 
@@ -418,7 +418,7 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   if(!window)
     return JS_EXCEPTION;
 
-  GLFWSize* size = js_mallocz(ctx, sizeof(*size));
+  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   glfwGetWindowSize(window, &size->width, &size->height);
   return glfw_size_new_instance(ctx, size);
 }
@@ -429,7 +429,7 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   if(!window)
     return JS_EXCEPTION;
 
-  GLFWSize* size = js_mallocz(ctx, sizeof(*size));
+  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   glfwGetFramebufferSize(window, &size->width, &size->height);
   return glfw_size_new_instance(ctx, size);
 }
@@ -632,9 +632,16 @@ JSClassDef glfw_window_class_def = {
 
 #define MAKE_TRIGGER_METHOD_ENTRY(NativeName, JSName) JS_CFUNC_DEF(#JSName, 0, glfw_window_##JSName),
 
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num) \
+/*#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter, magic_num) \
   { \
     .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .magic = magic_num, .u = { \
+      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}} \
+    } \
+  }
+*/
+#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
+  { \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .u = { \
       .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}} \
     } \
   }
@@ -649,7 +656,7 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
-    JS_CGETSET_DEF("id", glfw_window_get_id, NULL),
+    JS_CGETSET_ENUMERABLE_DEF("id", glfw_window_get_id, NULL),
     JS_CGETSET_MAGIC_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
     JS_CGETSET_MAGIC_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
     JS_CGETSET_MAGIC_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
@@ -668,6 +675,7 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
     JS_CGETSET_MAGIC_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
     //  TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWwindow", JS_PROP_CONFIGURABLE),
 };
 
 #undef MAKE_TRIGGER_METHOD_ENTRY

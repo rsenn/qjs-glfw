@@ -66,6 +66,7 @@ const JSCFunctionListEntry glfw_video_mode_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("greenBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 3),
     JS_CGETSET_MAGIC_DEF("blueBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 4),
     JS_CGETSET_MAGIC_DEF("refreshRate", glfw_video_mode_get_int, glfw_video_mode_set_int, 5),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWvidmode", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_video_mode_proto, glfw_video_mode_class;

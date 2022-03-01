@@ -32,7 +32,7 @@ glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
   if(!monitor)
     return JS_EXCEPTION;
 
-  GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
+  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   glfwGetMonitorPos(monitor, &position->x, &position->y);
   return glfw_position_new_instance(ctx, position);
 }
@@ -43,15 +43,15 @@ glfw_monitor_get_workarea(JSContext* ctx, JSValueConst this_val) {
   if(!monitor)
     return JS_EXCEPTION;
 
-  GLFWWorkArea* workarea = js_mallocz(ctx, sizeof(*workarea));
+  GLFWworkarea* workarea = js_mallocz(ctx, sizeof(*workarea));
   if(!workarea)
     return JS_EXCEPTION;
 
-  GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
+  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   if(!position)
     return JS_EXCEPTION;
 
-  GLFWSize* size = js_mallocz(ctx, sizeof(*size));
+  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   if(!size)
     return JS_EXCEPTION;
 
@@ -70,7 +70,7 @@ glfw_monitor_get_physical_size(JSContext* ctx, JSValueConst this_val) {
   if(!monitor)
     return JS_EXCEPTION;
 
-  GLFWSize* size = js_mallocz(ctx, sizeof(*size));
+  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   glfwGetMonitorPhysicalSize(monitor, &size->width, &size->height);
   return glfw_size_new_instance(ctx, size);
 }
@@ -81,7 +81,7 @@ glfw_monitor_get_content_scale(JSContext* ctx, JSValueConst this_val) {
   if(!monitor)
     return JS_EXCEPTION;
 
-  GLFWScale* scale = js_mallocz(ctx, sizeof(*scale));
+  GLFWscale* scale = js_mallocz(ctx, sizeof(*scale));
 
 #ifdef HAVE_GLFW_GET_MONITOR_CONTENT_SCALE
   glfwGetMonitorContentScale(monitor, (float*)&scale->x, (float*)&scale->y);
@@ -177,6 +177,8 @@ const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
     JS_CGETSET_DEF("currentVideoMode", glfw_monitor_get_current_video_mode, NULL),
     JS_CGETSET_DEF("videoModes", glfw_monitor_get_video_modes, NULL),
     JS_CGETSET_DEF("gamma", glfw_monitor_get_gamma, glfw_monitor_set_gamma),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWmonitor", JS_PROP_CONFIGURABLE),
+
 };
 
 const JSCFunctionListEntry glfw_monitor_funcs[] = {

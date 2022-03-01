@@ -7,7 +7,7 @@ JSClassID glfw_scale_class_id = 0;
 // constructor/destructor
 JSValue
 glfw_scale_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWScale* scale;
+  GLFWscale* scale;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
@@ -42,14 +42,14 @@ fail:
 
 void
 glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWScale* scale = JS_GetOpaque(val, glfw_scale_class_id);
+  GLFWscale* scale = JS_GetOpaque(val, glfw_scale_class_id);
   js_free_rt(rt, scale);
 }
 
 // properties
 JSValue
 glfw_scale_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWScale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
+  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
   if(!scale)
     return JS_EXCEPTION;
   return JS_NewFloat64(ctx, magic == 0 ? scale->x : scale->y);
@@ -57,7 +57,7 @@ glfw_scale_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
 
 JSValue
 glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWScale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
+  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
   if(!scale)
     return JS_EXCEPTION;
 
@@ -77,7 +77,7 @@ static JSValue
 glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWScale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
+  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
   if(!scale)
     return JS_EXCEPTION;
 
@@ -108,6 +108,7 @@ const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
     JS_CGETSET_MAGIC_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_scale_iterator),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWscale", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_scale_proto, glfw_scale_class;
@@ -133,7 +134,7 @@ glfw_scale_constructor(JSContext* ctx) {
 }
 
 JSValue
-glfw_scale_new_instance(JSContext* ctx, GLFWScale* scale) {
+glfw_scale_new_instance(JSContext* ctx, GLFWscale* scale) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 

@@ -7,15 +7,15 @@ JSClassID glfw_workarea_class_id = 0;
 // constructor/destructor
 JSValue
 glfw_workarea_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWWorkArea* workarea = js_mallocz(ctx, sizeof(*workarea));
+  GLFWworkarea* workarea = js_mallocz(ctx, sizeof(*workarea));
   if(!workarea)
     return JS_EXCEPTION;
 
-  GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
+  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   if(!position)
     return JS_EXCEPTION;
 
-  GLFWSize* size = js_mallocz(ctx, sizeof(*size));
+  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   if(!size)
     return JS_EXCEPTION;
 
@@ -42,14 +42,14 @@ fail:
 
 void
 glfw_workarea_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWWorkArea* workarea = JS_GetOpaque(val, glfw_workarea_class_id);
+  GLFWworkarea* workarea = JS_GetOpaque(val, glfw_workarea_class_id);
   js_free_rt(rt, workarea);
 }
 
 // properties
 JSValue
 glfw_workarea_get_position_or_size(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWWorkArea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
+  GLFWworkarea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
   if(!workarea)
     return JS_EXCEPTION;
 
@@ -61,7 +61,7 @@ glfw_workarea_get_position_or_size(JSContext* ctx, JSValueConst this_val, int ma
 
 JSValue
 glfw_workarea_set_position_or_size(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWWorkArea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
+  GLFWworkarea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
   if(!workarea)
     return JS_EXCEPTION;
 
@@ -78,7 +78,7 @@ static JSValue
 glfw_workarea_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWWorkArea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
+  GLFWworkarea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
   if(!workarea)
     return JS_EXCEPTION;
 
@@ -111,6 +111,7 @@ const JSCFunctionListEntry glfw_workarea_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("position", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 0),
     JS_CGETSET_MAGIC_DEF("size", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_workarea_iterator),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWworkarea", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_workarea_proto, glfw_workarea_class;
@@ -136,7 +137,7 @@ glfw_workarea_constructor(JSContext* ctx) {
 }
 
 JSValue
-glfw_workarea_new_instance(JSContext* ctx, GLFWWorkArea* workarea) {
+glfw_workarea_new_instance(JSContext* ctx, GLFWworkarea* workarea) {
   JSValue ctor = glfw_workarea_constructor(ctx);
   JSValue proto = JS_GetPropertyStr(ctx, ctor, "prototype");
   if(JS_IsException(proto)) {

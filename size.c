@@ -7,7 +7,7 @@ JSClassID glfw_size_class_id = 0;
 // constructor/destructor
 JSValue
 glfw_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWSize* size;
+  GLFWsize* size;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
@@ -42,14 +42,14 @@ fail:
 
 void
 glfw_size_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWSize* size = JS_GetOpaque(val, glfw_size_class_id);
+  GLFWsize* size = JS_GetOpaque(val, glfw_size_class_id);
   js_free_rt(rt, size);
 }
 
 // properties
 JSValue
 glfw_size_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWSize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
+  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
   if(!size)
     return JS_EXCEPTION;
   return JS_NewInt32(ctx, magic == 0 ? size->width : size->height);
@@ -57,7 +57,7 @@ glfw_size_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
 
 JSValue
 glfw_size_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWSize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
+  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
   if(!size)
     return JS_EXCEPTION;
 
@@ -77,7 +77,7 @@ static JSValue
 glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWSize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
+  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
   if(!size)
     return JS_EXCEPTION;
 
@@ -108,6 +108,7 @@ const JSCFunctionListEntry glfw_size_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("width", glfw_size_get_axis, glfw_size_set_axis, 0),
     JS_CGETSET_MAGIC_DEF("height", glfw_size_get_axis, glfw_size_set_axis, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_size_iterator),
+JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWsize", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_size_proto, glfw_size_class;
@@ -133,7 +134,7 @@ glfw_size_constructor(JSContext* ctx) {
 }
 
 JSValue
-glfw_size_new_instance(JSContext* ctx, GLFWSize* size) {
+glfw_size_new_instance(JSContext* ctx, GLFWsize* size) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 

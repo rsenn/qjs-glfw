@@ -7,7 +7,7 @@ JSClassID glfw_position_class_id = 0;
 // constructor/destructor
 JSValue
 glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
+  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   if(!position)
     return JS_EXCEPTION;
 
@@ -25,14 +25,14 @@ fail:
 
 void
 glfw_position_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWPosition* position = JS_GetOpaque(val, glfw_position_class_id);
+  GLFWposition* position = JS_GetOpaque(val, glfw_position_class_id);
   js_free_rt(rt, position);
 }
 
 // properties
 JSValue
 glfw_position_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWPosition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
+  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
   if(!position)
     return JS_EXCEPTION;
   return JS_NewInt32(ctx, magic == 0 ? position->x : position->y);
@@ -40,7 +40,7 @@ glfw_position_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
 
 JSValue
 glfw_position_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWPosition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
+  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
   if(!position)
     return JS_EXCEPTION;
 
@@ -60,7 +60,7 @@ static JSValue
 glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWPosition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
+  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
   if(!position)
     return JS_EXCEPTION;
 
@@ -91,6 +91,7 @@ const JSCFunctionListEntry glfw_position_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("x", glfw_position_get_xy, glfw_position_set_xy, 0),
     JS_CGETSET_MAGIC_DEF("y", glfw_position_get_xy, glfw_position_set_xy, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_position_iterator),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWposition", JS_PROP_CONFIGURABLE),
 };
 
 JSValue glfw_position_proto, glfw_position_class;
@@ -116,7 +117,7 @@ glfw_position_constructor(JSContext* ctx) {
 }
 
 JSValue
-glfw_position_new_instance(JSContext* ctx, GLFWPosition* position) {
+glfw_position_new_instance(JSContext* ctx, GLFWposition* position) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 

@@ -2,12 +2,11 @@
 #define GLFW_MODULE_SCALE 1
 
 typedef struct {
-  double x;
-  double y;
-} GLFWScale;
+  double x,y;
+} GLFWscale;
 
 extern JSClassID glfw_scale_class_id;
-JSValue glfw_scale_new_instance(JSContext* ctx, GLFWScale* scale);
+JSValue glfw_scale_new_instance(JSContext* ctx, GLFWscale* scale);
 int glfw_scale_init(JSContext* ctx, JSModuleDef* m);
 int glfw_scale_export(JSContext* ctx, JSModuleDef* m);
 
