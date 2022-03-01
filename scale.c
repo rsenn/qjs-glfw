@@ -4,7 +4,7 @@
 
 JSClassID glfw_scale_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_scale_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWScale* scale;
@@ -46,7 +46,7 @@ glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, scale);
 }
 
-// Properties
+// properties
 JSValue
 glfw_scale_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWScale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
@@ -98,7 +98,7 @@ glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return generator;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_scale_class_def = {
     "Scale",
     .finalizer = glfw_scale_finalizer,

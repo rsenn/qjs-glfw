@@ -4,14 +4,14 @@
 
 JSClassID glfw_video_mode_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_video_mode_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");
   return JS_EXCEPTION;
 }
 
-// Properties
+// properties
 JSValue
 glfw_video_mode_get_int(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
@@ -54,7 +54,7 @@ glfw_video_mode_set_int(JSContext* ctx, JSValueConst this_val, JSValue val, int 
   return JS_UNDEFINED;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_video_mode_class_def = {
     "VideoMode",
 };

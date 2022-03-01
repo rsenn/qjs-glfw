@@ -4,14 +4,14 @@
 
 JSClassID glfw_gamma_ramp_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_gamma_ramp_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");
   return JS_EXCEPTION;
 }
 
-// Properties
+// properties
 JSValue
 glfw_gamma_ramp_get_prop(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWgammaramp* gamma_ramp = JS_GetOpaque2(ctx, this_val, glfw_gamma_ramp_class_id);
@@ -29,7 +29,7 @@ glfw_gamma_ramp_get_prop(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_NewInt32(ctx, value);
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_gamma_ramp_class_def = {
     "GammaRamp",
 };

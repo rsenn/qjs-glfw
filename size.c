@@ -4,7 +4,7 @@
 
 JSClassID glfw_size_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWSize* size;
@@ -46,7 +46,7 @@ glfw_size_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, size);
 }
 
-// Properties
+// properties
 JSValue
 glfw_size_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWSize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
@@ -98,7 +98,7 @@ glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   return generator;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_size_class_def = {
     "Size",
     .finalizer = glfw_size_finalizer,

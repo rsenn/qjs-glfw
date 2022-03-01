@@ -9,13 +9,13 @@
 
 JSClassID glfw_monitor_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_monitor_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   return glfw_monitor_new_instance(ctx, glfwGetPrimaryMonitor());
 }
 
-// Properties
+// properties
 JSValue
 glfw_monitor_get_name(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
@@ -163,7 +163,7 @@ glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
   return array;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_monitor_class_def = {
     "Monitor",
 };

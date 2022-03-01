@@ -4,7 +4,7 @@
 
 JSClassID glfw_position_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWPosition* position = js_mallocz(ctx, sizeof(*position));
@@ -29,7 +29,7 @@ glfw_position_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, position);
 }
 
-// Properties
+// properties
 JSValue
 glfw_position_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWPosition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
@@ -81,7 +81,7 @@ glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   return generator;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_position_class_def = {
     "Position",
     .finalizer = glfw_position_finalizer,

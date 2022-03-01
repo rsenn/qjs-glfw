@@ -4,7 +4,7 @@
 
 JSClassID glfw_workarea_class_id = 0;
 
-// Constructor/Destructor
+// constructor/destructor
 JSValue
 glfw_workarea_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWWorkArea* workarea = js_mallocz(ctx, sizeof(*workarea));
@@ -46,7 +46,7 @@ glfw_workarea_finalizer(JSRuntime* rt, JSValue val) {
   js_free_rt(rt, workarea);
 }
 
-// Properties
+// properties
 JSValue
 glfw_workarea_get_position_or_size(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWWorkArea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
@@ -101,7 +101,7 @@ glfw_workarea_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   return generator;
 }
 
-// Initialization
+// initialization
 JSClassDef glfw_workarea_class_def = {
     "WorkArea",
     .finalizer = glfw_workarea_finalizer,

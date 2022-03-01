@@ -166,7 +166,7 @@ const JSCFunctionListEntry glfw_exports[] = {
 #undef CONSTANTS
 #undef DEFINE_CONSTANT
 
-// Initialization
+// initialization
 int
 glfw_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
