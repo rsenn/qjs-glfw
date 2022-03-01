@@ -7,6 +7,58 @@
 
 JSClassID glfw_window_class_id = 0;
 
+/*
+
+  const defaultCallbacks = {
+    handlePos(x, y)  {
+      console.log('handlePos', { x, y)  });
+    },
+    handleSize(width, height)  {
+      console.log('handleSize', { width, height)  });
+    },
+    handleClose(w)  {
+      console.log('handleClose', { w)  });
+    },
+    handleRefresh(w)  {
+      console.log('handleRefresh', { w)  });
+    },
+    handleFocus(focused)  {
+      console.log('handleFocus', { focused)  });
+    },
+    handleIconify(iconified)  {
+      console.log('handleIconify', { iconified)  });
+    },
+    handleFramebufferSize(width, height)  {
+      console.log('handleFramebufferSize', { width, height)  });
+    },
+    handleMouseButton(button, action, mods)  {
+      console.log('handleMouseButton', { button, action, mods)  });
+    },
+    handleCursorPos(x, y)  {
+      console.log('handleCursorPos', { x, y)  });
+    },
+    handleCursorEnter(cur)  {
+      console.log('handleCursorEnter', { cur)  });
+    },
+    handleScroll(xoffset, yoffset)  {
+      console.log('handleScroll', { xoffset, yoffset)  });
+    },
+    handleKey(key, scancode, action, mods)  {
+      console.log('handleKey', { key, scancode, action, mods)  });
+    },
+    handleChar(c)  {
+      console.log('handleChar', { c)  });
+    },
+    handleCharMods(c, mods)  {
+      console.log('handleCharMods', { c, mods)  });
+    },
+    handleDrop(argcargv)  {
+      console.log('handleDrop', { argcargv)  });
+    }
+  });
+
+ */
+
 enum CallbackID {
   CALLBACK_WINDOW_POS = 0,
   CALLBACK_WINDOW_SIZE,
