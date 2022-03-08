@@ -1,8 +1,6 @@
 # Find GLEW library and include paths for CMU462 This defines the following:
 #
-# GLEW_FOUND             If GLEW is found GLEW_LIBRARY           GLEW libraries
-# GLEW_INCLUDE_DIR GLEW include directories GLEW_LIBRARY_DIR       GLEW library
-# directories
+# GLEW_FOUND             If GLEW is found GLEW_LIBRARY           GLEW libraries GLEW_INCLUDE_DIR GLEW include directories GLEW_LIBRARY_DIR       GLEW library directories
 macro(find_glew)
   if(UNIX)
     set(GLEW_INC_NAMES glew.h)
@@ -26,19 +24,16 @@ macro(find_glew)
     if(GLEW_LIBRARY)
       get_filename_component(GLEW_LIBRARY_DIR "${GLEW_LIBRARY}" DIRECTORY)
     else(GLEW_LIBRARY)
-      find_path(GLEW_LIBRARY_DIR NAMES ${GLEW_LIB_NAMES}
-                DOC "GLEW library directory")
+      find_path(GLEW_LIBRARY_DIR NAMES ${GLEW_LIB_NAMES} DOC "GLEW library directory")
     endif(GLEW_LIBRARY)
   endif(NOT GLEW_LIBRARY_DIR)
 
   # GLEW include dir
   if(NOT GLEW_INCLUDE_DIR)
     if(GLEW_LIBRARY_DIR)
-      string(REGEX REPLACE "/lib/?.*" "/include" GLEW_INCLUDE_DIR
-                           "${GLEW_LIBRARY_DIR}")
+      string(REGEX REPLACE "/lib/?.*" "/include" GLEW_INCLUDE_DIR "${GLEW_LIBRARY_DIR}")
     else(GLEW_LIBRARY_DIR)
-      find_path(GLEW_INCLUDE_DIR NAMES ${GLEW_INC_NAMES}
-                DOC "GLEW include directory")
+      find_path(GLEW_INCLUDE_DIR NAMES ${GLEW_INC_NAMES} DOC "GLEW include directory")
     endif(GLEW_LIBRARY_DIR)
   endif(NOT GLEW_INCLUDE_DIR)
 
@@ -56,7 +51,5 @@ macro(find_glew)
     set(GLEW_CONFIGURATION_SHOWN TRUE)
   endif(NOT GLEW_CONFIGURATION_SHOWN)
 
-  # Set package standard args include(FindPackageHandleStandardArgs)
-  # FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLEW REQUIRED_VARS GLEW_LIBRARY
-  # GLEW_INCLUDE_DIR GLEW_LIBRARY_DIR VERSION_VAR GLEW_VERSION)
+  # Set package standard args include(FindPackageHandleStandardArgs) FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLEW REQUIRED_VARS GLEW_LIBRARY GLEW_INCLUDE_DIR GLEW_LIBRARY_DIR VERSION_VAR GLEW_VERSION)
 endmacro(find_glew)

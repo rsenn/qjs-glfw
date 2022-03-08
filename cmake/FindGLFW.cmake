@@ -1,8 +1,6 @@
 # Find GLFW library and include paths for CMU462 This defines the following:
 #
-# GLFW_FOUND             If GLFW is found GLFW_LIBRARY           GLFW libraries
-# GLFW_INCLUDE_DIR GLFW include directories GLFW_LIBRARY_DIR       GLFW library
-# directories
+# GLFW_FOUND             If GLFW is found GLFW_LIBRARY           GLFW libraries GLFW_INCLUDE_DIR GLFW include directories GLFW_LIBRARY_DIR       GLFW library directories
 macro(find_glfw)
   if(UNIX)
     set(GLFW_INC_NAMES glfw3.h glfw.h)
@@ -26,19 +24,16 @@ macro(find_glfw)
     if(GLFW_LIBRARY)
       get_filename_component(GLFW_LIBRARY_DIR "${GLFW_LIBRARY}" DIRECTORY)
     else(GLFW_LIBRARY)
-      find_path(GLFW_LIBRARY_DIR NAMES ${GLFW_LIB_NAMES}
-                DOC "GLFW library directory")
+      find_path(GLFW_LIBRARY_DIR NAMES ${GLFW_LIB_NAMES} DOC "GLFW library directory")
     endif(GLFW_LIBRARY)
   endif(NOT GLFW_LIBRARY_DIR)
 
   # GLFW include dir
   if(NOT GLFW_INCLUDE_DIR)
     if(GLFW_LIBRARY_DIR)
-      string(REGEX REPLACE "/lib/?.*" "/include" GLFW_INCLUDE_DIR
-                           "${GLFW_LIBRARY_DIR}")
+      string(REGEX REPLACE "/lib/?.*" "/include" GLFW_INCLUDE_DIR "${GLFW_LIBRARY_DIR}")
     else(GLFW_LIBRARY_DIR)
-      find_path(GLFW_INCLUDE_DIR NAMES ${GLFW_INC_NAMES}
-                DOC "GLFW include directory")
+      find_path(GLFW_INCLUDE_DIR NAMES ${GLFW_INC_NAMES} DOC "GLFW include directory")
     endif(GLFW_LIBRARY_DIR)
   endif(NOT GLFW_INCLUDE_DIR)
 
@@ -56,7 +51,5 @@ macro(find_glfw)
     set(GLFW_CONFIGURATION_SHOWN TRUE)
   endif(NOT GLFW_CONFIGURATION_SHOWN)
 
-  # Set package standard args include(FindPackageHandleStandardArgs)
-  # FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW REQUIRED_VARS GLFW_LIBRARY
-  # GLFW_INCLUDE_DIR GLFW_LIBRARY_DIR VERSION_VAR GLFW_VERSION)
+  # Set package standard args include(FindPackageHandleStandardArgs) FIND_PACKAGE_HANDLE_STANDARD_ARGS(GLFW REQUIRED_VARS GLFW_LIBRARY GLFW_INCLUDE_DIR GLFW_LIBRARY_DIR VERSION_VAR GLFW_VERSION)
 endmacro(find_glfw)
