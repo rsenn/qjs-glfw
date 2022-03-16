@@ -8,13 +8,19 @@ macro(build_glfw)
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glfw
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
+    UPDATE_COMMAND sed -i "s|DEFINE_SYMBOL _GLFW_BUILD_DLL||g"
+                   ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src/CMakeLists.txt
     PREFIX glfw
     CMAKE_ARGS
       -DBUILD_SHARED_LIBS:BOOL=OFF
+      -DENABLE_SHARED:BOOL=OFF
       "-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}"
       "-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=${CMAKE_POSITION_INDEPENDENT_CODE}"
       "-DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}"
-      "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}"
+      "-DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS} ${MODULE_COMPILE_FLAGS}"
+      -DGLFW_BUILD_DOCS:BOOL=OFF
+      -DGLFW_BUILD_EXAMPLES:BOOL=OFF
+      -DGLFW_BUILD_TESTS:BOOL=OFF
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
     INSTALL_COMMAND ""
@@ -40,8 +46,9 @@ macro(build_glfw)
 
   endif()
 
-  set(GLFW_INCLUDE_DIR ${SOURCE_DIR}/c/include
+  set(GLFW_INCLUDE_DIR ${SOURCE_DIR}/include
       CACHE PATH "glfw3 include directory" FORCE)
-  set(GLFW_LIBRARY_DIR ${BINARY_DIR} CACHE PATH "glfw3 include directory" FORCE)
+  set(GLFW_LIBRARY_DIR ${BINARY_DIR}/src CACHE PATH "glfw3 library directory"
+                                               FORCE)
   set(GLFW_LIBRARY glfw3)
 endmacro(build_glfw)
