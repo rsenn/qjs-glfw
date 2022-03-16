@@ -10,19 +10,31 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLEW.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGLFW.cmake)
 
+find_quickjs()
+configure_quickjs()
+
 find_glew()
 
 if(BUILD_GLFW)
   build_glfw()
+
+  add_definitions(
+    -DHAVE_GLFW_GET_ERROR
+    -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE
+    -DHAVE_GLFW_GET_MONITOR_WORKAREA
+    -DHAVE_GLFW_GET_WINDOW_OPACITY
+    -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK
+    -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK
+    -DHAVE_GLFW_SET_WINDOW_OPACITY
+    -DHAVE_GLFW_WINDOW_HINT_STRING
+  )  
 else(BUILD_GLFW)
   find_glfw()
 endif(BUILD_GLFW)
 
 message(STATUS "GLEW_LIBRARY: ${GLEW_LIBRARY}")
 message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
-
-find_quickjs()
-configure_quickjs()
 
 include_directories(${GLEW_INCLUDE_DIR} ${GLFW_INCLUDE_DIR}
                     ${QUICKJS_INCLUDE_DIR})
@@ -32,64 +44,68 @@ if(WIN32)
   add_definitions(-DGLFW_DLL)
 endif(WIN32)
 
-include(CheckFunctionExists)
-include(CheckLibraryExists)
+if(NOT BUILD_GLFW)
+  include(CheckFunctionExists)
+  include(CheckLibraryExists)
 
-list(APPEND CMAKE_REQUIRED_INCLUDES ${GLFW_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
-list(APPEND CMAKE_REQUIRED_LIBRARIES ${GLFW_LIBRARY} ${GLEW_LIBRARY})
+  list(APPEND CMAKE_REQUIRED_INCLUDES ${GLFW_INCLUDE_DIR} ${GLEW_INCLUDE_DIR})
+  list(APPEND CMAKE_REQUIRED_LIBRARIES ${GLFW_LIBRARY} ${GLEW_LIBRARY})
 
-check_function_exists(glfwGetError GLFW_GET_ERROR)
-if(GLFW_GET_ERROR)
-  add_definitions(-DHAVE_GLFW_GET_ERROR=1)
-endif(GLFW_GET_ERROR)
+  check_function_exists(glfwGetError GLFW_GET_ERROR)
+  if(GLFW_GET_ERROR)
+    add_definitions(-DHAVE_GLFW_GET_ERROR=1)
+  endif(GLFW_GET_ERROR)
 
-check_function_exists(glfwGetMonitorContentScale GLFW_GET_MONITOR_CONTENT_SCALE)
-if(GLFW_GET_MONITOR_CONTENT_SCALE)
-  add_definitions(-DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE=1)
-endif(GLFW_GET_MONITOR_CONTENT_SCALE)
+  check_function_exists(glfwGetMonitorContentScale
+                        GLFW_GET_MONITOR_CONTENT_SCALE)
+  if(GLFW_GET_MONITOR_CONTENT_SCALE)
+    add_definitions(-DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE=1)
+  endif(GLFW_GET_MONITOR_CONTENT_SCALE)
 
-check_function_exists(glfwGetMonitorWorkarea GLFW_GET_MONITOR_WORKAREA)
-if(NOT GLFW_GET_MONITOR_WORKAREA)
-  check_library_exists("${GLFW_LIBRARY}" glfwGetMonitorWorkarea ""
-                       GLFW_GET_MONITOR_WORKAREA)
-endif(NOT GLFW_GET_MONITOR_WORKAREA)
+  check_function_exists(glfwGetMonitorWorkarea GLFW_GET_MONITOR_WORKAREA)
+  if(NOT GLFW_GET_MONITOR_WORKAREA)
+    check_library_exists("${GLFW_LIBRARY}" glfwGetMonitorWorkarea ""
+                         GLFW_GET_MONITOR_WORKAREA)
+  endif(NOT GLFW_GET_MONITOR_WORKAREA)
 
-if(GLFW_GET_MONITOR_WORKAREA)
-  add_definitions(-DHAVE_GLFW_GET_MONITOR_WORKAREA=1)
-endif(GLFW_GET_MONITOR_WORKAREA)
-message("GLFW_GET_MONITOR_WORKAREA: ${GLFW_GET_MONITOR_WORKAREA}")
+  if(GLFW_GET_MONITOR_WORKAREA)
+    add_definitions(-DHAVE_GLFW_GET_MONITOR_WORKAREA=1)
+  endif(GLFW_GET_MONITOR_WORKAREA)
+  message("GLFW_GET_MONITOR_WORKAREA: ${GLFW_GET_MONITOR_WORKAREA}")
 
-check_function_exists(glfwWindowHintString GLFW_WINDOW_HINT_STRING)
-if(GLFW_WINDOW_HINT_STRING)
-  add_definitions(-DHAVE_GLFW_WINDOW_HINT_STRING=1)
-endif(GLFW_WINDOW_HINT_STRING)
+  check_function_exists(glfwWindowHintString GLFW_WINDOW_HINT_STRING)
+  if(GLFW_WINDOW_HINT_STRING)
+    add_definitions(-DHAVE_GLFW_WINDOW_HINT_STRING=1)
+  endif(GLFW_WINDOW_HINT_STRING)
 
-check_function_exists(glfwSetWindowOpacity GLFW_SET_WINDOW_OPACITY)
-if(GLFW_SET_WINDOW_OPACITY)
-  add_definitions(-DHAVE_GLFW_SET_WINDOW_OPACITY=1)
-endif(GLFW_SET_WINDOW_OPACITY)
+  check_function_exists(glfwSetWindowOpacity GLFW_SET_WINDOW_OPACITY)
+  if(GLFW_SET_WINDOW_OPACITY)
+    add_definitions(-DHAVE_GLFW_SET_WINDOW_OPACITY=1)
+  endif(GLFW_SET_WINDOW_OPACITY)
 
-check_function_exists(glfwGetWindowOpacity GLFW_GET_WINDOW_OPACITY)
-if(GLFW_GET_WINDOW_OPACITY)
-  add_definitions(-DHAVE_GLFW_GET_WINDOW_OPACITY=1)
-endif(GLFW_GET_WINDOW_OPACITY)
+  check_function_exists(glfwGetWindowOpacity GLFW_GET_WINDOW_OPACITY)
+  if(GLFW_GET_WINDOW_OPACITY)
+    add_definitions(-DHAVE_GLFW_GET_WINDOW_OPACITY=1)
+  endif(GLFW_GET_WINDOW_OPACITY)
 
-check_function_exists(glfwSetWindowMaximizeCallback
-                      GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
-if(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
-  add_definitions(-DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK=1)
-endif(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
+  check_function_exists(glfwSetWindowMaximizeCallback
+                        GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
+  if(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
+    add_definitions(-DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK=1)
+  endif(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
 
-check_function_exists(glfwSetWindowContentScaleCallback
-                      GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
-if(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
-  add_definitions(-DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK=1)
-endif(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
+  check_function_exists(glfwSetWindowContentScaleCallback
+                        GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
+  if(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
+    add_definitions(-DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK=1)
+  endif(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
 
-check_function_exists(glfwRequestWindowAttention GLFW_REQUEST_WINDOW_ATTENTION)
-if(GLFW_REQUEST_WINDOW_ATTENTION)
-  add_definitions(-DHAVE_GLFW_REQUEST_WINDOW_ATTENTION=1)
-endif(GLFW_REQUEST_WINDOW_ATTENTION)
+  check_function_exists(glfwRequestWindowAttention
+                        GLFW_REQUEST_WINDOW_ATTENTION)
+  if(GLFW_REQUEST_WINDOW_ATTENTION)
+    add_definitions(-DHAVE_GLFW_REQUEST_WINDOW_ATTENTION=1)
+  endif(GLFW_REQUEST_WINDOW_ATTENTION)
+endif(NOT BUILD_GLFW)
 
 add_library(
   qjs-glfw SHARED

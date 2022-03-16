@@ -4,7 +4,7 @@ macro(build_glfw)
   include(ExternalProject)
 
   ExternalProject_Add(
-    glfw3
+    glfw
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glfw
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
@@ -18,30 +18,30 @@ macro(build_glfw)
     CMAKE_GENERATOR ${CMAKE_GENERATOR}
     CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
     INSTALL_COMMAND ""
-    LOG_DOWNLOAD ON
-    LOG_CONFIGURE ON
-    LOG_BUILD ON
+    #[[LOG_DOWNLOAD ON
+    LOG_BUILD ON]]
     USES_TERMINAL_DOWNLOAD ON
-    USES_TERMINAL_CONFIGURE ON
+    LOG_CONFIGURE ON
+    # USES_TERMINAL_CONFIGURE OFF
     USES_TERMINAL_BUILD ON)
 
-  ExternalProject_Get_Property(glfw3 SOURCE_DIR BINARY_DIR)
+  ExternalProject_Get_Property(glfw SOURCE_DIR BINARY_DIR)
 
-  add_library(glfw STATIC IMPORTED GLOBAL)
+  add_library(glfw3 STATIC IMPORTED GLOBAL)
 
-  add_dependencies(glfw glfw3)
+  add_dependencies(glfw3 glfw)
 
   if(MSVC)
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
-                                          ${BINARY_DIR}/src/glfw3.lib)
+    set_target_properties(glfw3 PROPERTIES IMPORTED_LOCATION
+                                           ${BINARY_DIR}/src/glfw.lib)
   else()
-    set_target_properties(glfw PROPERTIES IMPORTED_LOCATION
-                                          ${BINARY_DIR}/src/libglfw3.a)
+    set_target_properties(glfw3 PROPERTIES IMPORTED_LOCATION
+                                           ${BINARY_DIR}/src/libglfw3.a)
 
   endif()
 
   set(GLFW_INCLUDE_DIR ${SOURCE_DIR}/c/include
-      CACHE PATH "glfw include directory" FORCE)
-  set(GLFW_LIBRARY_DIR ${BINARY_DIR} CACHE PATH "glfw include directory" FORCE)
-  set(GLFW_LIBRARY glfw)
+      CACHE PATH "glfw3 include directory" FORCE)
+  set(GLFW_LIBRARY_DIR ${BINARY_DIR} CACHE PATH "glfw3 include directory" FORCE)
+  set(GLFW_LIBRARY glfw3)
 endmacro(build_glfw)
