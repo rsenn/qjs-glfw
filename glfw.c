@@ -170,10 +170,15 @@ const JSCFunctionListEntry glfw_exports[] = {
 int
 glfw_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
+
   glfw_position_init(ctx, m);
   glfw_size_init(ctx, m);
-  glfw_window_init(ctx, m);
+  glfw_gamma_ramp_init(ctx, m);
   glfw_monitor_init(ctx, m);
+  glfw_scale_init(ctx, m);
+  glfw_video_mode_init(ctx, m);
+  glfw_window_init(ctx, m);
+  glfw_workarea_init(ctx, m);
 
   // TODO: lazy-load version info with a getter?
   int major, minor, revision;
@@ -191,10 +196,15 @@ glfw_init(JSContext* ctx, JSModuleDef* m) {
 int
 glfw_export(JSContext* ctx, JSModuleDef* m) {
   JS_AddModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
+
   glfw_position_export(ctx, m);
   glfw_size_export(ctx, m);
-  glfw_window_export(ctx, m);
+  glfw_gamma_ramp_export(ctx, m);
   glfw_monitor_export(ctx, m);
+  glfw_scale_export(ctx, m);
+  glfw_video_mode_export(ctx, m);
+  glfw_window_export(ctx, m);
+  glfw_workarea_export(ctx, m);
 
   JS_AddModuleExport(ctx, m, "version");
 
