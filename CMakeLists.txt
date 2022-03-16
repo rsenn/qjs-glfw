@@ -7,8 +7,8 @@ option(BUILD_GLFW OFF "Build GLFW from sources")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLEW.cmake)
-   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
- include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGLFW.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGLFW.cmake)
 
 find_glew()
 
