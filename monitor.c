@@ -12,7 +12,8 @@ JSClassID glfw_monitor_class_id = 0;
 // constructor/destructor
 JSValue
 glfw_monitor_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  return glfw_monitor_new_instance(ctx, glfwGetPrimaryMonitor());
+  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+  return glfw_monitor_new_instance(ctx, monitor);
 }
 
 // properties
