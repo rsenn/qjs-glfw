@@ -1,18 +1,25 @@
-import { poll, context, CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR, OPENGL_PROFILE, OPENGL_CORE_PROFILE, OPENGL_FORWARD_COMPAT, RESIZABLE, SAMPLES } from 'glfw';
-import { Screen, Window } from './js/gui.js';
-import { glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glGenTextures, glTexCoord2f, glTexParameterf, glTexImage2D, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_LINEAR, GL_QUADS, GL_REPEAT, GL_RGB, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_TEXTURE_MIN_FILTER, GL_TEXTURE_WRAP_S, GL_TEXTURE_WRAP_T, GL_UNSIGNED_BYTE, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION } from './js/gl.js';
-//import { HSLA } from './lib/color.js';
-//import { imread } from 'opencv';
+import { poll, context } from 'glfw';
+import { Window } from './js/gui.js';
+import { glTranslatef, glColor3ub, glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glTexCoord2f, glVertex2f, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_QUADS, GL_TEXTURE_2D, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION, GL_LINE_LOOP, GL_DEPTH_BUFFER_BIT } from './js/gl.js';
 
 function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
   return arr;
 }
- 
+function DrawCircle(cx, cy, r, num_segments) {
+  glBegin(GL_LINE_LOOP);
+  for(let ii = 0; ii < num_segments; ii++) {
+    let theta = (2.0 * Math.PI * ii) / num_segments; //get the current angle
+    let x = cx + r * Math.cos(theta); //calculate the x component
+    let y = cy + r * Math.sin(theta); //calculate the y component
+    console.log(`ii: ${ii} x: ${x} y: ${y}`);
+    glVertex2f(x, y); //output vertex
+  }
+  glEnd();
+}
 
 function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
-  //context.current = window;
 
   const { position, size } = window;
   const { width, height } = size;
@@ -67,6 +74,7 @@ function main(...args) {
     glClearColor(...color.map(n => n / 255));
     glClear(GL_COLOR_BUFFER_BIT); //clears the window to the color you want.
     // console.log('textures[0]', textures[0]);
+    //
 
     /* glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -84,6 +92,21 @@ function main(...args) {
 
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);*/
+
+    //glClear( GL_DEPTH_BUFFER_BIT);
+    //glLoadIdentity();
+    glTranslatef(0, 0, -10);
+
+    glColor3ub(255, 0, 0);
+
+    glBegin(GL_QUADS);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 100, 0);
+    glVertex3f(100, 100, 0);
+    glVertex3f(100, 0, 0);
+    glEnd();
+
+    DrawCircle(width / 2, height / 2, Math.min(width, height) / 2, 100);
 
     glPopMatrix();
 
