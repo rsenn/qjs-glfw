@@ -100,7 +100,7 @@ glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
 // initialization
 JSClassDef glfw_size_class_def = {
-    "Size",
+    .class_name = "Size",
     .finalizer = glfw_size_finalizer,
 };
 
