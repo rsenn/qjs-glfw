@@ -1,14 +1,15 @@
 macro(build_gl3w)
-  message("-- Building gl3w from source")
+  message("-- Building libgl3w from source")
 
   include(ExternalProject)
 
   ExternalProject_Add(
-    gl3w
+    libgl3w
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/gl3w
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/gl3w
     GIT_REPOSITORY https://github.com/skaslev/gl3w.git
-    PATCH_COMMAND patch -p1 -N -i ${CMAKE_CURRENT_SOURCE_DIR}/gl3w-cmake.patch
+    PATCH_COMMAND patch -p1 -f -N -i ${CMAKE_CURRENT_SOURCE_DIR}/gl3w-cmake.patch || true
+    INSTALL_COMMAND true
     PREFIX gl3w
     CMAKE_ARGS
       -DBUILD_SHARED_LIBS:BOOL=OFF
@@ -26,39 +27,24 @@ macro(build_gl3w)
     LOG_CONFIGURE ON
     USES_TERMINAL_BUILD ON)
 
-  ExternalProject_Get_Property(gl3w SOURCE_DIR BINARY_DIR)
-  dump(SOURCE_DIR BINARY_DIR)
+  ExternalProject_Get_Property(libgl3w SOURCE_DIR BINARY_DIR)
 
-  # add_dependencies(${BINARY_DIR}/src/gl3w.c gl3w)
-  add_library(libgl3w STATIC IMPORTED)
-  add_dependencies(libgl3w gl3w)
+  add_library(gl3w-static STATIC IMPORTED GLOBAL)
+  add_dependencies(gl3w-static libgl3w)
 
   if(MSVC)
-    set_target_properties(
-      libgl3w PROPERTIES IMPORTED_LOCATION
-                         ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.lib)
+    set_target_properties(gl3w-static PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/gl3w.lib)
   else()
-    set_target_properties(
-      libgl3w PROPERTIES IMPORTED_LOCATION
-                         ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/libgl3w.a)
-
+    set_target_properties(gl3w-static PROPERTIES IMPORTED_LOCATION ${BINARY_DIR}/libgl3w.a)
   endif()
 
-  get_target_property(GL3W_LIBRARY_FILE libgl3w IMPORTED_LOCATION)
-  dump(GL3W_LIBRARY_FILE)
+  get_target_property(GL3W_LIBRARY_FILE gl3w-static IMPORTED_LOCATION)
+  # dump(GL3W_LIBRARY_FILE)
 
-  set(GL3W_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/gl3w/include"
-      CACHE PATH "gl3w include directory")
-  set(GL3W_LIBRARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/gl3w/src"
-      CACHE PATH "gl3w library directory")
-  set(GL3W_LIBRARY "${GL3W_LIBRARY_FILE}" CACHE STRING "gl3w library")
+  set(GL3W_INCLUDE_DIR "${BINARY_DIR}/include" CACHE PATH "libgl3w include directory" FORCE)
+  set(GL3W_LIBRARY_DIR "${BINARY_DIR}" CACHE PATH "libgl3w library directory" FORCE)
+  set(GL3W_LIBRARY gl3w-static CACHE STRING "libgl3w library" FORCE)
 
-  #[[  if(NOT GL3W_SOURCE)
-    if(EXISTS ${BINARY_DIR}/src/gl3w.c)
-      set(GL3W_SOURCE ${BINARY_DIR}/src/gl3w.c CACHE PATH "gl3w source" FORCE)
-    endif()
-  endif()
-
-  set(GL3W_SOURCE "${GL3W_SOURCE}" CACHE PATH "gl3w source")]]
+  link_directories(${GL3W_LIBRARY_DIR})
 
 endmacro(build_gl3w)

@@ -124,7 +124,7 @@ add_library(
   # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
 )
 
-add_dependencies(qjs-glfw gl3w)
+# add_dependencies(qjs-glfw gl3w)
 
 set_target_properties(
   qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS
@@ -135,8 +135,15 @@ target_compile_options(qjs-glfw PRIVATE ${MODULE_COMPILE_FLAGS})
 
 target_include_directories(qjs-glfw
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
-target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLFW_LIBRARY}
-                                       ${QUICKJS_LIBRARY})
+
+link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR})
+
+dump(GL3W_LIBRARY_DIR)
+
+target_link_libraries(
+  qjs-glfw PRIVATE gl3w #${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/libgl3w.a
+                  ${GL3W_LIBRARY}
+                    ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
 
 if(NOT CMAKE_INSTALL_LIBDIR)

@@ -1,4 +1,5 @@
-#include <GL/glew.h>
+#include <GL/gl3w.h>
+//#include <GL/glew.h>
 #include "glfw.h"
 #include "position.h"
 #include "size.h"
@@ -20,6 +21,20 @@ glfw_throw(JSContext* ctx) {
 //
 // Top-level
 //
+JSValue
+gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  const char* str;
+  void* addr;
+  str = JS_ToCString(ctx, argv[0]);
+
+  addr = gl3wGetProcAddress(str);
+  // printf("gl3wGetProcAddress(\"%s\") = %p\n",str, addr);
+
+  JS_FreeCString(ctx, str);
+
+  return JS_NewInt64(ctx, (int64_t)addr);
+}
+
 JSValue
 glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   glfwPollEvents();
@@ -157,6 +172,7 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("poll", 2, glfw_poll_events),
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
+    JS_CFUNC_DEF("getProcAddress", 1, gl3w_getprocaddress),
     JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
     CONSTANTS(DEFINE_CONSTANT)
@@ -219,20 +235,32 @@ js_init_module(JSContext* ctx, const char* module_name) {
 
   glfw_export(ctx, m);
 
-  // TODO: Is it possible to check errors for init and throw in module import?
-  glfwInit();
-  // atexit(glfwTerminate);
+  {
+    static BOOL initialized;
 
-  /*   glewExperimental = GL_TRUE;
-    if(glewInit() != GLEW_OK) {
-      printf("Could not init glew.\n");
-      return -1;
+    if(!initialized) {
+      // TODO: Is it possible to check errors for init and throw in module import?
+      glfwInit();
+      // atexit(glfwTerminate);
+
+      int result = gl3wInit();
+      printf("gl3wInit() = %d\n", result);
+
+      /*  void* addr = gl3wGetProcAddress("glVertex3f");
+        printf("gl3wGetProcAddress(\"glVertex3f\") = %p\n", addr);*/
+      /*   glewExperimental = GL_TRUE;
+        if(glewInit() != GLEW_OK) {
+          printf("Could not init glew.\n");
+          return -1;
+        }
+
+
+        // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
+        glGetError();
+      */
+      initialized = TRUE;
     }
-
-
-    // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
-    glGetError();
-  */
+  }
 
   return m;
 }
