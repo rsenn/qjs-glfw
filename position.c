@@ -83,7 +83,7 @@ glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
 // initialization
 JSClassDef glfw_position_class_def = {
-    "Position",
+    .class_name = "Position",
     .finalizer = glfw_position_finalizer,
 };
 

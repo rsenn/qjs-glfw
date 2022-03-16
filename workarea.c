@@ -103,7 +103,7 @@ glfw_workarea_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
 // initialization
 JSClassDef glfw_workarea_class_def = {
-    "WorkArea",
+    .class_name = "WorkArea",
     .finalizer = glfw_workarea_finalizer,
 };
 

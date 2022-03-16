@@ -2,7 +2,7 @@
 #define GLFW_MODULE_SCALE 1
 
 typedef struct {
-  double x,y;
+  double x, y;
 } GLFWscale;
 
 extern JSClassID glfw_scale_class_id;

@@ -165,7 +165,7 @@ glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
 
 // initialization
 JSClassDef glfw_monitor_class_def = {
-    "Monitor",
+    .class_name = "Monitor",
 };
 
 const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {

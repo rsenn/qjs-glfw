@@ -627,7 +627,7 @@ MAKE_TRIGGER_METHOD(RequestWindowAttention, requestAttention)
 
 // initialization
 JSClassDef glfw_window_class_def = {
-    "Window",
+    .class_name = "Window",
 };
 
 #define MAKE_TRIGGER_METHOD_ENTRY(NativeName, JSName) JS_CFUNC_DEF(#JSName, 0, glfw_window_##JSName),

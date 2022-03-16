@@ -100,7 +100,7 @@ glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
 // initialization
 JSClassDef glfw_scale_class_def = {
-    "Scale",
+    .class_name = "Scale",
     .finalizer = glfw_scale_finalizer,
 };
 

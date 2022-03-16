@@ -56,7 +56,7 @@ glfw_video_mode_set_int(JSContext* ctx, JSValueConst this_val, JSValue val, int 
 
 // initialization
 JSClassDef glfw_video_mode_class_def = {
-    "VideoMode",
+    .class_name = "VideoMode",
 };
 
 const JSCFunctionListEntry glfw_video_mode_proto_funcs[] = {
