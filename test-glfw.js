@@ -8,24 +8,7 @@ function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
   return arr;
 }
-
-function Mat2Texture(texture_cv) {
-  console.log('texture_cv', texture_cv);
-  const { buffer } = texture_cv;
-  console.log('texture_cv.buffer', buffer);
-  let texture = new Uint32Array(1);
-  console.log('texture', texture);
-  glGenTextures(1, texture.buffer); // Create The Texture
-
-  glBindTexture(GL_TEXTURE_2D, texture[0]);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-  glTexImage2D(GL_TEXTURE_2D, 0, 3, texture_cv.cols, texture_cv.rows, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-  return texture[0];
-}
+ 
 
 function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
@@ -38,23 +21,7 @@ function main(...args) {
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
 
-  /*  if(args.length == 0) args.push('Muehleberg.png');
-
-  while(args.length > 0) {
-    console.log('args[0]:', args[0]);
-
-    let image = imread(args[0]);
-    console.log('image:', image);
-    console.log('image.buffer:', image.buffer);
-    let texture = Mat2Texture(image);
-
-    args.shift();
-    textures.push(texture);
-  }
-  shuffle(textures);
-  console.log('textures', textures);*/
-
-  let hues = [
+  const hues = [
     [255, 0, 0, 255],
     [255, 98, 0, 255],
     [255, 191, 0, 255],
