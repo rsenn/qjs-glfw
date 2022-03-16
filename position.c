@@ -88,8 +88,8 @@ JSClassDef glfw_position_class_def = {
 };
 
 const JSCFunctionListEntry glfw_position_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("x", glfw_position_get_xy, glfw_position_set_xy, 0),
-    JS_CGETSET_MAGIC_DEF("y", glfw_position_get_xy, glfw_position_set_xy, 1),
+    JS_CGETSET_ENUMERABLE_DEF("x", glfw_position_get_xy, glfw_position_set_xy, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y", glfw_position_get_xy, glfw_position_set_xy, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_position_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWposition", JS_PROP_CONFIGURABLE),
 };

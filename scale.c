@@ -105,8 +105,8 @@ JSClassDef glfw_scale_class_def = {
 };
 
 const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
-    JS_CGETSET_MAGIC_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
+    JS_CGETSET_ENUMERABLE_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
+    JS_CGETSET_ENUMERABLE_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_scale_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWscale", JS_PROP_CONFIGURABLE),
 };

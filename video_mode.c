@@ -60,12 +60,12 @@ JSClassDef glfw_video_mode_class_def = {
 };
 
 const JSCFunctionListEntry glfw_video_mode_proto_funcs[] = {
-    JS_CGETSET_MAGIC_DEF("width", glfw_video_mode_get_int, glfw_video_mode_set_int, 0),
-    JS_CGETSET_MAGIC_DEF("height", glfw_video_mode_get_int, glfw_video_mode_set_int, 1),
+    JS_CGETSET_ENUMERABLE_DEF("width", glfw_video_mode_get_int, glfw_video_mode_set_int, 0),
+    JS_CGETSET_ENUMERABLE_DEF("height", glfw_video_mode_get_int, glfw_video_mode_set_int, 1),
     JS_CGETSET_MAGIC_DEF("redBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 2),
     JS_CGETSET_MAGIC_DEF("greenBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 3),
     JS_CGETSET_MAGIC_DEF("blueBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 4),
-    JS_CGETSET_MAGIC_DEF("refreshRate", glfw_video_mode_get_int, glfw_video_mode_set_int, 5),
+    JS_CGETSET_ENUMERABLE_DEF("refreshRate", glfw_video_mode_get_int, glfw_video_mode_set_int, 5),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWvidmode", JS_PROP_CONFIGURABLE),
 };
 
