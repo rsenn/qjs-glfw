@@ -143,7 +143,8 @@ dump(GL3W_LIBRARY_DIR)
 target_link_libraries(
   qjs-glfw PRIVATE gl3w #${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/libgl3w.a
                   ${GL3W_LIBRARY}
-                    ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
+                  ${GLEW_LIBRARY}
+                  ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
 
 if(NOT CMAKE_INSTALL_LIBDIR)

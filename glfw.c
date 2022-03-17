@@ -1,10 +1,15 @@
-#include <GL/gl3w.h>
-//#include <GL/glew.h>
+#include <GL/glew.h>
+
 #include "glfw.h"
 #include "position.h"
 #include "size.h"
 #include "window.h"
 #include "monitor.h"
+
+int gl3wInit(void);
+int gl3wInit2(void* proc);
+int gl3wIsSupported(int major, int minor);
+void* gl3wGetProcAddress(const char* proc);
 
 #ifdef HAVE_GLFW_GET_ERROR
 JSValue
@@ -243,21 +248,18 @@ js_init_module(JSContext* ctx, const char* module_name) {
       glfwInit();
       // atexit(glfwTerminate);
 
-      int result = gl3wInit();
-      printf("gl3wInit() = %d\n", result);
+/*      int result = gl3wInit();
+      printf("gl3wInit() = %d\n", result);*/
 
-      /*  void* addr = gl3wGetProcAddress("glVertex3f");
-        printf("gl3wGetProcAddress(\"glVertex3f\") = %p\n", addr);*/
-      /*   glewExperimental = GL_TRUE;
-        if(glewInit() != GLEW_OK) {
-          printf("Could not init glew.\n");
-          return -1;
-        }
+           /*glewExperimental = GL_TRUE;
+      if(glewInit() != GLEW_OK) {
+        printf("Could not init glew.\n");
+        return 0;
+      }
 
+      // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
+      glGetError();*/
 
-        // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
-        glGetError();
-      */
       initialized = TRUE;
     }
   }

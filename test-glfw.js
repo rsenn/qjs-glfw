@@ -128,7 +128,7 @@ function main(...args) {
 
 const runMain = () => {
   try {
-    main(scriptArgs.slice(1));
+    main(...scriptArgs.slice(1));
     std.exit(0);
   } catch(error) {
     console.log('ERROR:', error);
