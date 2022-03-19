@@ -49,5 +49,5 @@ macro(build_gl3w)
 
     link_directories(${GL3W_LIBRARY_DIR})
   endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}"/gl3w)
-  
+
 endmacro(build_gl3w)

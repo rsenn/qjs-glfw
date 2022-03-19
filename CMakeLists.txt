@@ -41,8 +41,7 @@ endif(USE_GL3W)
 
 message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}")
 message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}")
-#message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}")
-#message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
+# message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
 link_directories(${GL3W_LIBRARY_DIR} ${GLFW_LIBRARY_DIR} ${QUICKJS_LIBRARY_DIR})
@@ -109,10 +108,9 @@ if(NOT BUILD_GLFW)
   endif(GLFW_REQUEST_WINDOW_ATTENTION)
 endif(NOT BUILD_GLFW)
 
-#${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
-add_library(
-  qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h
-)
+# ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
+add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c
+                            workarea.h)
 
 add_dependencies(qjs-glfw gl3w_gen)
 
