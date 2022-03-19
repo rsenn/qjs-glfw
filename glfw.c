@@ -1,15 +1,27 @@
-#include <GL/glew.h>
+//#include <GL/glew.h>
 
 #include "glfw.h"
 #include "position.h"
 #include "size.h"
 #include "window.h"
 #include "monitor.h"
+#include "workarea.h"
+#include "gamma_ramp.h"
+#include "video_mode.h"
+#include "scale.h"
 
-int gl3wInit(void);
-int gl3wInit2(void* proc);
+//#include "gl3w/src/gl3w.c"
+//#include <GL/glcorearb.h>
+//
+
+#ifdef USE_GL3W
+#include <GL/gl3w.h>
+
+/*int gl3wInit(void);
+int gl3wInit2(GL3WGetProcAddressProc proc);
 int gl3wIsSupported(int major, int minor);
-void* gl3wGetProcAddress(const char* proc);
+GL3WglProc gl3wGetProcAddress(const char* proc);*/
+#endif
 
 #ifdef HAVE_GLFW_GET_ERROR
 JSValue
@@ -23,9 +35,7 @@ glfw_throw(JSContext* ctx) {
 }
 #endif
 
-//
-// Top-level
-//
+#ifdef USE_GL3W
 JSValue
 gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* str;
@@ -39,6 +49,7 @@ gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   return JS_NewInt64(ctx, (int64_t)addr);
 }
+#endif
 
 JSValue
 glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -177,7 +188,9 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("poll", 2, glfw_poll_events),
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
+#ifdef USE_GL3W
     JS_CFUNC_DEF("getProcAddress", 1, gl3w_getprocaddress),
+#endif
     JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
     CONSTANTS(DEFINE_CONSTANT)
