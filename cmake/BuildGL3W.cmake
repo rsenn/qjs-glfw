@@ -47,6 +47,6 @@ macro(build_gl3w)
     set(GL3W_LIBRARY gl3w-static CACHE STRING "libgl3w library" FORCE)
 
     link_directories(${GL3W_LIBRARY_DIR})
-  endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}"/gl3w)
+  endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/gl3w")
 
 endmacro(build_gl3w)
