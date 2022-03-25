@@ -114,6 +114,9 @@ endif(NOT BUILD_GLFW)
 add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
 
 if(USE_GL3W)
+  if(NOT TARGET gl3w_gen)
+    add_subdirectory(gl3w EXCLUDE_FROM_ALL)
+  endif(NOT TARGET gl3w_gen)
   add_dependencies(qjs-glfw gl3w_gen)
 endif(USE_GL3W)
 
