@@ -113,7 +113,9 @@ endif(NOT BUILD_GLFW)
 # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
 add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
 
-add_dependencies(qjs-glfw gl3w_gen)
+if(USE_GL3W)
+  add_dependencies(qjs-glfw gl3w_gen)
+endif(USE_GL3W)
 
 set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS "${MODULE_COMPILE_FLAGS}"
 )
