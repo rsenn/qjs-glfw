@@ -13,7 +13,9 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLEW.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLFW.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGLFW.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGL3W.cmake)
+if(USE_GL3W)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/BuildGL3W.cmake)
+endif(USE_GL3W)
 
 check_flag("-fvisibility=hidden" VISIBILITY_HIDDEN MODULE_COMPILE_FLAGS)
 
@@ -33,14 +35,14 @@ else(BUILD_GLFW)
   find_glfw()
 endif(BUILD_GLFW)
 
-build_gl3w()
-
 if(USE_GL3W)
+  build_gl3w()
+
   add_definitions(-DUSE_GL3W)
 endif(USE_GL3W)
 
-message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}")
-message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}")
+#message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}")
+#message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}")
 # message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
