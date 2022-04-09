@@ -29,8 +29,16 @@ find_glew()
 if(BUILD_GLFW)
   build_glfw()
 
-  add_definitions(-DHAVE_GLFW_GET_ERROR -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE -DHAVE_GLFW_GET_MONITOR_WORKAREA -DHAVE_GLFW_GET_WINDOW_OPACITY -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION
-                  -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK -DHAVE_GLFW_SET_WINDOW_OPACITY -DHAVE_GLFW_WINDOW_HINT_STRING)
+  add_definitions(
+    -DHAVE_GLFW_GET_ERROR
+    -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE
+    -DHAVE_GLFW_GET_MONITOR_WORKAREA
+    -DHAVE_GLFW_GET_WINDOW_OPACITY
+    -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK
+    -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK
+    -DHAVE_GLFW_SET_WINDOW_OPACITY
+    -DHAVE_GLFW_WINDOW_HINT_STRING)
 else(BUILD_GLFW)
   find_glfw()
 endif(BUILD_GLFW)
@@ -41,10 +49,13 @@ if(USE_GL3W)
   add_definitions(-DUSE_GL3W)
 endif(USE_GL3W)
 
-# message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}") message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}") message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY:
-# ${GLFW_LIBRARY}")
+# message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}") message(STATUS
+# "GL3W_LIBRARY: ${GL3W_LIBRARY}") message(STATUS "GLFW_INCLUDE_DIR:
+# ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include
+  ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
 link_directories(${GL3W_LIBRARY_DIR} ${GLFW_LIBRARY_DIR} ${QUICKJS_LIBRARY_DIR})
 
 if(WIN32)
@@ -63,14 +74,16 @@ if(NOT BUILD_GLFW)
     add_definitions(-DHAVE_GLFW_GET_ERROR=1)
   endif(GLFW_GET_ERROR)
 
-  check_function_exists(glfwGetMonitorContentScale GLFW_GET_MONITOR_CONTENT_SCALE)
+  check_function_exists(glfwGetMonitorContentScale
+                        GLFW_GET_MONITOR_CONTENT_SCALE)
   if(GLFW_GET_MONITOR_CONTENT_SCALE)
     add_definitions(-DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE=1)
   endif(GLFW_GET_MONITOR_CONTENT_SCALE)
 
   check_function_exists(glfwGetMonitorWorkarea GLFW_GET_MONITOR_WORKAREA)
   if(NOT GLFW_GET_MONITOR_WORKAREA)
-    check_library_exists("${GLFW_LIBRARY}" glfwGetMonitorWorkarea "" GLFW_GET_MONITOR_WORKAREA)
+    check_library_exists("${GLFW_LIBRARY}" glfwGetMonitorWorkarea ""
+                         GLFW_GET_MONITOR_WORKAREA)
   endif(NOT GLFW_GET_MONITOR_WORKAREA)
 
   if(GLFW_GET_MONITOR_WORKAREA)
@@ -93,25 +106,31 @@ if(NOT BUILD_GLFW)
     add_definitions(-DHAVE_GLFW_GET_WINDOW_OPACITY=1)
   endif(GLFW_GET_WINDOW_OPACITY)
 
-  check_function_exists(glfwSetWindowMaximizeCallback GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
+  check_function_exists(glfwSetWindowMaximizeCallback
+                        GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
   if(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
     add_definitions(-DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK=1)
   endif(GLFW_SET_WINDOW_MAXIMIZE_CALLBACK)
 
-  check_function_exists(glfwSetWindowContentScaleCallback GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
+  check_function_exists(glfwSetWindowContentScaleCallback
+                        GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
   if(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
     add_definitions(-DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK=1)
   endif(GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK)
 
-  check_function_exists(glfwRequestWindowAttention GLFW_REQUEST_WINDOW_ATTENTION)
+  check_function_exists(glfwRequestWindowAttention
+                        GLFW_REQUEST_WINDOW_ATTENTION)
   if(GLFW_REQUEST_WINDOW_ATTENTION)
     add_definitions(-DHAVE_GLFW_REQUEST_WINDOW_ATTENTION=1)
   endif(GLFW_REQUEST_WINDOW_ATTENTION)
 endif(NOT BUILD_GLFW)
 
 # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
-add_library(qjs-glfw SHARED gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c
-                            workarea.h)
+add_library(
+  qjs-glfw SHARED
+  gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c
+  position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c
+  window.h workarea.c workarea.h)
 
 if(USE_GL3W)
   if(NOT TARGET gl3w_gen)
@@ -120,18 +139,22 @@ if(USE_GL3W)
   add_dependencies(qjs-glfw gl3w_gen)
 endif(USE_GL3W)
 
-set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS "${MODULE_COMPILE_FLAGS}"
+set_target_properties(
+  qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS
+                                                 # "${MODULE_COMPILE_FLAGS}"
 )
 
 target_compile_options(qjs-glfw PRIVATE ${MODULE_COMPILE_FLAGS})
 
-target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
+target_include_directories(qjs-glfw
+                           PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
 
 link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR})
 
 # dump(GL3W_LIBRARY_DIR)
 
-target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
+target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLEW_LIBRARY}
+                                       ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
 
 if(NOT CMAKE_INSTALL_LIBDIR)
@@ -141,4 +164,6 @@ if(NOT QUICKJS_C_MODULE_DIR)
   set(QUICKJS_C_MODULE_DIR "${CMAKE_INSTALL_LIBDIR}/quickjs")
 endif(NOT QUICKJS_C_MODULE_DIR)
 
-install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ
+                    GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
