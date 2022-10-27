@@ -821,7 +821,19 @@ export function glewInit() {
   define('glPushMatrix', glewGetProcAddress('PushMatrix'), null, 'void');
   define('glPopMatrix', glewGetProcAddress('PopMatrix'), null, 'void');
   define('glBindTexture', glewGetProcAddress('BindTexture'), null, 'void', 'unsigned int', 'unsigned int');
-  define('glBitmap', glewGetProcAddress('Bitmap'), null, 'void', 'int', 'int', 'float', 'float', 'float', 'float', 'void *');
+  define(
+    'glBitmap',
+    glewGetProcAddress('Bitmap'),
+    null,
+    'void',
+    'int',
+    'int',
+    'float',
+    'float',
+    'float',
+    'float',
+    'void *'
+  );
   define('glBlendFunc', glewGetProcAddress('BlendFunc'), null, 'void', 'unsigned int', 'unsigned int');
   define('glCallList', glewGetProcAddress('CallList'), null, 'void', 'unsigned int');
   define('glCallLists', glewGetProcAddress('CallLists'), null, 'void', 'int', 'unsigned int', 'void *');
@@ -858,20 +870,96 @@ export function glewInit() {
   define('glColor4iv', glewGetProcAddress('Color4iv'), null, 'void', 'void *');
   define('glColor4s', glewGetProcAddress('Color4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glColor4sv', glewGetProcAddress('Color4sv'), null, 'void', 'void *');
-  define('glColor4ub', glewGetProcAddress('Color4ub'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+  define(
+    'glColor4ub',
+    glewGetProcAddress('Color4ub'),
+    null,
+    'void',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char'
+  );
   define('glColor4ubv', glewGetProcAddress('Color4ubv'), null, 'void', 'void *');
-  define('glColor4ui', glewGetProcAddress('Color4ui'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int', 'unsigned int');
+  define(
+    'glColor4ui',
+    glewGetProcAddress('Color4ui'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'unsigned int',
+    'unsigned int'
+  );
   define('glColor4uiv', glewGetProcAddress('Color4uiv'), null, 'void', 'void *');
   define('glColor4us', glewGetProcAddress('Color4us'), null, 'void', 'uint16', 'uint16', 'uint16', 'uint16');
   define('glColor4usv', glewGetProcAddress('Color4usv'), null, 'void', 'void *');
-  define('glColorMask', glewGetProcAddress('ColorMask'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+  define(
+    'glColorMask',
+    glewGetProcAddress('ColorMask'),
+    null,
+    'void',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char'
+  );
   define('glColorMaterial', glewGetProcAddress('ColorMaterial'), null, 'void', 'unsigned int', 'unsigned int');
   define('glColorPointer', glewGetProcAddress('ColorPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
   define('glCopyPixels', glewGetProcAddress('CopyPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int');
-  define('glCopyTexImage1D', glewGetProcAddress('CopyTexImage1D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int');
-  define('glCopyTexImage2D', glewGetProcAddress('CopyTexImage2D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
-  define('glCopyTexSubImage1D', glewGetProcAddress('CopyTexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
-  define('glCopyTexSubImage2D', glewGetProcAddress('CopyTexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'int', 'int');
+  define(
+    'glCopyTexImage1D',
+    glewGetProcAddress('CopyTexImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexImage2D',
+    glewGetProcAddress('CopyTexImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexSubImage1D',
+    glewGetProcAddress('CopyTexSubImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexSubImage2D',
+    glewGetProcAddress('CopyTexSubImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
   define('glCullFace', glewGetProcAddress('CullFace'), null, 'void', 'unsigned int');
   define('glDeleteLists', glewGetProcAddress('DeleteLists'), null, 'void', 'unsigned int', 'int');
   define('glDeleteTextures', glewGetProcAddress('DeleteTextures'), null, 'void', 'int', 'void *');
@@ -882,8 +970,27 @@ export function glewInit() {
   define('glDisableClientState', glewGetProcAddress('DisableClientState'), null, 'void', 'unsigned int');
   define('glDrawArrays', glewGetProcAddress('DrawArrays'), null, 'void', 'unsigned int', 'int', 'int');
   define('glDrawBuffer', glewGetProcAddress('DrawBuffer'), null, 'void', 'unsigned int');
-  define('glDrawElements', glewGetProcAddress('DrawElements'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glDrawPixels', glewGetProcAddress('DrawPixels'), null, 'void', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glDrawElements',
+    glewGetProcAddress('DrawElements'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glDrawPixels',
+    glewGetProcAddress('DrawPixels'),
+    null,
+    'void',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glEdgeFlag', glewGetProcAddress('EdgeFlag'), null, 'void', 'unsigned char');
   define('glEdgeFlagPointer', glewGetProcAddress('EdgeFlagPointer'), null, 'void', 'int', 'void *');
   define('glEdgeFlagv', glewGetProcAddress('EdgeFlagv'), null, 'void', 'void *');
@@ -907,7 +1014,18 @@ export function glewInit() {
   define('glFogi', glewGetProcAddress('Fogi'), null, 'void', 'unsigned int', 'int');
   define('glFogiv', glewGetProcAddress('Fogiv'), null, 'void', 'unsigned int', 'void *');
   define('glFrontFace', glewGetProcAddress('FrontFace'), null, 'void', 'unsigned int');
-  define('glFrustum', glewGetProcAddress('Frustum'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+  define(
+    'glFrustum',
+    glewGetProcAddress('Frustum'),
+    null,
+    'void',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double'
+  );
   define('glGenLists', glewGetProcAddress('GenLists'), null, 'unsigned int', 'int');
   define('glGenTextures', glewGetProcAddress('GenTextures'), null, 'void', 'int', 'void *');
   define('glGetBooleanv', glewGetProcAddress('GetBooleanv'), null, 'void', 'unsigned int', 'void *');
@@ -920,8 +1038,24 @@ export function glewInit() {
   define('glGetMapdv', glewGetProcAddress('GetMapdv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetMapfv', glewGetProcAddress('GetMapfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetMapiv', glewGetProcAddress('GetMapiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetMaterialfv', glewGetProcAddress('GetMaterialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetMaterialiv', glewGetProcAddress('GetMaterialiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glGetMaterialfv',
+    glewGetProcAddress('GetMaterialfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetMaterialiv',
+    glewGetProcAddress('GetMaterialiv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glGetPixelMapfv', glewGetProcAddress('GetPixelMapfv'), null, 'void', 'unsigned int', 'void *');
   define('glGetPixelMapuiv', glewGetProcAddress('GetPixelMapuiv'), null, 'void', 'unsigned int', 'void *');
   define('glGetPixelMapusv', glewGetProcAddress('GetPixelMapusv'), null, 'void', 'unsigned int', 'void *');
@@ -933,11 +1067,55 @@ export function glewInit() {
   define('glGetTexGendv', glewGetProcAddress('GetTexGendv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetTexGenfv', glewGetProcAddress('GetTexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetTexGeniv', glewGetProcAddress('GetTexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexImage', glewGetProcAddress('GetTexImage'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexLevelParameterfv', glewGetProcAddress('GetTexLevelParameterfv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glGetTexLevelParameteriv', glewGetProcAddress('GetTexLevelParameteriv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glGetTexParameterfv', glewGetProcAddress('GetTexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexParameteriv', glewGetProcAddress('GetTexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glGetTexImage',
+    glewGetProcAddress('GetTexImage'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexLevelParameterfv',
+    glewGetProcAddress('GetTexLevelParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexLevelParameteriv',
+    glewGetProcAddress('GetTexLevelParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexParameterfv',
+    glewGetProcAddress('GetTexParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexParameteriv',
+    glewGetProcAddress('GetTexParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glHint', glewGetProcAddress('Hint'), null, 'void', 'unsigned int', 'unsigned int');
   define('glIndexd', glewGetProcAddress('Indexd'), null, 'void', 'double');
   define('glIndexdv', glewGetProcAddress('Indexdv'), null, 'void', 'void *');
@@ -970,14 +1148,88 @@ export function glewInit() {
   define('glLoadMatrixf', glewGetProcAddress('LoadMatrixf'), null, 'void', 'void *');
   define('glLoadName', glewGetProcAddress('LoadName'), null, 'void', 'unsigned int');
   define('glLogicOp', glewGetProcAddress('LogicOp'), null, 'void', 'unsigned int');
-  define('glMap1d', glewGetProcAddress('Map1d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'void *');
-  define('glMap1f', glewGetProcAddress('Map1f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'void *');
-  define('glMap2d', glewGetProcAddress('Map2d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'double', 'double', 'int', 'int', 'void *');
-  define('glMap2f', glewGetProcAddress('Map2f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'float', 'float', 'int', 'int', 'void *');
+  define(
+    'glMap1d',
+    glewGetProcAddress('Map1d'),
+    null,
+    'void',
+    'unsigned int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap1f',
+    glewGetProcAddress('Map1f'),
+    null,
+    'void',
+    'unsigned int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap2d',
+    glewGetProcAddress('Map2d'),
+    null,
+    'void',
+    'unsigned int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap2f',
+    glewGetProcAddress('Map2f'),
+    null,
+    'void',
+    'unsigned int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'void *'
+  );
   define('glMapGrid1d', glewGetProcAddress('MapGrid1d'), null, 'void', 'int', 'double', 'double');
   define('glMapGrid1f', glewGetProcAddress('MapGrid1f'), null, 'void', 'int', 'float', 'float');
-  define('glMapGrid2d', glewGetProcAddress('MapGrid2d'), null, 'void', 'int', 'double', 'double', 'int', 'double', 'double');
-  define('glMapGrid2f', glewGetProcAddress('MapGrid2f'), null, 'void', 'int', 'float', 'float', 'int', 'float', 'float');
+  define(
+    'glMapGrid2d',
+    glewGetProcAddress('MapGrid2d'),
+    null,
+    'void',
+    'int',
+    'double',
+    'double',
+    'int',
+    'double',
+    'double'
+  );
+  define(
+    'glMapGrid2f',
+    glewGetProcAddress('MapGrid2f'),
+    null,
+    'void',
+    'int',
+    'float',
+    'float',
+    'int',
+    'float',
+    'float'
+  );
   define('glMaterialf', glewGetProcAddress('Materialf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
   define('glMaterialfv', glewGetProcAddress('Materialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glMateriali', glewGetProcAddress('Materiali'), null, 'void', 'unsigned int', 'unsigned int', 'int');
@@ -997,7 +1249,18 @@ export function glewInit() {
   define('glNormal3s', glewGetProcAddress('Normal3s'), null, 'void', 'short', 'short', 'short');
   define('glNormal3sv', glewGetProcAddress('Normal3sv'), null, 'void', 'void *');
   define('glNormalPointer', glewGetProcAddress('NormalPointer'), null, 'void', 'unsigned int', 'int', 'void *');
-  define('glOrtho', glewGetProcAddress('Ortho'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+  define(
+    'glOrtho',
+    glewGetProcAddress('Ortho'),
+    null,
+    'void',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double'
+  );
   define('glPassThrough', glewGetProcAddress('PassThrough'), null, 'void', 'float');
   define('glPixelMapfv', glewGetProcAddress('PixelMapfv'), null, 'void', 'unsigned int', 'int', 'void *');
   define('glPixelMapuiv', glewGetProcAddress('PixelMapuiv'), null, 'void', 'unsigned int', 'int', 'void *');
@@ -1040,7 +1303,19 @@ export function glewInit() {
   define('glRasterPos4s', glewGetProcAddress('RasterPos4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glRasterPos4sv', glewGetProcAddress('RasterPos4sv'), null, 'void', 'void *');
   define('glReadBuffer', glewGetProcAddress('ReadBuffer'), null, 'void', 'unsigned int');
-  define('glReadPixels', glewGetProcAddress('ReadPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glReadPixels',
+    glewGetProcAddress('ReadPixels'),
+    null,
+    'void',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glRectd', glewGetProcAddress('Rectd'), null, 'void', 'double', 'double', 'double', 'double');
   define('glRectdv', glewGetProcAddress('Rectdv'), null, 'void', 'void *', 'void *');
   define('glRectf', glewGetProcAddress('Rectf'), null, 'void', 'float', 'float', 'float', 'float');
@@ -1092,7 +1367,16 @@ export function glewInit() {
   define('glTexCoord4iv', glewGetProcAddress('TexCoord4iv'), null, 'void', 'void *');
   define('glTexCoord4s', glewGetProcAddress('TexCoord4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glTexCoord4sv', glewGetProcAddress('TexCoord4sv'), null, 'void', 'void *');
-  define('glTexCoordPointer', glewGetProcAddress('TexCoordPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+  define(
+    'glTexCoordPointer',
+    glewGetProcAddress('TexCoordPointer'),
+    null,
+    'void',
+    'int',
+    'unsigned int',
+    'int',
+    'void *'
+  );
   define('glTexEnvf', glewGetProcAddress('TexEnvf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
   define('glTexEnvfv', glewGetProcAddress('TexEnvfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glTexEnvi', glewGetProcAddress('TexEnvi'), null, 'void', 'unsigned int', 'unsigned int', 'int');
@@ -1103,14 +1387,83 @@ export function glewInit() {
   define('glTexGenfv', glewGetProcAddress('TexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glTexGeni', glewGetProcAddress('TexGeni'), null, 'void', 'unsigned int', 'unsigned int', 'int');
   define('glTexGeniv', glewGetProcAddress('TexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexImage1D', glewGetProcAddress('TexImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexImage2D', glewGetProcAddress('TexImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glTexImage1D',
+    glewGetProcAddress('TexImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexImage2D',
+    glewGetProcAddress('TexImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glTexParameterf', glewGetProcAddress('TexParameterf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
-  define('glTexParameterfv', glewGetProcAddress('TexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glTexParameterfv',
+    glewGetProcAddress('TexParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glTexParameteri', glewGetProcAddress('TexParameteri'), null, 'void', 'unsigned int', 'unsigned int', 'int');
-  define('glTexParameteriv', glewGetProcAddress('TexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexSubImage1D', glewGetProcAddress('TexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexSubImage2D', glewGetProcAddress('TexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glTexParameteriv',
+    glewGetProcAddress('TexParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexSubImage1D',
+    glewGetProcAddress('TexSubImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexSubImage2D',
+    glewGetProcAddress('TexSubImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glTranslated', glewGetProcAddress('Translated'), null, 'void', 'double', 'double', 'double');
   define('glTranslatef', glewGetProcAddress('Translatef'), null, 'void', 'float', 'float', 'float');
   define('glVertex2d', glewGetProcAddress('Vertex2d'), null, 'void', 'double', 'double');

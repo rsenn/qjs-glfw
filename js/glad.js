@@ -817,7 +817,19 @@ export function gladLoadGL() {
   define('glPushMatrix', gladGetProcAddress('glPushMatrix'), null, 'void');
   define('glPopMatrix', gladGetProcAddress('glPopMatrix'), null, 'void');
   define('glBindTexture', gladGetProcAddress('glBindTexture'), null, 'void', 'unsigned int', 'unsigned int');
-  define('glBitmap', gladGetProcAddress('glBitmap'), null, 'void', 'int', 'int', 'float', 'float', 'float', 'float', 'void *');
+  define(
+    'glBitmap',
+    gladGetProcAddress('glBitmap'),
+    null,
+    'void',
+    'int',
+    'int',
+    'float',
+    'float',
+    'float',
+    'float',
+    'void *'
+  );
   define('glBlendFunc', gladGetProcAddress('glBlendFunc'), null, 'void', 'unsigned int', 'unsigned int');
   define('glCallList', gladGetProcAddress('glCallList'), null, 'void', 'unsigned int');
   define('glCallLists', gladGetProcAddress('glCallLists'), null, 'void', 'int', 'unsigned int', 'void *');
@@ -838,7 +850,15 @@ export function gladLoadGL() {
   define('glColor3iv', gladGetProcAddress('glColor3iv'), null, 'void', 'void *');
   define('glColor3s', gladGetProcAddress('glColor3s'), null, 'void', 'short', 'short', 'short');
   define('glColor3sv', gladGetProcAddress('glColor3sv'), null, 'void', 'void *');
-  define('glColor3ub', gladGetProcAddress('glColor3ub'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char');
+  define(
+    'glColor3ub',
+    gladGetProcAddress('glColor3ub'),
+    null,
+    'void',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char'
+  );
   define('glColor3ubv', gladGetProcAddress('glColor3ubv'), null, 'void', 'void *');
   define('glColor3ui', gladGetProcAddress('glColor3ui'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int');
   define('glColor3uiv', gladGetProcAddress('glColor3uiv'), null, 'void', 'void *');
@@ -854,20 +874,96 @@ export function gladLoadGL() {
   define('glColor4iv', gladGetProcAddress('glColor4iv'), null, 'void', 'void *');
   define('glColor4s', gladGetProcAddress('glColor4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glColor4sv', gladGetProcAddress('glColor4sv'), null, 'void', 'void *');
-  define('glColor4ub', gladGetProcAddress('glColor4ub'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+  define(
+    'glColor4ub',
+    gladGetProcAddress('glColor4ub'),
+    null,
+    'void',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char'
+  );
   define('glColor4ubv', gladGetProcAddress('glColor4ubv'), null, 'void', 'void *');
-  define('glColor4ui', gladGetProcAddress('glColor4ui'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int', 'unsigned int');
+  define(
+    'glColor4ui',
+    gladGetProcAddress('glColor4ui'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'unsigned int',
+    'unsigned int'
+  );
   define('glColor4uiv', gladGetProcAddress('glColor4uiv'), null, 'void', 'void *');
   define('glColor4us', gladGetProcAddress('glColor4us'), null, 'void', 'uint16', 'uint16', 'uint16', 'uint16');
   define('glColor4usv', gladGetProcAddress('glColor4usv'), null, 'void', 'void *');
-  define('glColorMask', gladGetProcAddress('glColorMask'), null, 'void', 'unsigned char', 'unsigned char', 'unsigned char', 'unsigned char');
+  define(
+    'glColorMask',
+    gladGetProcAddress('glColorMask'),
+    null,
+    'void',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char',
+    'unsigned char'
+  );
   define('glColorMaterial', gladGetProcAddress('glColorMaterial'), null, 'void', 'unsigned int', 'unsigned int');
   define('glColorPointer', gladGetProcAddress('glColorPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
   define('glCopyPixels', gladGetProcAddress('glCopyPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int');
-  define('glCopyTexImage1D', gladGetProcAddress('glCopyTexImage1D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int');
-  define('glCopyTexImage2D', gladGetProcAddress('glCopyTexImage2D'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
-  define('glCopyTexSubImage1D', gladGetProcAddress('glCopyTexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int');
-  define('glCopyTexSubImage2D', gladGetProcAddress('glCopyTexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'int', 'int');
+  define(
+    'glCopyTexImage1D',
+    gladGetProcAddress('glCopyTexImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexImage2D',
+    gladGetProcAddress('glCopyTexImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexSubImage1D',
+    gladGetProcAddress('glCopyTexSubImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
+  define(
+    'glCopyTexSubImage2D',
+    gladGetProcAddress('glCopyTexSubImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int'
+  );
   define('glCullFace', gladGetProcAddress('glCullFace'), null, 'void', 'unsigned int');
   define('glDeleteLists', gladGetProcAddress('glDeleteLists'), null, 'void', 'unsigned int', 'int');
   define('glDeleteTextures', gladGetProcAddress('glDeleteTextures'), null, 'void', 'int', 'void *');
@@ -878,8 +974,27 @@ export function gladLoadGL() {
   define('glDisableClientState', gladGetProcAddress('glDisableClientState'), null, 'void', 'unsigned int');
   define('glDrawArrays', gladGetProcAddress('glDrawArrays'), null, 'void', 'unsigned int', 'int', 'int');
   define('glDrawBuffer', gladGetProcAddress('glDrawBuffer'), null, 'void', 'unsigned int');
-  define('glDrawElements', gladGetProcAddress('glDrawElements'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glDrawPixels', gladGetProcAddress('glDrawPixels'), null, 'void', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glDrawElements',
+    gladGetProcAddress('glDrawElements'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glDrawPixels',
+    gladGetProcAddress('glDrawPixels'),
+    null,
+    'void',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glEdgeFlag', gladGetProcAddress('glEdgeFlag'), null, 'void', 'unsigned char');
   define('glEdgeFlagPointer', gladGetProcAddress('glEdgeFlagPointer'), null, 'void', 'int', 'void *');
   define('glEdgeFlagv', gladGetProcAddress('glEdgeFlagv'), null, 'void', 'void *');
@@ -903,7 +1018,18 @@ export function gladLoadGL() {
   define('glFogi', gladGetProcAddress('glFogi'), null, 'void', 'unsigned int', 'int');
   define('glFogiv', gladGetProcAddress('glFogiv'), null, 'void', 'unsigned int', 'void *');
   define('glFrontFace', gladGetProcAddress('glFrontFace'), null, 'void', 'unsigned int');
-  define('glFrustum', gladGetProcAddress('glFrustum'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+  define(
+    'glFrustum',
+    gladGetProcAddress('glFrustum'),
+    null,
+    'void',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double'
+  );
   define('glGenLists', gladGetProcAddress('glGenLists'), null, 'unsigned int', 'int');
   define('glGenTextures', gladGetProcAddress('glGenTextures'), null, 'void', 'int', 'void *');
   define('glGetBooleanv', gladGetProcAddress('glGetBooleanv'), null, 'void', 'unsigned int', 'void *');
@@ -916,8 +1042,24 @@ export function gladLoadGL() {
   define('glGetMapdv', gladGetProcAddress('glGetMapdv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetMapfv', gladGetProcAddress('glGetMapfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetMapiv', gladGetProcAddress('glGetMapiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetMaterialfv', gladGetProcAddress('glGetMaterialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetMaterialiv', gladGetProcAddress('glGetMaterialiv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glGetMaterialfv',
+    gladGetProcAddress('glGetMaterialfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetMaterialiv',
+    gladGetProcAddress('glGetMaterialiv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glGetPixelMapfv', gladGetProcAddress('glGetPixelMapfv'), null, 'void', 'unsigned int', 'void *');
   define('glGetPixelMapuiv', gladGetProcAddress('glGetPixelMapuiv'), null, 'void', 'unsigned int', 'void *');
   define('glGetPixelMapusv', gladGetProcAddress('glGetPixelMapusv'), null, 'void', 'unsigned int', 'void *');
@@ -929,11 +1071,55 @@ export function gladLoadGL() {
   define('glGetTexGendv', gladGetProcAddress('glGetTexGendv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetTexGenfv', gladGetProcAddress('glGetTexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glGetTexGeniv', gladGetProcAddress('glGetTexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexImage', gladGetProcAddress('glGetTexImage'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexLevelParameterfv', gladGetProcAddress('glGetTexLevelParameterfv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glGetTexLevelParameteriv', gladGetProcAddress('glGetTexLevelParameteriv'), null, 'void', 'unsigned int', 'int', 'unsigned int', 'void *');
-  define('glGetTexParameterfv', gladGetProcAddress('glGetTexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glGetTexParameteriv', gladGetProcAddress('glGetTexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glGetTexImage',
+    gladGetProcAddress('glGetTexImage'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexLevelParameterfv',
+    gladGetProcAddress('glGetTexLevelParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexLevelParameteriv',
+    gladGetProcAddress('glGetTexLevelParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexParameterfv',
+    gladGetProcAddress('glGetTexParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glGetTexParameteriv',
+    gladGetProcAddress('glGetTexParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glHint', gladGetProcAddress('glHint'), null, 'void', 'unsigned int', 'unsigned int');
   define('glIndexd', gladGetProcAddress('glIndexd'), null, 'void', 'double');
   define('glIndexdv', gladGetProcAddress('glIndexdv'), null, 'void', 'void *');
@@ -947,7 +1133,15 @@ export function gladLoadGL() {
   define('glIndexsv', gladGetProcAddress('glIndexsv'), null, 'void', 'void *');
   define('glIndexub', gladGetProcAddress('glIndexub'), null, 'void', 'unsigned char');
   define('glIndexubv', gladGetProcAddress('glIndexubv'), null, 'void', 'void *');
-  define('glInterleavedArrays', gladGetProcAddress('glInterleavedArrays'), null, 'void', 'unsigned int', 'int', 'void *');
+  define(
+    'glInterleavedArrays',
+    gladGetProcAddress('glInterleavedArrays'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'void *'
+  );
   define('glIsEnabled', gladGetProcAddress('glIsEnabled'), null, 'unsigned char', 'unsigned int');
   define('glIsList', gladGetProcAddress('glIsList'), null, 'unsigned char', 'unsigned int');
   define('glIsTexture', gladGetProcAddress('glIsTexture'), null, 'unsigned char', 'unsigned int');
@@ -966,14 +1160,88 @@ export function gladLoadGL() {
   define('glLoadMatrixf', gladGetProcAddress('glLoadMatrixf'), null, 'void', 'void *');
   define('glLoadName', gladGetProcAddress('glLoadName'), null, 'void', 'unsigned int');
   define('glLogicOp', gladGetProcAddress('glLogicOp'), null, 'void', 'unsigned int');
-  define('glMap1d', gladGetProcAddress('glMap1d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'void *');
-  define('glMap1f', gladGetProcAddress('glMap1f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'void *');
-  define('glMap2d', gladGetProcAddress('glMap2d'), null, 'void', 'unsigned int', 'double', 'double', 'int', 'int', 'double', 'double', 'int', 'int', 'void *');
-  define('glMap2f', gladGetProcAddress('glMap2f'), null, 'void', 'unsigned int', 'float', 'float', 'int', 'int', 'float', 'float', 'int', 'int', 'void *');
+  define(
+    'glMap1d',
+    gladGetProcAddress('glMap1d'),
+    null,
+    'void',
+    'unsigned int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap1f',
+    gladGetProcAddress('glMap1f'),
+    null,
+    'void',
+    'unsigned int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap2d',
+    gladGetProcAddress('glMap2d'),
+    null,
+    'void',
+    'unsigned int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'double',
+    'double',
+    'int',
+    'int',
+    'void *'
+  );
+  define(
+    'glMap2f',
+    gladGetProcAddress('glMap2f'),
+    null,
+    'void',
+    'unsigned int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'float',
+    'float',
+    'int',
+    'int',
+    'void *'
+  );
   define('glMapGrid1d', gladGetProcAddress('glMapGrid1d'), null, 'void', 'int', 'double', 'double');
   define('glMapGrid1f', gladGetProcAddress('glMapGrid1f'), null, 'void', 'int', 'float', 'float');
-  define('glMapGrid2d', gladGetProcAddress('glMapGrid2d'), null, 'void', 'int', 'double', 'double', 'int', 'double', 'double');
-  define('glMapGrid2f', gladGetProcAddress('glMapGrid2f'), null, 'void', 'int', 'float', 'float', 'int', 'float', 'float');
+  define(
+    'glMapGrid2d',
+    gladGetProcAddress('glMapGrid2d'),
+    null,
+    'void',
+    'int',
+    'double',
+    'double',
+    'int',
+    'double',
+    'double'
+  );
+  define(
+    'glMapGrid2f',
+    gladGetProcAddress('glMapGrid2f'),
+    null,
+    'void',
+    'int',
+    'float',
+    'float',
+    'int',
+    'float',
+    'float'
+  );
   define('glMaterialf', gladGetProcAddress('glMaterialf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
   define('glMaterialfv', gladGetProcAddress('glMaterialfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glMateriali', gladGetProcAddress('glMateriali'), null, 'void', 'unsigned int', 'unsigned int', 'int');
@@ -993,7 +1261,18 @@ export function gladLoadGL() {
   define('glNormal3s', gladGetProcAddress('glNormal3s'), null, 'void', 'short', 'short', 'short');
   define('glNormal3sv', gladGetProcAddress('glNormal3sv'), null, 'void', 'void *');
   define('glNormalPointer', gladGetProcAddress('glNormalPointer'), null, 'void', 'unsigned int', 'int', 'void *');
-  define('glOrtho', gladGetProcAddress('glOrtho'), null, 'void', 'double', 'double', 'double', 'double', 'double', 'double');
+  define(
+    'glOrtho',
+    gladGetProcAddress('glOrtho'),
+    null,
+    'void',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double',
+    'double'
+  );
   define('glPassThrough', gladGetProcAddress('glPassThrough'), null, 'void', 'float');
   define('glPixelMapfv', gladGetProcAddress('glPixelMapfv'), null, 'void', 'unsigned int', 'int', 'void *');
   define('glPixelMapuiv', gladGetProcAddress('glPixelMapuiv'), null, 'void', 'unsigned int', 'int', 'void *');
@@ -1036,7 +1315,19 @@ export function gladLoadGL() {
   define('glRasterPos4s', gladGetProcAddress('glRasterPos4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glRasterPos4sv', gladGetProcAddress('glRasterPos4sv'), null, 'void', 'void *');
   define('glReadBuffer', gladGetProcAddress('glReadBuffer'), null, 'void', 'unsigned int');
-  define('glReadPixels', gladGetProcAddress('glReadPixels'), null, 'void', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glReadPixels',
+    gladGetProcAddress('glReadPixels'),
+    null,
+    'void',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glRectd', gladGetProcAddress('glRectd'), null, 'void', 'double', 'double', 'double', 'double');
   define('glRectdv', gladGetProcAddress('glRectdv'), null, 'void', 'void *', 'void *');
   define('glRectf', gladGetProcAddress('glRectf'), null, 'void', 'float', 'float', 'float', 'float');
@@ -1055,7 +1346,15 @@ export function gladLoadGL() {
   define('glShadeModel', gladGetProcAddress('glShadeModel'), null, 'void', 'unsigned int');
   define('glStencilFunc', gladGetProcAddress('glStencilFunc'), null, 'void', 'unsigned int', 'int', 'unsigned int');
   define('glStencilMask', gladGetProcAddress('glStencilMask'), null, 'void', 'unsigned int');
-  define('glStencilOp', gladGetProcAddress('glStencilOp'), null, 'void', 'unsigned int', 'unsigned int', 'unsigned int');
+  define(
+    'glStencilOp',
+    gladGetProcAddress('glStencilOp'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'unsigned int'
+  );
   define('glTexCoord1d', gladGetProcAddress('glTexCoord1d'), null, 'void', 'double');
   define('glTexCoord1dv', gladGetProcAddress('glTexCoord1dv'), null, 'void', 'void *');
   define('glTexCoord1f', gladGetProcAddress('glTexCoord1f'), null, 'void', 'float');
@@ -1088,7 +1387,16 @@ export function gladLoadGL() {
   define('glTexCoord4iv', gladGetProcAddress('glTexCoord4iv'), null, 'void', 'void *');
   define('glTexCoord4s', gladGetProcAddress('glTexCoord4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glTexCoord4sv', gladGetProcAddress('glTexCoord4sv'), null, 'void', 'void *');
-  define('glTexCoordPointer', gladGetProcAddress('glTexCoordPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+  define(
+    'glTexCoordPointer',
+    gladGetProcAddress('glTexCoordPointer'),
+    null,
+    'void',
+    'int',
+    'unsigned int',
+    'int',
+    'void *'
+  );
   define('glTexEnvf', gladGetProcAddress('glTexEnvf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
   define('glTexEnvfv', gladGetProcAddress('glTexEnvfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glTexEnvi', gladGetProcAddress('glTexEnvi'), null, 'void', 'unsigned int', 'unsigned int', 'int');
@@ -1099,14 +1407,91 @@ export function gladLoadGL() {
   define('glTexGenfv', gladGetProcAddress('glTexGenfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
   define('glTexGeni', gladGetProcAddress('glTexGeni'), null, 'void', 'unsigned int', 'unsigned int', 'int');
   define('glTexGeniv', gladGetProcAddress('glTexGeniv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexImage1D', gladGetProcAddress('glTexImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexImage2D', gladGetProcAddress('glTexImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexParameterf', gladGetProcAddress('glTexParameterf'), null, 'void', 'unsigned int', 'unsigned int', 'float');
-  define('glTexParameterfv', gladGetProcAddress('glTexParameterfv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glTexImage1D',
+    gladGetProcAddress('glTexImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexImage2D',
+    gladGetProcAddress('glTexImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexParameterf',
+    gladGetProcAddress('glTexParameterf'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'float'
+  );
+  define(
+    'glTexParameterfv',
+    gladGetProcAddress('glTexParameterfv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glTexParameteri', gladGetProcAddress('glTexParameteri'), null, 'void', 'unsigned int', 'unsigned int', 'int');
-  define('glTexParameteriv', gladGetProcAddress('glTexParameteriv'), null, 'void', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexSubImage1D', gladGetProcAddress('glTexSubImage1D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
-  define('glTexSubImage2D', gladGetProcAddress('glTexSubImage2D'), null, 'void', 'unsigned int', 'int', 'int', 'int', 'int', 'int', 'unsigned int', 'unsigned int', 'void *');
+  define(
+    'glTexParameteriv',
+    gladGetProcAddress('glTexParameteriv'),
+    null,
+    'void',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexSubImage1D',
+    gladGetProcAddress('glTexSubImage1D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
+  define(
+    'glTexSubImage2D',
+    gladGetProcAddress('glTexSubImage2D'),
+    null,
+    'void',
+    'unsigned int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'int',
+    'unsigned int',
+    'unsigned int',
+    'void *'
+  );
   define('glTranslated', gladGetProcAddress('glTranslated'), null, 'void', 'double', 'double', 'double');
   define('glTranslatef', gladGetProcAddress('glTranslatef'), null, 'void', 'float', 'float', 'float');
   define('glVertex2d', gladGetProcAddress('glVertex2d'), null, 'void', 'double', 'double');
@@ -1133,7 +1518,16 @@ export function gladLoadGL() {
   define('glVertex4iv', gladGetProcAddress('glVertex4iv'), null, 'void', 'void *');
   define('glVertex4s', gladGetProcAddress('glVertex4s'), null, 'void', 'short', 'short', 'short', 'short');
   define('glVertex4sv', gladGetProcAddress('glVertex4sv'), null, 'void', 'void *');
-  define('glVertexPointer', gladGetProcAddress('glVertexPointer'), null, 'void', 'int', 'unsigned int', 'int', 'void *');
+  define(
+    'glVertexPointer',
+    gladGetProcAddress('glVertexPointer'),
+    null,
+    'void',
+    'int',
+    'unsigned int',
+    'int',
+    'void *'
+  );
   define('glViewport', gladGetProcAddress('glViewport'), null, 'void', 'int', 'int', 'int', 'int');
 
   return ret;

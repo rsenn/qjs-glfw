@@ -11,7 +11,10 @@ export class Window {
   #handle = null;
 
   constructor(...args) {
-    const size = typeof args[0] == 'number' && typeof args[1] == 'number' ? new glfw.Size(...args.splice(0, 2)) : Screen.size(args[1]);
+    const size =
+      typeof args[0] == 'number' && typeof args[1] == 'number'
+        ? new glfw.Size(...args.splice(0, 2))
+        : Screen.size(args[1]);
     const [name, screenIndex = 0] = args;
     console.log('size', size);
     console.log('name', name);
