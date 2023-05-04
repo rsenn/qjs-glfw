@@ -490,7 +490,7 @@ glfw_window_get_callback(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 JSValue
-glfw_window_get_id(JSContext* ctx, JSValueConst this_val, int magic) {
+glfw_window_get_id(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
   WindowContext* wc;
   char buf[128];
@@ -639,12 +639,6 @@ JSClassDef glfw_window_class_def = {
     } \
   }
 */
-#define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
-  { \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET_MAGIC, .u = { \
-      .getset = {.get = {.getter_magic = fgetter}, .set = {.setter_magic = fsetter}} \
-    } \
-  }
 
 const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CFUNC_DEF("makeContextCurrent", 0, glfw_window_make_context_current),

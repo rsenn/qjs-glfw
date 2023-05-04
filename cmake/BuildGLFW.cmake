@@ -1,15 +1,15 @@
-macro(build_glfw)
+macro(build_glfw SOURCE BINARY)
   message("-- Building GLFW from source")
 
   include(ExternalProject)
 
   ExternalProject_Add(
     glfw
-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/glfw
-    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/glfw
+    SOURCE_DIR ${SOURCE}/glfw
+    BINARY_DIR ${BINARY}/glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
     UPDATE_COMMAND sed -i "s|DEFINE_SYMBOL _GLFW_BUILD_DLL||g"
-                   ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src/CMakeLists.txt
+                   ${SOURCE}/glfw/src/CMakeLists.txt
     PREFIX glfw
     CMAKE_ARGS
       -DBUILD_SHARED_LIBS:BOOL=OFF

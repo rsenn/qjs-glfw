@@ -170,7 +170,7 @@ JSClassDef glfw_monitor_class_def = {
 };
 
 const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("name", glfw_monitor_get_name, NULL, 0),
+    JS_CGETSET_ENUMERABLE_DEF("name", glfw_monitor_get_name, NULL),
     JS_CGETSET_DEF("position", glfw_monitor_get_position, NULL),
     JS_CGETSET_DEF("workarea", glfw_monitor_get_workarea, NULL),
     JS_CGETSET_DEF("physicalSize", glfw_monitor_get_physical_size, NULL),

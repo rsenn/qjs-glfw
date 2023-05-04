@@ -1,4 +1,7 @@
-//#include <GL/glew.h>
+#ifdef USE_GL3W
+#include <GL/glcorearb.h>
+#include <GL/gl3w.h>
+#endif
 
 #include "glfw.h"
 #include "position.h"
@@ -11,17 +14,7 @@
 #include "scale.h"
 
 //#include "gl3w/src/gl3w.c"
-//#include <GL/glcorearb.h>
 //
-
-#ifdef USE_GL3W
-#include <GL/gl3w.h>
-
-/*int gl3wInit(void);
-int gl3wInit2(GL3WGetProcAddressProc proc);
-int gl3wIsSupported(int major, int minor);
-GL3WglProc gl3wGetProcAddress(const char* proc);*/
-#endif
 
 #ifdef HAVE_GLFW_GET_ERROR
 JSValue
@@ -40,6 +33,7 @@ JSValue
 gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* str;
   void* addr;
+  char buf[64];
   str = JS_ToCString(ctx, argv[0]);
 
   addr = gl3wGetProcAddress(str);
@@ -47,7 +41,9 @@ gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   JS_FreeCString(ctx, str);
 
-  return JS_NewInt64(ctx, (int64_t)addr);
+  snprintf(buf, sizeof(buf), "%p", addr);
+
+  return JS_NewString(ctx, buf);
 }
 #endif
 

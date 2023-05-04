@@ -29,7 +29,7 @@ configure_quickjs()
 find_glew()
 
 if(BUILD_GLFW)
-  build_glfw()
+  build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_BINARY_DIR})
 
   add_definitions(
     -DHAVE_GLFW_GET_ERROR
@@ -46,8 +46,15 @@ else(BUILD_GLFW)
 endif(BUILD_GLFW)
 
 if(USE_GL3W)
+
+file(MAKE_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/GL)
+file(MAKE_DIRECTORY  ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/KHR)
+file(DOWNLOAD "https://www.khronos.org/registry/OpenGL/api/GL/glcorearb.h" ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/GL/glcorearb.h SHOW_PROGRESS)
+file(DOWNLOAD "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h" ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/KHR/khrplatform.h SHOW_PROGRESS)
+
   build_gl3w()
 
+  include_directories(${CMAKE_CURRENT_BINARY_DIR}/gl3w/include)
   add_definitions(-DUSE_GL3W)
 endif(USE_GL3W)
 
@@ -128,11 +135,18 @@ if(NOT BUILD_GLFW)
 endif(NOT BUILD_GLFW)
 
 # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
-add_library(
-  qjs-glfw SHARED
-  gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c
+set(QJS_GLFW_SOURCES  gamma_ramp.c gamma_ramp.h glfw.c glfw.h monitor.c monitor.h position.c
   position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c
   window.h workarea.c workarea.h)
+
+
+if(USE_GL3W)
+  list(APPEND IMGUI_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c)
+endif(USE_GL3W)
+
+add_library(
+  qjs-glfw SHARED ${QJS_GLFW_SOURCES}
+  )
 
 if(USE_GL3W)
   if(NOT TARGET gl3w_gen)

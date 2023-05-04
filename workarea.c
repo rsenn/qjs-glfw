@@ -108,8 +108,8 @@ JSClassDef glfw_workarea_class_def = {
 };
 
 const JSCFunctionListEntry glfw_workarea_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_DEF("position", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 0),
-    JS_CGETSET_ENUMERABLE_DEF("size", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 1),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("position", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 0),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("size", glfw_workarea_get_position_or_size, glfw_workarea_set_position_or_size, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_workarea_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWworkarea", JS_PROP_CONFIGURABLE),
 };
