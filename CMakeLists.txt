@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.26)
+
 project(qjs-glfw C)
 
 message("Building project [1;31m${PROJECT_NAME}[0m")
