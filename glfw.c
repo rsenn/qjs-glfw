@@ -92,6 +92,7 @@ glfw_context_get_current(JSContext* ctx, JSValueConst this_val) {
   // TODO: window is not owned so finalizer should not destroy it
   return glfw_window_new_instance(ctx, window);
 }
+
 JSValue
 glfw_context_set_current(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, value, glfw_window_class_id);
@@ -99,6 +100,11 @@ glfw_context_set_current(JSContext* ctx, JSValueConst this_val, JSValueConst val
     return JS_EXCEPTION;
   glfwMakeContextCurrent(window);
   return JS_UNDEFINED;
+}
+
+JSValue
+glfw_context_get_proto(JSContext* ctx, JSValueConst this_val) {
+  return JS_NULL;
 }
 
 JSValue
@@ -113,6 +119,7 @@ glfw_context_swap_interval(JSContext* ctx, JSValueConst this_val, int argc, JSVa
 }
 
 static const JSCFunctionListEntry glfw_context_props[] = {
+    // JS_CGETSET_DEF("__proto__", glfw_context_get_proto, 0),
     JS_CGETSET_DEF("current", glfw_context_get_current, glfw_context_set_current),
     JS_CFUNC_DEF("swapInterval", 2, glfw_context_swap_interval),
 };
@@ -261,17 +268,17 @@ js_init_module(JSContext* ctx, const char* module_name) {
 #endif
       // atexit(glfwTerminate);
 
-/*      int result = gl3wInit();
-      printf("gl3wInit() = %d\n", result);*/
+      /*      int result = gl3wInit();
+            printf("gl3wInit() = %d\n", result);*/
 
-           /*glewExperimental = GL_TRUE;
-      if(glewInit() != GLEW_OK) {
-        printf("Could not init glew.\n");
-        return 0;
-      }
+      /*glewExperimental = GL_TRUE;
+ if(glewInit() != GLEW_OK) {
+   printf("Could not init glew.\n");
+   return 0;
+ }
 
-      // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
-      glGetError();*/
+ // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
+ glGetError();*/
 
       initialized = TRUE;
     }

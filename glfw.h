@@ -30,9 +30,7 @@ JSValue glfw_throw(JSContext* ctx);
 
 #define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
   { \
-    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET, .u = { \
-      .getset = {.get = {.getter = fgetter}, .set = {.setter = fsetter}} \
-    } \
+    .name = prop_name, .prop_flags = JS_PROP_ENUMERABLE | JS_PROP_CONFIGURABLE, .def_type = JS_DEF_CGETSET, .u = {.getset = {.get = {.getter = fgetter}, .set = {.setter = fsetter}} } \
   }
 
 #define JS_CGETSET_ENUMERABLE_MAGIC_DEF(prop_name, fgetter, fsetter, magic_num) \
@@ -54,6 +52,13 @@ js_iterator_atom(JSContext* ctx) {
   JS_FreeValue(ctx, symbol_ctor);
   JS_FreeValue(ctx, symbol_iterator);
   return atom;
+}
+
+static inline JSValue
+js_newptr(JSContext* ctx, void* ptr) {
+  char buf[128];
+  snprintf(buf, sizeof(buf), "%p", ptr);
+  return JS_NewString(ctx, buf);
 }
 
 VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);

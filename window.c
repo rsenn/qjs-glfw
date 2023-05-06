@@ -81,6 +81,8 @@ enum CallbackID {
 };
 
 typedef struct WindowContext {
+  JSContext* ctx;
+  JSValue this_val;
   union {
     struct {
       JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler, window_focus_handler, window_iconify_handler, window_maximize_handler, framebuffer_size_handler,
@@ -88,8 +90,6 @@ typedef struct WindowContext {
     };
     JSValue list[_CALLBACK_LAST];
   } handlers;
-  JSContext* ctx;
-  JSValue this_val;
 } WindowContext;
 
 static void
@@ -279,6 +279,17 @@ glfw_window_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst
 }
 
 // instance methods
+
+JSValue
+glfw_window_get_id(JSContext* ctx, JSValueConst this_val) {
+  GLFWwindow* window;
+
+  if(!(window = glfw_window_data2(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  return js_newptr(ctx, window);
+}
+
 JSValue
 glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   GLFWwindow* window = glfw_window_data2(ctx, this_val);
@@ -490,20 +501,6 @@ glfw_window_get_callback(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 JSValue
-glfw_window_get_id(JSContext* ctx, JSValueConst this_val) {
-  GLFWwindow* window;
-  WindowContext* wc;
-  char buf[128];
-
-  if(!(window = glfw_window_data2(ctx, this_val)))
-    return JS_EXCEPTION;
-
-  snprintf(buf, sizeof(buf), "%p", window);
-
-  return JS_NewString(ctx, buf);
-}
-
-JSValue
 glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst value, int magic) {
   GLFWwindow* window = glfw_window_data2(ctx, this_val);
   WindowContext* wc;
@@ -641,6 +638,7 @@ JSClassDef glfw_window_class_def = {
 */
 
 const JSCFunctionListEntry glfw_window_proto_funcs[] = {
+    JS_CGETSET_ENUMERABLE_DEF("id", glfw_window_get_id, NULL),
     JS_CFUNC_DEF("makeContextCurrent", 0, glfw_window_make_context_current),
     JS_CFUNC_DEF("swapBuffers", 0, glfw_window_swap_buffers),
     JS_CGETSET_DEF("shouldClose", glfw_window_get_should_close, glfw_window_set_should_close),
@@ -650,7 +648,6 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, NULL),
-    JS_CGETSET_ENUMERABLE_DEF("id", glfw_window_get_id, NULL),
     JS_CGETSET_MAGIC_DEF("handlePos", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_POS),
     JS_CGETSET_MAGIC_DEF("handleSize", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_SIZE),
     JS_CGETSET_MAGIC_DEF("handleClose", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_WINDOW_CLOSE),
