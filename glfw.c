@@ -255,6 +255,10 @@ js_init_module(JSContext* ctx, const char* module_name) {
     if(!initialized) {
       // TODO: Is it possible to check errors for init and throw in module import?
       glfwInit();
+
+#ifdef USE_GL3W
+      gl3wInit();
+#endif
       // atexit(glfwTerminate);
 
 /*      int result = gl3wInit();

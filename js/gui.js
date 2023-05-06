@@ -11,10 +11,7 @@ export class Window {
   #handle = null;
 
   constructor(...args) {
-    const size =
-      typeof args[0] == 'number' && typeof args[1] == 'number'
-        ? new glfw.Size(...args.splice(0, 2))
-        : Screen.size(args[1]);
+    const size = typeof args[0] == 'number' && typeof args[1] == 'number' ? new glfw.Size(...args.splice(0, 2)) : Screen.size(args[1]);
     const [name, screenIndex = 0] = args;
     console.log('size', size);
     console.log('name', name);
@@ -88,4 +85,118 @@ export class Window {
   valueOf() {
     return this.name;
   }
+
+  set onkey(handler) {
+    this.#handle.handleKey = (keycode, code, action, mods) => {
+      const key =
+        keycode > 0xff
+          ? [
+              'Escape',
+              'Enter',
+              'Tab',
+              'Backspace',
+              'Insert',
+              'Delete',
+              'Right',
+              'Left',
+              'Down',
+              'Up',
+              'PageUp',
+              'PageDown',
+              'Home',
+              'End',
+              ,
+              ,
+              ,
+              ,
+              ,
+              ,
+              ,
+              ,
+              ,
+              ,
+              'CapsLock',
+              'ScrollLock',
+              'NumLock',
+              'PrintScreen',
+              'Pause',
+              ,
+              ,
+              ,
+              ,
+              ,
+              'F1',
+              'F2',
+              'F3',
+              'F4',
+              'F5',
+              'F6',
+              'F7',
+              'F8',
+              'F9',
+              'F10',
+              'F11',
+              'F12',
+              'F13',
+              'F14',
+              'F15',
+              'F16',
+              'F17',
+              'F18',
+              'F19',
+              'F20',
+              'F21',
+              'F22',
+              'F23',
+              'F24',
+              'F25',
+              ,
+              ,
+              ,
+              ,
+              ,
+              'Numpad0',
+              'Numpad1',
+              'Numpad2',
+              'Numpad3',
+              'Numpad4',
+              'Numpad5',
+              'Numpad6',
+              'Numpad7',
+              'Numpad8',
+              'Numpad9',
+              'NumpadDecimal',
+              'NumpadDivide',
+              'NumpadMultiply',
+              'NumpadSubtract',
+              'NumpadAdd',
+              'NumpadEnter',
+              'NumpadEqual',
+              ,
+              ,
+              ,
+              'ShiftLeft',
+              'ControlLeft',
+              'AltLeft',
+              'SuperLeft',
+              'ShiftRight',
+              'ControlRight',
+              'AltRight',
+              'SuperRight',
+              'Menu'
+            ][keycode - 0x100]
+          : String.fromCharCode(keycode);
+      const ev = { type: action ? 'keydown' : 'keyup', repeat: action > 1, key, keycode, code, altKey: !!(mods & 4), shiftKey: !!(mods & 1), ctrlKey: !!(mods & 2) };
+      if(mods > 7) ev.mods = mods;
+      if(keycode < 0x100 && !ev.shiftKey) ev.key = ev.key.toLowerCase();
+      handler(ev);
+    };
+  }
+  /*
+  set onchar(handler) {
+    this.#handle.handleChar = handler;
+  }
+  set oncharmods(handler) {
+    this.#handle.handleCharMods = handler;
+  }*/
 }

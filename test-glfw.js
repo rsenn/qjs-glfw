@@ -1,6 +1,6 @@
 import { getProcAddress, poll, context } from 'glfw';
 import { Window } from './js/gui.js';
-import { GL_BLEND, glBlendFunc, glHint, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, glLineWidth, glTranslatef, glColor3ub, glColor3f, glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glTexCoord2f, glVertex2f, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_QUADS, GL_TEXTURE_2D, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION, GL_LINE_LOOP, GL_DEPTH_BUFFER_BIT } from './js/gl3w.js';
+import { glewInit, GL_BLEND, glBlendFunc, glHint, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, glLineWidth, glTranslatef, glColor3ub, glColor3f, glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glTexCoord2f, glVertex2f, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_QUADS, GL_TEXTURE_2D, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION, GL_LINE_LOOP, GL_DEPTH_BUFFER_BIT } from './js/glew.js';
 
 function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
@@ -22,8 +22,12 @@ function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
 
   //console.log('gladLoadGL() =', gladLoadGL());
-  //console.log('glewInit() =', glewInit());
+  console.log('glewInit() =', glewInit());
   console.log('getProcAddress("glVertex3f") =', getProcAddress('glVertex3f'));
+
+  window.onkey = event => console.log('handleKey', event);
+  /*  window.onchar=( c) => console.log('handleChar', { c});
+  window.oncharmods=( c, mods) => console.log('handleCharMods', { c, mods});*/
 
   const { position, size } = window;
   const { width, height } = size;
@@ -31,6 +35,7 @@ function main(...args) {
   let textures = [];
 
   console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`);
+  glViewport(0, 0, width, height);
 
   const hues = [
     [255, 0, 0, 255],

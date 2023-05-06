@@ -644,7 +644,7 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CFUNC_DEF("makeContextCurrent", 0, glfw_window_make_context_current),
     JS_CFUNC_DEF("swapBuffers", 0, glfw_window_swap_buffers),
     JS_CGETSET_DEF("shouldClose", glfw_window_get_should_close, glfw_window_set_should_close),
-    JS_CGETSET_ENUMERABLE_DEF("title", NULL, glfw_window_set_title),
+    JS_CGETSET_DEF("title", NULL, glfw_window_set_title),
     JS_CGETSET_ENUMERABLE_DEF("position", glfw_window_get_position, glfw_window_set_position),
     JS_CGETSET_ENUMERABLE_DEF("size", glfw_window_get_size, glfw_window_set_size),
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
