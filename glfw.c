@@ -266,19 +266,6 @@ js_init_module(JSContext* ctx, const char* module_name) {
 #ifdef USE_GL3W
       gl3wInit();
 #endif
-      // atexit(glfwTerminate);
-
-      /*      int result = gl3wInit();
-            printf("gl3wInit() = %d\n", result);*/
-
-      /*glewExperimental = GL_TRUE;
- if(glewInit() != GLEW_OK) {
-   printf("Could not init glew.\n");
-   return 0;
- }
-
- // GLEW generates GL error because it calls glGetString(GL_EXTENSIONS), we'll consume it here.
- glGetError();*/
 
       initialized = TRUE;
     }
