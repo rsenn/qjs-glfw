@@ -6,6 +6,7 @@ function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
   return arr;
 }
+
 function DrawCircle(cx, cy, r, num_segments) {
   glBegin(GL_LINE_LOOP);
   for(let ii = 0; ii < num_segments; ii++) {
