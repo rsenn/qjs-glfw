@@ -21,7 +21,7 @@ endif(USE_GL3W)
 
 check_flag("-fvisibility=hidden" VISIBILITY_HIDDEN MODULE_COMPILE_FLAGS)
 
-# dump(MODULE_COMPILE_FLAGS)
+ #dump(MODULE_COMPILE_FLAGS)
 
 find_quickjs()
 configure_quickjs()
@@ -145,7 +145,7 @@ target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src
 
 link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR})
 
-# dump(GL3W_LIBRARY_DIR)
+ #dump(GL3W_LIBRARY_DIR)
 
 target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
 target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)

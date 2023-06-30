@@ -31,7 +31,7 @@ macro(find_quickjs)
 
   set(QUICKJS_INSTALL_PREFIX "${QUICKJS_INSTALL_DIR}" CACHE PATH "QuickJS installation prefix")
 
-  # dump(QUICKJS_INSTALL_PREFIX)
+   #dump(QUICKJS_INSTALL_PREFIX)
 
   # set(CMAKE_INSTALL_PREFIX "${QUICKJS_PREFIX}" CACHE PATH "Install directory")
 
@@ -141,7 +141,7 @@ macro(find_quickjs)
   check_include_file(quickjs-config.h HAVE_QUICKJS_CONFIG_H)
 
   if(HAVE_QUICKJS_CONFIG_H)
-    # dump(HAVE_QUICKJS_CONFIG_H)
+     #dump(HAVE_QUICKJS_CONFIG_H)
     add_definitions(-DHAVE_QUICKJS_CONFIG_H=1)
   endif(HAVE_QUICKJS_CONFIG_H)
 
