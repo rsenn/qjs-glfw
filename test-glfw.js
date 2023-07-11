@@ -1,35 +1,7 @@
-import { GL_COLOR_BUFFER_BIT } from './js/glew.js';
-import { GL_DEPTH_BUFFER_BIT } from './js/glew.js';
-import { GL_LIGHTING } from './js/glew.js';
-import { GL_LINE_LOOP } from './js/glew.js';
-import { GL_MODELVIEW } from './js/glew.js';
-import { GL_PROJECTION } from './js/glew.js';
-import { GL_QUADS } from './js/glew.js';
-import { GL_TEXTURE_2D } from './js/glew.js';
-import { glBegin } from './js/glew.js';
-import { glBindTexture } from './js/glew.js';
-import { glClear } from './js/glew.js';
-import { glClearColor } from './js/glew.js';
-import { glColor3f } from './js/glew.js';
-import { glDisable } from './js/glew.js';
-import { glEnable } from './js/glew.js';
-import { glEnd } from './js/glew.js';
-import { glewInit } from './js/glew.js';
-import { glFlush } from './js/glew.js';
-import { glLineWidth } from './js/glew.js';
-import { glLoadIdentity } from './js/glew.js';
-import { glMatrixMode } from './js/glew.js';
-import { glOrtho } from './js/glew.js';
-import { glPopMatrix } from './js/glew.js';
-import { glPushMatrix } from './js/glew.js';
-import { glTexCoord2f } from './js/glew.js';
-import { glTranslatef } from './js/glew.js';
-import { glVertex2f } from './js/glew.js';
-import { glVertex3f } from './js/glew.js';
-import { glViewport } from './js/glew.js';
+import { GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_LIGHTING, GL_LINE_LOOP, GL_MODELVIEW, GL_PROJECTION, GL_QUADS, GL_TEXTURE_2D, glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glewInit, glFlush, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPopMatrix, glPushMatrix, glTexCoord2f, glTranslatef, glVertex2f, glVertex3f, glViewport } from './js/glew.js';
 import { Window } from './js/gui.js';
-import { getProcAddress } from 'glfw';
-import { poll } from 'glfw';
+import { getProcAddress, poll } from 'glfw';
+
 function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
   return arr;

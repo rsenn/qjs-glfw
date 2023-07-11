@@ -63,16 +63,18 @@ glfw_throw(JSContext* ctx, const char* func) {
 }
 #endif
 
-#ifdef USE_GL3W
 JSValue
-gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* str;
   void* addr;
   char buf[64];
   str = JS_ToCString(ctx, argv[0]);
 
+#ifdef USE_GL3W
   addr = gl3wGetProcAddress(str);
-  // printf("gl3wGetProcAddress(\"%s\") = %p\n",str, addr);
+#else
+  addr = glfwGetProcAddress(str);
+#endif
 
   JS_FreeCString(ctx, str);
 
@@ -80,7 +82,6 @@ gl3w_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 
   return JS_NewString(ctx, buf);
 }
-#endif
 
 JSValue
 glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
@@ -226,9 +227,7 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("poll", 2, glfw_poll_events),
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
-#ifdef USE_GL3W
-    JS_CFUNC_DEF("getProcAddress", 1, gl3w_getprocaddress),
-#endif
+    JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
     JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
     CONSTANTS(DEFINE_CONSTANT)
