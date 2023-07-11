@@ -2,13 +2,15 @@
 
 #include "position.h"
 
-JSClassID glfw_position_class_id = 0;
+thread_local JSClassID glfw_position_class_id = 0;
+thread_local JSValue glfw_position_proto, glfw_position_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
-  if(!position)
+  GLFWposition* position;
+
+  if(!(position = js_mallocz(ctx, sizeof(GLFWposition))))
     return JS_EXCEPTION;
 
   if(JS_ToInt32(ctx, &position->x, argv[0]))
@@ -18,30 +20,36 @@ glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueCon
     goto fail;
 
   return glfw_position_new_instance(ctx, position);
+
 fail:
   js_free(ctx, position);
   return JS_EXCEPTION;
 }
 
-void
+static void
 glfw_position_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWposition* position = JS_GetOpaque(val, glfw_position_class_id);
-  js_free_rt(rt, position);
+  GLFWposition* position;
+
+  if((position = JS_GetOpaque(val, glfw_position_class_id)))
+    js_free_rt(rt, position);
 }
 
 // properties
-JSValue
+static JSValue
 glfw_position_get_xy(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
-  if(!position)
+  GLFWposition* position;
+
+  if(!(position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id)))
     return JS_EXCEPTION;
+
   return JS_NewInt32(ctx, magic == 0 ? position->x : position->y);
 }
 
-JSValue
+static JSValue
 glfw_position_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
-  if(!position)
+  GLFWposition* position;
+
+  if(!(position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id)))
     return JS_EXCEPTION;
 
   int value;
@@ -58,10 +66,11 @@ glfw_position_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int mag
 
 static JSValue
 glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  GLFWposition* position;
   JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWposition* position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id);
-  if(!position)
+
+  if(!(position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id)))
     return JS_EXCEPTION;
 
   arr = JS_NewArray(ctx);
@@ -82,38 +91,34 @@ glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 }
 
 // initialization
-JSClassDef glfw_position_class_def = {
+static JSClassDef glfw_position_class_def = {
     .class_name = "Position",
     .finalizer = glfw_position_finalizer,
 };
 
-const JSCFunctionListEntry glfw_position_proto_funcs[] = {
+static const JSCFunctionListEntry glfw_position_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("x", glfw_position_get_xy, glfw_position_set_xy, 0),
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("y", glfw_position_get_xy, glfw_position_set_xy, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_position_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWposition", JS_PROP_CONFIGURABLE),
 };
 
-JSValue glfw_position_proto, glfw_position_class;
-
 JSValue
-glfw_position_constructor(JSContext* ctx) {
+glfw_position_init(JSContext* ctx, JSModuleDef* m) {
   JSRuntime* rt = JS_GetRuntime(ctx);
 
-  if(!JS_IsRegisteredClass(rt, glfw_position_class_id)) {
-    JS_NewClassID(&glfw_position_class_id);
-    JS_NewClass(rt, glfw_position_class_id, &glfw_position_class_def);
+  JS_NewClassID(&glfw_position_class_id);
+  JS_NewClass(rt, glfw_position_class_id, &glfw_position_class_def);
 
-    glfw_position_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, glfw_position_proto, glfw_position_proto_funcs, countof(glfw_position_proto_funcs));
-    JS_SetClassProto(ctx, glfw_position_class_id, glfw_position_proto);
+  glfw_position_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_position_proto, glfw_position_proto_funcs, countof(glfw_position_proto_funcs));
+  JS_SetClassProto(ctx, glfw_position_class_id, glfw_position_proto);
 
-    glfw_position_class = JS_NewCFunction2(ctx, glfw_position_ctor, "Position", 2, JS_CFUNC_constructor, 0);
-    /* set proto.constructor and ctor.prototype */
-    JS_SetConstructor(ctx, glfw_position_class, glfw_position_proto);
-  }
+  glfw_position_class = JS_NewCFunction2(ctx, glfw_position_ctor, "Position", 2, JS_CFUNC_constructor, 0);
+  /* set proto.constructor and ctor.prototype */
+  JS_SetConstructor(ctx, glfw_position_class, glfw_position_proto);
 
-  return glfw_position_class;
+  JS_SetModuleExport(ctx, m, "Position", glfw_position_class);
 }
 
 JSValue
@@ -121,7 +126,7 @@ glfw_position_new_instance(JSContext* ctx, GLFWposition* position) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  proto = JS_GetPropertyStr(ctx, glfw_position_constructor(ctx), "prototype");
+  proto = JS_GetPropertyStr(ctx, glfw_position_class, "prototype");
   if(JS_IsException(proto))
     goto fail;
 
@@ -136,12 +141,6 @@ glfw_position_new_instance(JSContext* ctx, GLFWposition* position) {
 fail:
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
-}
-
-int
-glfw_position_init(JSContext* ctx, JSModuleDef* m) {
-  JS_SetModuleExport(ctx, m, "Position", glfw_position_constructor(ctx));
-  return 0;
 }
 
 int

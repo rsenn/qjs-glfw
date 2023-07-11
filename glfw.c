@@ -83,6 +83,68 @@ glfw_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
   return JS_NewString(ctx, buf);
 }
 
+enum {
+  TIME_GET,
+  TIME_SET,
+  TIMER_VALUE_GET,
+  TIMER_FREQUENCY_GET,
+};
+
+static JSValue
+glfw_time(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+
+  switch(magic) {
+    case TIME_GET: {
+      ret = JS_NewFloat64(ctx, glfwGetTime());
+      break;
+    }
+
+    case TIME_SET: {
+      double t = 0;
+      JS_ToFloat64(ctx, &t, argv[0]);
+      glfwSetTime(t);
+      break;
+    }
+    case TIMER_VALUE_GET: {
+      ret = JS_NewInt64(ctx, glfwGetTimerValue());
+      break;
+    }
+    case TIMER_FREQUENCY_GET: {
+      ret = JS_NewInt64(ctx, glfwGetTimerFrequency());
+      break;
+    }
+  }
+
+  return ret;
+}
+
+enum {
+  GET_PLATFORM,
+  SUPPORTED_PLATFORM,
+};
+
+static JSValue
+glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+  JSValue ret = JS_UNDEFINED;
+
+  switch(magic) {
+    case GET_PLATFORM: {
+      ret = JS_NewInt32(ctx, glfwGetPlatform());
+      break;
+    }
+    case SUPPORTED_PLATFORM: {
+      int32_t p = -1;
+      JS_ToInt32(ctx, &p, argv[0]);
+
+      ret = JS_NewInt32(ctx, glfwPlatformSupported(p));
+      break;
+    }
+  }
+
+  return ret;
+}
+
 JSValue
 glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   glfwPollEvents();
@@ -205,7 +267,13 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   V(OPENGL_CORE_PROFILE) \
   V(VERSION_MAJOR) \
   V(VERSION_MINOR) \
-  V(VERSION_REVISION)
+  V(VERSION_REVISION) \
+  V(ANY_PLATFORM) \
+  V(PLATFORM_WIN32) \
+  V(PLATFORM_COCOA) \
+  V(PLATFORM_WAYLAND) \
+  V(PLATFORM_X11) \
+  V(PLATFORM_NULL)
 
 #define CONSTANTS2(V) \
   V(CENTER_CURSOR) \
@@ -229,6 +297,12 @@ const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
     JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
     JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
+    JS_CFUNC_MAGIC_DEF("getTime", 0, glfw_time, TIME_GET),
+    JS_CFUNC_MAGIC_DEF("setTime", 1, glfw_time, TIME_SET),
+    JS_CFUNC_MAGIC_DEF("getTimerValue", 0, glfw_time, TIMER_VALUE_GET),
+    JS_CFUNC_MAGIC_DEF("getTimerFrequency", 0, glfw_time, TIMER_FREQUENCY_GET),
+    JS_CFUNC_MAGIC_DEF("getPlatform", 0, glfw_other, GET_PLATFORM),
+    JS_CFUNC_MAGIC_DEF("platformSupported", 1, glfw_other, SUPPORTED_PLATFORM),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
     CONSTANTS(DEFINE_CONSTANT)
     // CONSTANTS2(DEFINE_CONSTANT),

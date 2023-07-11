@@ -2,7 +2,7 @@
 
 #include "size.h"
 
-JSClassID glfw_size_class_id = 0;
+thread_local JSClassID glfw_size_class_id = 0;
 
 // constructor/destructor
 JSValue

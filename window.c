@@ -5,7 +5,7 @@
 
 #include "window.h"
 
-JSClassID glfw_window_class_id = 0;
+thread_local JSClassID glfw_window_class_id = 0;
 
 /*
 
@@ -599,6 +599,97 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
   return ret;
 }
 
+enum {
+  SHOW_WINDOW,
+  HIDE_WINDOW,
+  FOCUS_WINDOW,
+  ICONIFY_WINDOW,
+  RESTORE_WINDOW,
+  MAXIMIZE_WINDOW,
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+  REQUEST_WINDOW_ATTENTION,
+#endif
+  SET_WINDOW_SIZE_LIMITS,
+  SET_WINDOW_ASPECT_RATIO,
+  GET_WINDOW_FRAME_SIZE,
+};
+
+JSValue
+glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
+  GLFWwindow* window;
+  JSValue ret = JS_UNDEFINED;
+
+  if(!(window = glfw_window_data2(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  switch(magic) {
+    case SHOW_WINDOW: {
+      glfwShowWindow(window);
+      break;
+    }
+    case HIDE_WINDOW: {
+      glfwHideWindow(window);
+      break;
+    }
+    case FOCUS_WINDOW: {
+      glfwFocusWindow(window);
+      break;
+    }
+    case ICONIFY_WINDOW: {
+      glfwIconifyWindow(window);
+      break;
+    }
+    case RESTORE_WINDOW: {
+      glfwRestoreWindow(window);
+      break;
+    }
+    case MAXIMIZE_WINDOW: {
+      glfwMaximizeWindow(window);
+      break;
+    }
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    case REQUEST_WINDOW_ATTENTION: {
+      glfwRequestWindowAttention(window);
+      break;
+    }
+#endif
+    case SET_WINDOW_SIZE_LIMITS: {
+      int32_t minw = 0, minh = 0, maxw = 0, maxh = 0;
+      JS_ToInt32(ctx, &minw, argv[0]);
+      JS_ToInt32(ctx, &minh, argv[1]);
+      JS_ToInt32(ctx, &maxw, argv[2]);
+      JS_ToInt32(ctx, &maxh, argv[3]);
+
+      glfwSetWindowSizeLimits(window, minw, minh, maxw, maxh);
+      break;
+    }
+    case SET_WINDOW_ASPECT_RATIO: {
+      int32_t numer = 0, denom = 0;
+      JS_ToInt32(ctx, &numer, argv[0]);
+      JS_ToInt32(ctx, &denom, argv[1]);
+
+      glfwSetWindowAspectRatio(window, numer, denom);
+      break;
+    }
+    case GET_WINDOW_FRAME_SIZE: {
+      int left, top, right, bottom;
+
+      glfwGetWindowFrameSize(window, &left, &top, &right, &bottom);
+
+      ret = argc > 0 && JS_IsArray(ctx, argv[0]) ? JS_DupValue(ctx, argv[0]) : JS_NewArray(ctx);
+
+      JS_SetPropertyUint32(ctx, ret, 0, JS_NewInt32(ctx, left));
+      JS_SetPropertyUint32(ctx, ret, 1, JS_NewInt32(ctx, top));
+      JS_SetPropertyUint32(ctx, ret, 2, JS_NewInt32(ctx, right));
+      JS_SetPropertyUint32(ctx, ret, 3, JS_NewInt32(ctx, bottom));
+
+      break;
+    }
+  }
+
+  return ret;
+}
+
 // Generate a few simple methods with macros...because I'm lazy. :O
 #define TRIGGER_FUNCTIONS(V) \
   V(IconifyWindow, iconify) \
@@ -666,6 +757,19 @@ const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("handleCharMods", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_CHAR_MODS),
     JS_CGETSET_MAGIC_DEF("handleDrop", glfw_window_get_callback, glfw_window_set_callback, CALLBACK_DROP),
     //  TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)
+    JS_CFUNC_MAGIC_DEF("show", 0, glfw_window_functions, SHOW_WINDOW),
+    JS_CFUNC_MAGIC_DEF("hide", 0, glfw_window_functions, HIDE_WINDOW),
+    JS_CFUNC_MAGIC_DEF("focus", 0, glfw_window_functions, FOCUS_WINDOW),
+    JS_CFUNC_MAGIC_DEF("iconify", 0, glfw_window_functions, ICONIFY_WINDOW),
+    JS_CFUNC_MAGIC_DEF("restore", 0, glfw_window_functions, RESTORE_WINDOW),
+    JS_CFUNC_MAGIC_DEF("maximize", 0, glfw_window_functions, MAXIMIZE_WINDOW),
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    JS_CFUNC_MAGIC_DEF("requestAttention", 0, glfw_window_functions, REQUEST_WINDOW_ATTENTION),
+#endif
+    JS_CFUNC_MAGIC_DEF("setSizeLimits", 4, glfw_window_functions, SET_WINDOW_SIZE_LIMITS),
+    JS_CFUNC_MAGIC_DEF("setAspectRatio", 2, glfw_window_functions, SET_WINDOW_ASPECT_RATIO),
+    JS_CFUNC_MAGIC_DEF("getFrameSize", 0, glfw_window_functions, GET_WINDOW_FRAME_SIZE),
+
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWwindow", JS_PROP_CONFIGURABLE),
 };
 
@@ -682,22 +786,6 @@ JSValue glfw_window_proto, glfw_window_class;
 
 JSValue
 glfw_window_constructor(JSContext* ctx) {
-  JSRuntime* rt = JS_GetRuntime(ctx);
-
-  if(!JS_IsRegisteredClass(rt, glfw_window_class_id)) {
-    JS_NewClassID(&glfw_window_class_id);
-    JS_NewClass(rt, glfw_window_class_id, &glfw_window_class_def);
-
-    glfw_window_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, glfw_window_proto, glfw_window_proto_funcs, countof(glfw_window_proto_funcs));
-    JS_SetClassProto(ctx, glfw_window_class_id, glfw_window_proto);
-
-    glfw_window_class = JS_NewCFunction2(ctx, glfw_window_ctor, "Window", 5, JS_CFUNC_constructor, 0);
-    JS_SetPropertyFunctionList(ctx, glfw_window_class, glfw_window_funcs, countof(glfw_window_funcs));
-    JS_SetConstructor(ctx, glfw_window_class, glfw_window_proto);
-  }
-
-  return glfw_window_class;
 }
 
 JSValue
@@ -755,7 +843,22 @@ fail:
 
 int
 glfw_window_init(JSContext* ctx, JSModuleDef* m) {
-  JS_SetModuleExport(ctx, m, "Window", glfw_window_constructor(ctx));
+
+  JSRuntime* rt = JS_GetRuntime(ctx);
+
+  JS_NewClassID(&glfw_window_class_id);
+  JS_NewClass(rt, glfw_window_class_id, &glfw_window_class_def);
+
+  glfw_window_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_window_proto, glfw_window_proto_funcs, countof(glfw_window_proto_funcs));
+  JS_SetClassProto(ctx, glfw_window_class_id, glfw_window_proto);
+
+  glfw_window_class = JS_NewCFunction2(ctx, glfw_window_ctor, "Window", 5, JS_CFUNC_constructor, 0);
+  JS_SetPropertyFunctionList(ctx, glfw_window_class, glfw_window_funcs, countof(glfw_window_funcs));
+  JS_SetConstructor(ctx, glfw_window_class, glfw_window_proto);
+
+  JS_SetModuleExport(ctx, m, "Window", glfw_window_class);
+
   return 0;
 }
 

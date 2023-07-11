@@ -9,7 +9,7 @@ typedef struct {
   GLFWsize* size;
 } GLFWworkarea;
 
-extern JSClassID glfw_workarea_class_id;
+extern thread_local JSClassID glfw_workarea_class_id;
 JSValue glfw_workarea_new_instance(JSContext* ctx, GLFWworkarea* workarea);
 int glfw_workarea_init(JSContext* ctx, JSModuleDef* m);
 int glfw_workarea_export(JSContext* ctx, JSModuleDef* m);

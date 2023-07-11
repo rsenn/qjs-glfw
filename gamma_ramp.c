@@ -2,7 +2,7 @@
 
 #include "gamma_ramp.h"
 
-JSClassID glfw_gamma_ramp_class_id = 0;
+thread_local JSClassID glfw_gamma_ramp_class_id = 0;
 
 // constructor/destructor
 JSValue

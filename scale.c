@@ -2,7 +2,7 @@
 
 #include "scale.h"
 
-JSClassID glfw_scale_class_id = 0;
+thread_local JSClassID glfw_scale_class_id = 0;
 
 // constructor/destructor
 JSValue

@@ -2,7 +2,7 @@
 
 #include "video_mode.h"
 
-JSClassID glfw_video_mode_class_id = 0;
+thread_local JSClassID glfw_video_mode_class_id = 0;
 
 // constructor/destructor
 JSValue
