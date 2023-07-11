@@ -7,7 +7,7 @@ thread_local JSValue glfw_position_proto, glfw_position_class;
 
 // constructor/destructor
 static JSValue
-glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+glfw_position_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWposition* position;
 
   if(!(position = js_mallocz(ctx, sizeof(GLFWposition))))
@@ -19,7 +19,7 @@ glfw_position_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueCon
   if(JS_ToInt32(ctx, &position->y, argv[1]))
     goto fail;
 
-  return glfw_position_new_instance(ctx, position);
+  return glfw_position_wrap(ctx, position);
 
 fail:
   js_free(ctx, position);
@@ -67,7 +67,7 @@ glfw_position_set_xy(JSContext* ctx, JSValueConst this_val, JSValue val, int mag
 static JSValue
 glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   GLFWposition* position;
-  JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
 
   if(!(position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id)))
@@ -114,7 +114,7 @@ glfw_position_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyFunctionList(ctx, glfw_position_proto, glfw_position_proto_funcs, countof(glfw_position_proto_funcs));
   JS_SetClassProto(ctx, glfw_position_class_id, glfw_position_proto);
 
-  glfw_position_class = JS_NewCFunction2(ctx, glfw_position_ctor, "Position", 2, JS_CFUNC_constructor, 0);
+  glfw_position_class = JS_NewCFunction2(ctx, glfw_position_constructor, "Position", 2, JS_CFUNC_constructor, 0);
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, glfw_position_class, glfw_position_proto);
 
@@ -122,7 +122,7 @@ glfw_position_init(JSContext* ctx, JSModuleDef* m) {
 }
 
 JSValue
-glfw_position_new_instance(JSContext* ctx, GLFWposition* position) {
+glfw_position_wrap(JSContext* ctx, GLFWposition* position) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 

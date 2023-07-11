@@ -10,7 +10,7 @@ typedef struct {
 extern thread_local JSClassID glfw_position_class_id;
 
 JSValue glfw_position_init(JSContext*, JSModuleDef*);
-JSValue glfw_position_new_instance(JSContext*, GLFWposition*);
+JSValue glfw_position_wrap(JSContext*, GLFWposition*);
 int glfw_position_export(JSContext*, JSModuleDef*);
 
 #endif

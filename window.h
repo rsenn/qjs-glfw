@@ -11,7 +11,6 @@ glfw_window_data2(JSContext* ctx, JSValueConst value) {
 int glfw_window_init(JSContext* ctx, JSModuleDef* m);
 int glfw_window_export(JSContext* ctx, JSModuleDef* m);
 
-JSValue glfw_window_new_instance(JSContext* ctx, GLFWwindow* window);
-JSValue glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
-
+JSValue glfw_window_wrap(JSContext* ctx, GLFWwindow* window);
+ 
 #endif

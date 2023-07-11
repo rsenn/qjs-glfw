@@ -6,6 +6,6 @@ extern thread_local JSClassID glfw_monitor_class_id;
 int glfw_monitor_init(JSContext* ctx, JSModuleDef* m);
 int glfw_monitor_export(JSContext* ctx, JSModuleDef* m);
 
-JSValue glfw_monitor_new_instance(JSContext* ctx, GLFWmonitor* monitor);
+JSValue glfw_monitor_wrap(JSContext* ctx, GLFWmonitor* monitor);
 
 #endif

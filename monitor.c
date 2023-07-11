@@ -8,12 +8,13 @@
 #include "monitor.h"
 
 thread_local JSClassID glfw_monitor_class_id = 0;
+thread_local JSValue glfw_monitor_proto, glfw_monitor_class;
 
 // constructor/destructor
 JSValue
-glfw_monitor_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+glfw_monitor_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-  return glfw_monitor_new_instance(ctx, monitor);
+  return glfw_monitor_wrap(ctx, monitor);
 }
 
 // properties
@@ -35,7 +36,7 @@ glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
 
   GLFWposition* position = js_mallocz(ctx, sizeof(*position));
   glfwGetMonitorPos(monitor, &position->x, &position->y);
-  return glfw_position_new_instance(ctx, position);
+  return glfw_position_wrap(ctx, position);
 }
 
 JSValue
@@ -62,7 +63,7 @@ glfw_monitor_get_workarea(JSContext* ctx, JSValueConst this_val) {
 #ifdef HAVE_GLFW_GET_MONITOR_WORKAREA
   glfwGetMonitorWorkarea(monitor, &position->x, &position->y, &size->width, &size->height);
 #endif
-  return glfw_workarea_new_instance(ctx, workarea);
+  return glfw_workarea_wrap(ctx, workarea);
 }
 
 JSValue
@@ -73,7 +74,7 @@ glfw_monitor_get_physical_size(JSContext* ctx, JSValueConst this_val) {
 
   GLFWsize* size = js_mallocz(ctx, sizeof(*size));
   glfwGetMonitorPhysicalSize(monitor, &size->width, &size->height);
-  return glfw_size_new_instance(ctx, size);
+  return glfw_size_wrap(ctx, size);
 }
 
 JSValue
@@ -87,7 +88,7 @@ glfw_monitor_get_content_scale(JSContext* ctx, JSValueConst this_val) {
 #ifdef HAVE_GLFW_GET_MONITOR_CONTENT_SCALE
   glfwGetMonitorContentScale(monitor, (float*)&scale->x, (float*)&scale->y);
 #endif
-  return glfw_scale_new_instance(ctx, scale);
+  return glfw_scale_wrap(ctx, scale);
 }
 
 JSValue
@@ -97,7 +98,7 @@ glfw_monitor_get_current_video_mode(JSContext* ctx, JSValueConst this_val) {
     return JS_EXCEPTION;
 
   const GLFWvidmode* video_mode = glfwGetVideoMode(monitor);
-  return glfw_video_mode_new_instance(ctx, video_mode);
+  return glfw_video_mode_wrap(ctx, video_mode);
 }
 
 JSValue
@@ -111,7 +112,7 @@ glfw_monitor_get_video_modes(JSContext* ctx, JSValueConst this_val) {
 
   JSValue array = JS_NewArray(ctx);
   for(int i = 0; i < count; i++) {
-    JSValue video_mode = glfw_video_mode_new_instance(ctx, &video_modes[i]);
+    JSValue video_mode = glfw_video_mode_wrap(ctx, &video_modes[i]);
     JS_SetPropertyInt64(ctx, array, i, video_mode);
   }
 
@@ -125,7 +126,7 @@ glfw_monitor_get_gamma(JSContext* ctx, JSValueConst this_val) {
     return JS_EXCEPTION;
 
   const GLFWgammaramp* gamma = glfwGetGammaRamp(monitor);
-  return glfw_gamma_ramp_new_instance(ctx, gamma);
+  return glfw_gamma_ramp_wrap(ctx, gamma);
 }
 
 JSValue
@@ -157,7 +158,7 @@ glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
 
   JSValue array = JS_NewArray(ctx);
   for(int i = 0; i < count; i++) {
-    JSValue monitor = glfw_monitor_new_instance(ctx, monitors[i]);
+    JSValue monitor = glfw_monitor_wrap(ctx, monitors[i]);
     JS_SetPropertyInt64(ctx, array, i, monitor);
   }
 
@@ -165,11 +166,11 @@ glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
 }
 
 // initialization
-JSClassDef glfw_monitor_class_def = {
+static JSClassDef glfw_monitor_class_def = {
     .class_name = "Monitor",
 };
 
-const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
+static const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("name", glfw_monitor_get_name, NULL),
     JS_CGETSET_DEF("position", glfw_monitor_get_position, NULL),
     JS_CGETSET_DEF("workarea", glfw_monitor_get_workarea, NULL),
@@ -182,36 +183,29 @@ const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
 
 };
 
-const JSCFunctionListEntry glfw_monitor_funcs[] = {
+static const JSCFunctionListEntry glfw_monitor_funcs[] = {
     JS_CGETSET_DEF("monitors", glfw_monitor_get_monitors, NULL),
 };
 
-JSValue glfw_monitor_proto, glfw_monitor_class;
+int
+glfw_monitor_init(JSContext* ctx, JSModuleDef* m) {
+  JS_NewClassID(&glfw_monitor_class_id);
+  JS_NewClass(JS_GetRuntime(ctx), glfw_monitor_class_id, &glfw_monitor_class_def);
 
-JSValue
-glfw_monitor_constructor(JSContext* ctx) {
-  JSRuntime* rt = JS_GetRuntime(ctx);
+  glfw_monitor_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_monitor_proto, glfw_monitor_proto_funcs, countof(glfw_monitor_proto_funcs));
+  JS_SetClassProto(ctx, glfw_monitor_class_id, glfw_monitor_proto);
 
-  if(!JS_IsRegisteredClass(rt, glfw_monitor_class_id)) {
-    JS_NewClassID(&glfw_monitor_class_id);
-    JS_NewClass(rt, glfw_monitor_class_id, &glfw_monitor_class_def);
-
-    glfw_monitor_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, glfw_monitor_proto, glfw_monitor_proto_funcs, countof(glfw_monitor_proto_funcs));
-    JS_SetClassProto(ctx, glfw_monitor_class_id, glfw_monitor_proto);
-
-    glfw_monitor_class = JS_NewCFunction2(ctx, glfw_monitor_ctor, "Monitor", 5, JS_CFUNC_constructor, 0);
-    JS_SetPropertyFunctionList(ctx, glfw_monitor_class, glfw_monitor_funcs, countof(glfw_monitor_funcs));
-    JS_SetConstructor(ctx, glfw_monitor_class, glfw_monitor_proto);
-  }
-
-  return glfw_monitor_class;
+  glfw_monitor_class = JS_NewCFunction2(ctx, glfw_monitor_constructor, "Monitor", 5, JS_CFUNC_constructor, 0);
+  JS_SetPropertyFunctionList(ctx, glfw_monitor_class, glfw_monitor_funcs, countof(glfw_monitor_funcs));
+  JS_SetConstructor(ctx, glfw_monitor_class, glfw_monitor_proto);
+  JS_SetModuleExport(ctx, m, "Monitor", glfw_monitor_class);
+  return 0;
 }
 
 JSValue
-glfw_monitor_new_instance(JSContext* ctx, GLFWmonitor* monitor) {
-  JSValue ctor = glfw_monitor_constructor(ctx);
-  JSValue proto = JS_GetPropertyStr(ctx, ctor, "prototype");
+glfw_monitor_wrap(JSContext* ctx, GLFWmonitor* monitor) {
+  JSValue proto = JS_GetPropertyStr(ctx, glfw_monitor_class, "prototype");
   if(JS_IsException(proto)) {
     JS_FreeValue(ctx, proto);
     return JS_EXCEPTION;
@@ -226,12 +220,6 @@ glfw_monitor_new_instance(JSContext* ctx, GLFWmonitor* monitor) {
 
   JS_SetOpaque(obj, monitor);
   return obj;
-}
-
-int
-glfw_monitor_init(JSContext* ctx, JSModuleDef* m) {
-  JS_SetModuleExport(ctx, m, "Monitor", glfw_monitor_constructor(ctx));
-  return 0;
 }
 
 int

@@ -3,10 +3,11 @@
 #include "scale.h"
 
 thread_local JSClassID glfw_scale_class_id = 0;
+thread_local JSValue glfw_scale_proto, glfw_scale_class;
 
 // constructor/destructor
 JSValue
-glfw_scale_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+glfw_scale_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWscale* scale;
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
@@ -75,7 +76,7 @@ glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magi
 
 static JSValue
 glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
   GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
   if(!scale)
@@ -99,46 +100,41 @@ glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueCons
 }
 
 // initialization
-JSClassDef glfw_scale_class_def = {
+static JSClassDef glfw_scale_class_def = {
     .class_name = "Scale",
     .finalizer = glfw_scale_finalizer,
 };
 
-const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
+static const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_scale_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWscale", JS_PROP_CONFIGURABLE),
 };
 
-JSValue glfw_scale_proto, glfw_scale_class;
+int
+glfw_scale_init(JSContext* ctx, JSModuleDef* m) {
+  JS_NewClassID(&glfw_scale_class_id);
+  JS_NewClass(JS_GetRuntime(ctx), glfw_scale_class_id, &glfw_scale_class_def);
 
-JSValue
-glfw_scale_constructor(JSContext* ctx) {
-  JSRuntime* rt = JS_GetRuntime(ctx);
+  glfw_scale_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_scale_proto, glfw_scale_proto_funcs, countof(glfw_scale_proto_funcs));
+  JS_SetClassProto(ctx, glfw_scale_class_id, glfw_scale_proto);
 
-  if(!JS_IsRegisteredClass(rt, glfw_scale_class_id)) {
-    JS_NewClassID(&glfw_scale_class_id);
-    JS_NewClass(JS_GetRuntime(ctx), glfw_scale_class_id, &glfw_scale_class_def);
+  glfw_scale_class = JS_NewCFunction2(ctx, glfw_scale_constructor, "Scale", 2, JS_CFUNC_constructor, 0);
+  /* set proto.constructor and ctor.prototype */
+  JS_SetConstructor(ctx, glfw_scale_class, glfw_scale_proto);
 
-    glfw_scale_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, glfw_scale_proto, glfw_scale_proto_funcs, countof(glfw_scale_proto_funcs));
-    JS_SetClassProto(ctx, glfw_scale_class_id, glfw_scale_proto);
-
-    glfw_scale_class = JS_NewCFunction2(ctx, glfw_scale_ctor, "Scale", 2, JS_CFUNC_constructor, 0);
-    /* set proto.constructor and ctor.prototype */
-    JS_SetConstructor(ctx, glfw_scale_class, glfw_scale_proto);
-  }
-
-  return glfw_scale_class;
+  JS_SetModuleExport(ctx, m, "Scale", glfw_scale_class);
+  return 0;
 }
 
 JSValue
-glfw_scale_new_instance(JSContext* ctx, GLFWscale* scale) {
+glfw_scale_wrap(JSContext* ctx, GLFWscale* scale) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  proto = JS_GetPropertyStr(ctx, glfw_scale_constructor(ctx), "prototype");
+  proto = JS_GetPropertyStr(ctx, glfw_scale_class, "prototype");
   if(JS_IsException(proto))
     goto fail;
 
@@ -153,12 +149,6 @@ glfw_scale_new_instance(JSContext* ctx, GLFWscale* scale) {
 fail:
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
-}
-
-int
-glfw_scale_init(JSContext* ctx, JSModuleDef* m) {
-  JS_SetModuleExport(ctx, m, "Scale", glfw_scale_constructor(ctx));
-  return 0;
 }
 
 int

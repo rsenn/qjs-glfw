@@ -188,7 +188,7 @@ glfw_context_get_current(JSContext* ctx, JSValueConst this_val) {
   if(!window)
     return JS_EXCEPTION;
   // TODO: window is not owned so finalizer should not destroy it
-  return glfw_window_new_instance(ctx, window);
+  return glfw_window_wrap(ctx, window);
 }
 
 JSValue
@@ -292,7 +292,7 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
 #define DEFINE_CONSTANT(Name) JS_PROP_INT32_DEF(#Name, GLFW_##Name, 0),
 
-const JSCFunctionListEntry glfw_exports[] = {
+static const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("poll", 2, glfw_poll_events),
     JS_CFUNC_DEF("wait", 2, glfw_wait_events),
     JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
