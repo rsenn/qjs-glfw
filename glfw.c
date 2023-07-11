@@ -2,6 +2,7 @@
 #include <GL/glcorearb.h>
 #include <GL/gl3w.h>
 #endif
+#include <assert.h>
 
 #include "glfw.h"
 #include "position.h"
@@ -15,15 +16,49 @@
 
 //#include "gl3w/src/gl3w.c"
 //
+thread_local BOOL glfw_initialized = FALSE;
+
+BOOL
+glfw_initialize(JSContext* ctx) {
+  assert(!glfw_initialized);
+
+  // TODO: Is it possible to check errors for init and throw in module import?
+  if(glfwInit() == GLFW_TRUE) {
+
+#ifdef USE_GL3W
+    gl3wInit();
+#endif
+
+    glfw_initialized = TRUE;
+  }
+
+  return glfw_initialized;
+}
 
 #ifdef HAVE_GLFW_GET_ERROR
 JSValue
-glfw_throw(JSContext* ctx) {
+glfw_throw(JSContext* ctx, const char* func) {
   const char* message;
+
   if(glfwGetError(&message) != GLFW_NO_ERROR) {
-    JSValue error = JS_NewString(ctx, message);
+    JSValue error = JS_NewError(ctx);
+
+    char* s;
+
+    if((s = js_malloc(ctx, strlen(message) + strlen(func) + 4))) {
+      strcpy(s, "In ");
+      strcat(s, func);
+      strcat(s, "(): ");
+      strcat(s, message);
+
+      JS_SetPropertyStr(ctx, error, "message", JS_NewString(ctx, s));
+      js_free(ctx, s);
+    }
+    JS_SetPropertyStr(ctx, error, "function", JS_NewString(ctx, func));
+
     JS_Throw(ctx, error);
   }
+
   return JS_EXCEPTION;
 }
 #endif
@@ -220,6 +255,7 @@ glfw_init(JSContext* ctx, JSModuleDef* m) {
   // TODO: lazy-load version info with a getter?
   int major, minor, revision;
   glfwGetVersion(&major, &minor, &revision);
+
   JSValue version = JS_NewObject(ctx);
   JS_SetPropertyStr(ctx, version, "major", JS_NewInt32(ctx, major));
   JS_SetPropertyStr(ctx, version, "minor", JS_NewInt32(ctx, minor));
@@ -255,21 +291,6 @@ js_init_module(JSContext* ctx, const char* module_name) {
     return NULL;
 
   glfw_export(ctx, m);
-
-  {
-    static BOOL initialized;
-
-    if(!initialized) {
-      // TODO: Is it possible to check errors for init and throw in module import?
-      glfwInit();
-
-#ifdef USE_GL3W
-      gl3wInit();
-#endif
-
-      initialized = TRUE;
-    }
-  }
 
   return m;
 }

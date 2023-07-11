@@ -702,11 +702,15 @@ glfw_window_constructor(JSContext* ctx) {
 
 JSValue
 glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
-  GLFWwindow* window = glfwCreateWindow(width, height, title, monitor, share);
-  if(window == NULL) {
+  GLFWwindow* window;
+
+  if(!glfw_initialized)
+    if(!glfw_initialize(ctx))
+      return GLFW_THROW();
+
+  if((window = glfwCreateWindow(width, height, title, monitor, share)) == NULL) {
 #ifdef HAVE_GLFW_GET_ERROR
-    glfw_throw(ctx);
-    return JS_EXCEPTION;
+    return GLFW_THROW();
 #else
     return JS_ThrowInternalError(ctx, "glfwCreateWindow failed");
 #endif
@@ -734,7 +738,8 @@ glfw_window_new_instance(JSContext* ctx, GLFWwindow* window) {
 
   if((wc = js_mallocz(ctx, sizeof(WindowContext)))) {
     int i;
-    for(i = 0; i < _CALLBACK_LAST; i++) wc->handlers.list[i] = JS_UNDEFINED;
+    for(i = 0; i < _CALLBACK_LAST; i++)
+      wc->handlers.list[i] = JS_UNDEFINED;
 
     wc->ctx = ctx;
     wc->this_val = JS_DupValue(ctx, obj);

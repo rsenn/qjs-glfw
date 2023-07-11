@@ -14,8 +14,6 @@
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
-JSValue glfw_throw(JSContext* ctx);
-
 #ifndef JS_SHARED_LIBRARY
 #define js_init_module js_init_module_qjsc_glfw
 #endif
@@ -26,6 +24,16 @@ JSValue glfw_throw(JSContext* ctx);
 #else
 #define VISIBLE __attribute__((visibility("default")))
 #define HIDDEN __attribute__((visibility("hidden")))
+#endif
+
+#ifdef _Thread_local
+#define thread_local _Thread_local
+#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#define thread_local __thread
+#elif defined(_WIN32)
+#define thread_local __declspec(thread)
+#else
+#error No TLS implementation found.
 #endif
 
 #define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
@@ -61,6 +69,11 @@ js_newptr(JSContext* ctx, void* ptr) {
   return JS_NewString(ctx, buf);
 }
 
+#define GLFW_THROW() glfw_throw(ctx, __func__)
+
 VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
+extern thread_local BOOL glfw_initialized;
+BOOL glfw_initialize(JSContext*);
+JSValue glfw_throw(JSContext*, const char*);
 
 #endif
