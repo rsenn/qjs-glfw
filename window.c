@@ -271,7 +271,7 @@ glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmo
 
 // constructor/destructor
 static JSValue
-glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
   int32_t width, height;
   const char* title = 0;
   GLFWsize* size;
@@ -281,12 +281,10 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
   int i = 0;
 
   if(JS_IsObject(argv[i]) && (size = JS_GetOpaque(argv[i], glfw_size_class_id))) {
-
     width = size->width;
     height = size->height;
 
     ++i;
-
   } else {
     if(JS_ToInt32(ctx, &width, argv[i]))
       return JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
@@ -336,7 +334,7 @@ glfw_window_get_id(JSContext* ctx, JSValueConst this_val) {
 }
 
 static JSValue
-glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWwindow* window;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
@@ -347,7 +345,7 @@ glfw_window_make_context_current(JSContext* ctx, JSValueConst this_val, int argc
 }
 
 static JSValue
-glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWwindow* window;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
@@ -359,7 +357,7 @@ glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValu
 
 // static methods
 static JSValue
-glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   int key;
 
   if(JS_ToInt32(ctx, &key, argv[0]))
@@ -388,7 +386,7 @@ glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 }
 
 static JSValue
-glfw_window_default_hints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_window_default_hints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   glfwDefaultWindowHints();
   return JS_UNDEFINED;
 }
@@ -797,7 +795,7 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   V(FocusWindow, focus)
 
 #define MAKE_TRIGGER_METHOD(NativeName, JSName) \
-  static JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) { \
+  static JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) { \
     GLFWwindow* window = glfw_window_data2(ctx, this_val); \
     glfw##NativeName(window); \
     if(!window) \

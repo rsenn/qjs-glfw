@@ -1,0 +1,170 @@
+#include "glfw.h"
+
+#include "image.h"
+
+thread_local JSClassID glfw_image_class_id = 0;
+thread_local JSValue glfw_image_proto, glfw_image_class;
+
+static void
+image_free(GLFWimage* img) {
+  if(img->pixels)
+    free(img->pixels);
+
+  free(img);
+}
+
+static GLFWimage*
+image_clone(GLFWimage const* img) {
+  const size_t len = 4 * img->width * img->height;
+  GLFWimage* ret;
+
+  if((ret = malloc(sizeof(GLFWimage)))) {
+    ret->pixels = NULL;
+    ret->width = img->width;
+    ret->height = img->height;
+
+    if(!(ret->pixels = malloc(len))) {
+      image_free(ret);
+      return 0;
+    }
+
+    memcpy(ret->pixels, img->pixels, len);
+  }
+
+  return ret;
+}
+
+// constructor/destructor
+static JSValue
+glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
+  JS_ThrowInternalError(ctx, "glfw.Image can not be constructed directly");
+  return JS_EXCEPTION;
+}
+
+static void
+image_unref(JSRuntime* rt, void* opaque, void* ptr) {
+  JSObject* obj = opaque;
+  JSValue image = JS_MKPTR(JS_TAG_OBJECT, obj);
+
+  JS_FreeValueRT(rt, image);
+}
+
+enum {
+  IMAGE_PIXELS,
+};
+
+// properties
+static JSValue
+glfw_image_array(JSContext* ctx, JSValueConst this_val) {
+  GLFWimage* image;
+  JSValue global, ctor, buf, ret;
+
+  if(!(image = JS_GetOpaque2(ctx, this_val, glfw_image_class_id)))
+    return JS_EXCEPTION;
+
+  buf = JS_NewArrayBuffer(ctx, (uint8_t*)image->pixels, image->width * image->height * 4, image_unref, JS_VALUE_GET_PTR(JS_DupValue(ctx, this_val)), FALSE);
+
+  global = JS_GetGlobalObject(ctx);
+  ctor = JS_GetPropertyStr(ctx, global, "Uint32Array");
+  JS_FreeValue(ctx, global);
+  ret = JS_CallConstructor(ctx, ctor, 1, &buf);
+  JS_FreeValue(ctx, ctor);
+  JS_FreeValue(ctx, buf);
+
+  return ret;
+}
+
+enum {
+  IMAGE_WIDTH,
+  IMAGE_HEIGHT,
+};
+
+// properties
+static JSValue
+glfw_image_get(JSContext* ctx, JSValueConst this_val, int magic) {
+  GLFWimage* image;
+  JSValue ret = JS_UNDEFINED;
+
+  if(!(image = JS_GetOpaque2(ctx, this_val, glfw_image_class_id)))
+    return JS_EXCEPTION;
+
+  switch(magic) {
+    case IMAGE_WIDTH: {
+      ret = JS_NewUint32(ctx, image->width);
+      break;
+    }
+    case IMAGE_HEIGHT: {
+      ret = JS_NewUint32(ctx, image->height);
+      break;
+    }
+  }
+
+  return ret;
+}
+
+static void
+glfw_image_finalizer(JSRuntime* rt, JSValue val) {
+  GLFWimage* image;
+
+  if((image = JS_GetOpaque(val, glfw_image_class_id)))
+    image_free(image);
+}
+
+// initialization
+static JSClassDef glfw_image_class_def = {
+    .class_name = "Image",
+    .finalizer = glfw_image_finalizer,
+};
+
+static const JSCFunctionListEntry glfw_image_proto_funcs[] = {
+    JS_CGETSET_DEF("pixels", glfw_image_array, NULL),
+    JS_CGETSET_MAGIC_DEF("width", glfw_image_get, NULL, IMAGE_WIDTH),
+    JS_CGETSET_MAGIC_DEF("height", glfw_image_get, NULL, IMAGE_HEIGHT),
+    JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWimage", JS_PROP_CONFIGURABLE),
+};
+
+int
+glfw_image_init(JSContext* ctx, JSModuleDef* m) {
+  JS_NewClassID(&glfw_image_class_id);
+  JS_NewClass(JS_GetRuntime(ctx), glfw_image_class_id, &glfw_image_class_def);
+
+  glfw_image_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_image_proto, glfw_image_proto_funcs, countof(glfw_image_proto_funcs));
+  JS_SetClassProto(ctx, glfw_image_class_id, glfw_image_proto);
+
+  glfw_image_class = JS_NewCFunction2(ctx, glfw_image_constructor, "Image", 2, JS_CFUNC_constructor, 0);
+  /* set proto.constructor and ctor.prototype */
+  JS_SetConstructor(ctx, glfw_image_class, glfw_image_proto);
+  JS_SetModuleExport(ctx, m, "Image", glfw_image_class);
+  return 0;
+}
+
+JSValue
+glfw_image_wrap(JSContext* ctx, const GLFWimage* img) {
+  JSValue obj, proto = JS_GetPropertyStr(ctx, glfw_image_class, "prototype");
+  GLFWimage* image;
+
+  if(!(image = image_clone(img)))
+    return JS_EXCEPTION;
+
+  if(JS_IsException(proto)) {
+    JS_FreeValue(ctx, proto);
+    return JS_EXCEPTION;
+  }
+
+  obj = JS_NewObjectProtoClass(ctx, proto, glfw_image_class_id);
+  JS_FreeValue(ctx, proto);
+
+  if(JS_IsException(proto)) {
+    JS_FreeValue(ctx, obj);
+    return JS_EXCEPTION;
+  }
+
+  JS_SetOpaque(obj, image);
+  return obj;
+}
+
+int
+glfw_image_export(JSContext* ctx, JSModuleDef* m) {
+  return JS_AddModuleExport(ctx, m, "Image");
+}

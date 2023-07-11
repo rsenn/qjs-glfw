@@ -138,7 +138,8 @@ const runMain = () => {
     main(...scriptArgs.slice(1));
     std.exit(0);
   } catch(error) {
-    console.log('ERROR:', error);
+    if(typeof error == 'object') console.log('ERROR: ' + error.message + '\n' + error.stack);
+    else console.log(`ERROR (${typeof error}): ` + error);
   }
 };
 import('console') .catch(runMain) .then(({ Console }) => ((globalThis.console = new Console({ inspectOptions: {} })), runMain()));

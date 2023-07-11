@@ -1,5 +1,4 @@
 #include "glfw.h"
-
 #include "scale.h"
 
 thread_local JSClassID glfw_scale_class_id = 0;
@@ -7,23 +6,28 @@ thread_local JSValue glfw_scale_proto, glfw_scale_class;
 
 // constructor/destructor
 static JSValue
-glfw_scale_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWscale* scale;
-  JSValue obj = JS_UNDEFINED;
-  JSValue proto;
+glfw_scale_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
+  GLFWscale *scale, *other;
+  JSValue proto, obj = JS_UNDEFINED;
 
-  scale = js_mallocz(ctx, sizeof(*scale));
-  if(!scale)
+  if(!(scale = js_mallocz(ctx, sizeof(*scale))))
     return JS_EXCEPTION;
 
-  if(JS_ToFloat64(ctx, &scale->x, argv[0]))
-    goto fail;
+  if(JS_IsObject(argv[0]) && (other = JS_GetOpaque(argv[0], glfw_scale_class_id))) {
+    *scale = *other;
+  } else {
+    if(JS_ToFloat64(ctx, &scale->x, argv[0])) {
+      JS_ThrowTypeError(ctx, "argument 1 (x-scaling) must be a number");
+      goto fail;
+    }
 
-  if(JS_ToFloat64(ctx, &scale->y, argv[1]))
-    goto fail;
+    if(JS_ToFloat64(ctx, &scale->y, argv[1])) {
+      JS_ThrowTypeError(ctx, "argument 2 (y-scaling) must be a number");
+      goto fail;
+    }
+  }
 
-  /* using new_target to get the prototype is necessary when the
-      class is extended. */
+  /* using new_target to get the prototype is necessary when the class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -41,8 +45,7 @@ fail:
   return JS_EXCEPTION;
 }
 
-void
-static glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
+void static glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
   GLFWscale* scale;
 
   if((scale = JS_GetOpaque(val, glfw_scale_class_id)))
@@ -51,19 +54,19 @@ static glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
 
 // properties
 static JSValue
-glfw_scale_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
+glfw_scale_get(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWscale* scale;
- 
+
   if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))
     return JS_EXCEPTION;
-  
+
   return JS_NewFloat64(ctx, magic == 0 ? scale->x : scale->y);
 }
 
 static JSValue
-glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+glfw_scale_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   GLFWscale* scale;
-  
+
   if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))
     return JS_EXCEPTION;
 
@@ -80,7 +83,7 @@ glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magi
 }
 
 static JSValue
-glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWscale* scale;
   JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
@@ -112,8 +115,8 @@ static JSClassDef glfw_scale_class_def = {
 };
 
 static const JSCFunctionListEntry glfw_scale_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("x", glfw_scale_get_axis, glfw_scale_set_axis, 0),
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("y", glfw_scale_get_axis, glfw_scale_set_axis, 1),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("x", glfw_scale_get, glfw_scale_set, 0),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("y", glfw_scale_get, glfw_scale_set, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_scale_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWscale", JS_PROP_CONFIGURABLE),
 };

@@ -7,14 +7,14 @@ thread_local JSValue glfw_video_mode_proto, glfw_video_mode_class;
 
 // constructor/destructor
 static JSValue
-glfw_video_mode_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
+glfw_video_mode_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");
   return JS_EXCEPTION;
 }
 
 // properties
 static JSValue
-glfw_video_mode_get_int(JSContext* ctx, JSValueConst this_val, int magic) {
+glfw_video_mode_get(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
   if(!video_mode)
     return JS_EXCEPTION;
@@ -34,7 +34,7 @@ glfw_video_mode_get_int(JSContext* ctx, JSValueConst this_val, int magic) {
 }
 
 static JSValue
-glfw_video_mode_set_int(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+glfw_video_mode_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
   if(!video_mode)
     return JS_EXCEPTION;
@@ -61,12 +61,12 @@ JSClassDef glfw_video_mode_class_def = {
 };
 
 static const JSCFunctionListEntry glfw_video_mode_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_video_mode_get_int, glfw_video_mode_set_int, 0),
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_video_mode_get_int, glfw_video_mode_set_int, 1),
-    JS_CGETSET_MAGIC_DEF("redBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 2),
-    JS_CGETSET_MAGIC_DEF("greenBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 3),
-    JS_CGETSET_MAGIC_DEF("blueBits", glfw_video_mode_get_int, glfw_video_mode_set_int, 4),
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("refreshRate", glfw_video_mode_get_int, glfw_video_mode_set_int, 5),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_video_mode_get, glfw_video_mode_set, 0),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_video_mode_get, glfw_video_mode_set, 1),
+    JS_CGETSET_MAGIC_DEF("redBits", glfw_video_mode_get, glfw_video_mode_set, 2),
+    JS_CGETSET_MAGIC_DEF("greenBits", glfw_video_mode_get, glfw_video_mode_set, 3),
+    JS_CGETSET_MAGIC_DEF("blueBits", glfw_video_mode_get, glfw_video_mode_set, 4),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("refreshRate", glfw_video_mode_get, glfw_video_mode_set, 5),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWvidmode", JS_PROP_CONFIGURABLE),
 };
 

@@ -11,6 +11,7 @@
 #include "monitor.h"
 #include "workarea.h"
 #include "gamma_ramp.h"
+#include "image.h"
 #include "video_mode.h"
 #include "scale.h"
 
@@ -64,7 +65,7 @@ glfw_throw(JSContext* ctx, const char* func) {
 #endif
 
 static JSValue
-glfw_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   const char* str;
   void* addr;
   char buf[64];
@@ -91,7 +92,7 @@ enum {
 };
 
 static JSValue
-glfw_time(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+glfw_time(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
@@ -125,7 +126,7 @@ enum {
 };
 
 static JSValue
-glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, int magic) {
+glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
@@ -146,13 +147,13 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, 
 }
 
 static JSValue
-glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   glfwPollEvents();
   return JS_UNDEFINED;
 }
 
 static JSValue
-glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   if(JS_IsNumber(argv[0])) {
     double timeout;
     if(JS_ToFloat64(ctx, &timeout, argv[0]))
@@ -167,7 +168,7 @@ glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
 }
 
 static JSValue
-glfw_post_empty_event(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_post_empty_event(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   if(JS_IsNumber(argv[0])) {
     double timeout;
     if(JS_ToFloat64(ctx, &timeout, argv[0]))
@@ -206,7 +207,7 @@ glfw_context_get_proto(JSContext* ctx, JSValueConst this_val) {
 }
 
 static JSValue
-glfw_context_swap_interval(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_context_swap_interval(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   int interval;
   if(JS_ToInt32(ctx, &interval, argv[0]))
     return JS_EXCEPTION;
@@ -224,7 +225,7 @@ static const JSCFunctionListEntry glfw_context_props[] = {
 
 // Version
 static JSValue
-glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   return JS_NewString(ctx, glfwGetVersionString());
 }
 
@@ -319,6 +320,7 @@ glfw_init(JSContext* ctx, JSModuleDef* m) {
   glfw_position_init(ctx, m);
   glfw_size_init(ctx, m);
   glfw_gamma_ramp_init(ctx, m);
+  glfw_image_init(ctx, m);
   glfw_monitor_init(ctx, m);
   glfw_scale_init(ctx, m);
   glfw_video_mode_init(ctx, m);
@@ -346,6 +348,7 @@ glfw_export(JSContext* ctx, JSModuleDef* m) {
   glfw_position_export(ctx, m);
   glfw_size_export(ctx, m);
   glfw_gamma_ramp_export(ctx, m);
+  glfw_image_export(ctx, m);
   glfw_monitor_export(ctx, m);
   glfw_scale_export(ctx, m);
   glfw_video_mode_export(ctx, m);
