@@ -784,7 +784,7 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
   V(FocusWindow, focus)
 
 #define MAKE_TRIGGER_METHOD(NativeName, JSName) \
-  JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) { \
+  static JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) { \
     GLFWwindow* window = glfw_window_data2(ctx, this_val); \
     glfw##NativeName(window); \
     if(!window) \

@@ -6,9 +6,11 @@ typedef struct {
 } GLFWsize;
 
 extern thread_local JSClassID glfw_size_class_id;
+extern thread_local JSValue glfw_size_proto, glfw_size_class;
 
-JSValue glfw_size_wrap(JSContext* ctx, GLFWsize* size);
-int glfw_size_init(JSContext* ctx, JSModuleDef* m);
-int glfw_size_export(JSContext* ctx, JSModuleDef* m);
+int     glfw_size_init(JSContext*, JSModuleDef*);
+JSValue glfw_size_wrap(JSContext*, GLFWsize*);
+int     glfw_size_export(JSContext*, JSModuleDef*);
+
 
 #endif

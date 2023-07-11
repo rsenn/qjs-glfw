@@ -6,8 +6,10 @@ typedef struct {
 } GLFWscale;
 
 extern thread_local JSClassID glfw_scale_class_id;
-JSValue glfw_scale_wrap(JSContext* ctx, GLFWscale* scale);
-int glfw_scale_init(JSContext* ctx, JSModuleDef* m);
-int glfw_scale_export(JSContext* ctx, JSModuleDef* m);
+extern thread_local JSValue glfw_scale_proto, glfw_scale_class;
+
+int     glfw_scale_init(JSContext*, JSModuleDef*);
+JSValue glfw_scale_wrap(JSContext*, GLFWscale*);
+int     glfw_scale_export(JSContext*, JSModuleDef*);
 
 #endif

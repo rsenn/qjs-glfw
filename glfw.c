@@ -63,7 +63,7 @@ glfw_throw(JSContext* ctx, const char* func) {
 }
 #endif
 
-JSValue
+static JSValue
 glfw_getprocaddress(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   const char* str;
   void* addr;
@@ -145,13 +145,13 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv, 
   return ret;
 }
 
-JSValue
+static JSValue
 glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   glfwPollEvents();
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   if(JS_IsNumber(argv[0])) {
     double timeout;
@@ -166,7 +166,7 @@ glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* 
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 glfw_post_empty_event(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   if(JS_IsNumber(argv[0])) {
     double timeout;
@@ -182,7 +182,7 @@ glfw_post_empty_event(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 }
 
 // Context
-JSValue
+static JSValue
 glfw_context_get_current(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = glfwGetCurrentContext();
   if(!window)
@@ -191,7 +191,7 @@ glfw_context_get_current(JSContext* ctx, JSValueConst this_val) {
   return glfw_window_wrap(ctx, window);
 }
 
-JSValue
+static JSValue
 glfw_context_set_current(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window = JS_GetOpaque2(ctx, value, glfw_window_class_id);
   if(!window)
@@ -200,12 +200,12 @@ glfw_context_set_current(JSContext* ctx, JSValueConst this_val, JSValueConst val
   return JS_UNDEFINED;
 }
 
-JSValue
+static JSValue
 glfw_context_get_proto(JSContext* ctx, JSValueConst this_val) {
   return JS_NULL;
 }
 
-JSValue
+static JSValue
 glfw_context_swap_interval(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   int interval;
   if(JS_ToInt32(ctx, &interval, argv[0]))
@@ -223,7 +223,7 @@ static const JSCFunctionListEntry glfw_context_props[] = {
 };
 
 // Version
-JSValue
+static JSValue
 glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
   return JS_NewString(ctx, glfwGetVersionString());
 }

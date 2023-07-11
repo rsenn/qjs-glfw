@@ -8,6 +8,7 @@ typedef struct {
 } GLFWposition;
 
 extern thread_local JSClassID glfw_position_class_id;
+extern thread_local JSValue glfw_position_proto, glfw_position_class;
 
 JSValue glfw_position_init(JSContext*, JSModuleDef*);
 JSValue glfw_position_wrap(JSContext*, GLFWposition*);

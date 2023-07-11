@@ -6,14 +6,14 @@ thread_local JSClassID glfw_gamma_ramp_class_id = 0;
 thread_local JSValue glfw_gamma_ramp_proto, glfw_gamma_ramp_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_gamma_ramp_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");
   return JS_EXCEPTION;
 }
 
 // properties
-JSValue
+static JSValue
 glfw_gamma_ramp_get_prop(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWgammaramp* gamma_ramp = JS_GetOpaque2(ctx, this_val, glfw_gamma_ramp_class_id);
   if(!gamma_ramp)

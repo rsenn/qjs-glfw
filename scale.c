@@ -6,7 +6,7 @@ thread_local JSClassID glfw_scale_class_id = 0;
 thread_local JSValue glfw_scale_proto, glfw_scale_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_scale_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWscale* scale;
   JSValue obj = JS_UNDEFINED;
@@ -42,24 +42,29 @@ fail:
 }
 
 void
-glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWscale* scale = JS_GetOpaque(val, glfw_scale_class_id);
-  js_free_rt(rt, scale);
+static glfw_scale_finalizer(JSRuntime* rt, JSValue val) {
+  GLFWscale* scale;
+
+  if((scale = JS_GetOpaque(val, glfw_scale_class_id)))
+    js_free_rt(rt, scale);
 }
 
 // properties
-JSValue
+static JSValue
 glfw_scale_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
-  if(!scale)
+  GLFWscale* scale;
+ 
+  if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))
     return JS_EXCEPTION;
+  
   return JS_NewFloat64(ctx, magic == 0 ? scale->x : scale->y);
 }
 
-JSValue
+static JSValue
 glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
-  if(!scale)
+  GLFWscale* scale;
+  
+  if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))
     return JS_EXCEPTION;
 
   double value;
@@ -76,10 +81,11 @@ glfw_scale_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magi
 
 static JSValue
 glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  GLFWscale* scale;
   JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWscale* scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id);
-  if(!scale)
+
+  if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))
     return JS_EXCEPTION;
 
   arr = JS_NewArray(ctx);

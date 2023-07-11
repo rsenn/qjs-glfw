@@ -71,9 +71,13 @@ js_newptr(JSContext* ctx, void* ptr) {
 
 #define GLFW_THROW() glfw_throw(ctx, __func__)
 
-VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 extern thread_local BOOL glfw_initialized;
+
+VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
+
+JSValue glfw_throw(JSContext* ctx, const char* func);
 BOOL glfw_initialize(JSContext*);
-JSValue glfw_throw(JSContext*, const char*);
+int glfw_init(JSContext*, JSModuleDef*);
+int glfw_export(JSContext*, JSModuleDef*);
 
 #endif

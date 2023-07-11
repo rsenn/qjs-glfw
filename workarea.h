@@ -10,8 +10,10 @@ typedef struct {
 } GLFWworkarea;
 
 extern thread_local JSClassID glfw_workarea_class_id;
-JSValue glfw_workarea_wrap(JSContext* ctx, GLFWworkarea* workarea);
-int glfw_workarea_init(JSContext* ctx, JSModuleDef* m);
-int glfw_workarea_export(JSContext* ctx, JSModuleDef* m);
+extern thread_local JSValue glfw_workarea_proto, glfw_workarea_class;
+
+int     glfw_workarea_init(JSContext*, JSModuleDef*);
+JSValue glfw_workarea_wrap(JSContext*, GLFWworkarea*);
+int     glfw_workarea_export(JSContext*, JSModuleDef*);
 
 #endif

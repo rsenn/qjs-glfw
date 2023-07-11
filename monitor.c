@@ -11,14 +11,14 @@ thread_local JSClassID glfw_monitor_class_id = 0;
 thread_local JSValue glfw_monitor_proto, glfw_monitor_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_monitor_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWmonitor* monitor = glfwGetPrimaryMonitor();
   return glfw_monitor_wrap(ctx, monitor);
 }
 
 // properties
-JSValue
+static JSValue
 glfw_monitor_get_name(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -28,7 +28,7 @@ glfw_monitor_get_name(JSContext* ctx, JSValueConst this_val) {
   return JS_NewString(ctx, name);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -39,7 +39,7 @@ glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
   return glfw_position_wrap(ctx, position);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_workarea(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -66,7 +66,7 @@ glfw_monitor_get_workarea(JSContext* ctx, JSValueConst this_val) {
   return glfw_workarea_wrap(ctx, workarea);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_physical_size(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -77,7 +77,7 @@ glfw_monitor_get_physical_size(JSContext* ctx, JSValueConst this_val) {
   return glfw_size_wrap(ctx, size);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_content_scale(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -91,7 +91,7 @@ glfw_monitor_get_content_scale(JSContext* ctx, JSValueConst this_val) {
   return glfw_scale_wrap(ctx, scale);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_current_video_mode(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -101,7 +101,7 @@ glfw_monitor_get_current_video_mode(JSContext* ctx, JSValueConst this_val) {
   return glfw_video_mode_wrap(ctx, video_mode);
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_video_modes(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -119,7 +119,7 @@ glfw_monitor_get_video_modes(JSContext* ctx, JSValueConst this_val) {
   return array;
 }
 
-JSValue
+static JSValue
 glfw_monitor_get_gamma(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -129,7 +129,7 @@ glfw_monitor_get_gamma(JSContext* ctx, JSValueConst this_val) {
   return glfw_gamma_ramp_wrap(ctx, gamma);
 }
 
-JSValue
+static JSValue
 glfw_monitor_set_gamma(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWmonitor* monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id);
   if(!monitor)
@@ -151,7 +151,7 @@ glfw_monitor_set_gamma(JSContext* ctx, JSValueConst this_val, JSValueConst value
 }
 
 // Static properties
-JSValue
+static JSValue
 glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
   int count;
   GLFWmonitor** monitors = glfwGetMonitors(&count);

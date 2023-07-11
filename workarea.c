@@ -6,7 +6,7 @@ thread_local JSClassID glfw_workarea_class_id = 0;
 thread_local JSValue glfw_workarea_proto, glfw_workarea_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_workarea_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWworkarea* workarea = js_mallocz(ctx, sizeof(*workarea));
   if(!workarea)
@@ -41,14 +41,14 @@ fail:
   return JS_EXCEPTION;
 }
 
-void
+static void
 glfw_workarea_finalizer(JSRuntime* rt, JSValue val) {
   GLFWworkarea* workarea = JS_GetOpaque(val, glfw_workarea_class_id);
   js_free_rt(rt, workarea);
 }
 
 // properties
-JSValue
+static JSValue
 glfw_workarea_get_position_or_size(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWworkarea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
   if(!workarea)
@@ -60,7 +60,7 @@ glfw_workarea_get_position_or_size(JSContext* ctx, JSValueConst this_val, int ma
     return glfw_size_wrap(ctx, workarea->size);
 }
 
-JSValue
+static JSValue
 glfw_workarea_set_position_or_size(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   GLFWworkarea* workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id);
   if(!workarea)

@@ -6,14 +6,14 @@ thread_local JSClassID glfw_video_mode_class_id = 0;
 thread_local JSValue glfw_video_mode_proto, glfw_video_mode_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_video_mode_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   JS_ThrowInternalError(ctx, "VideoMode can not be constructed directly");
   return JS_EXCEPTION;
 }
 
 // properties
-JSValue
+static JSValue
 glfw_video_mode_get_int(JSContext* ctx, JSValueConst this_val, int magic) {
   GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
   if(!video_mode)
@@ -33,7 +33,7 @@ glfw_video_mode_get_int(JSContext* ctx, JSValueConst this_val, int magic) {
   return JS_NewInt64(ctx, value);
 }
 
-JSValue
+static JSValue
 glfw_video_mode_set_int(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
   GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
   if(!video_mode)

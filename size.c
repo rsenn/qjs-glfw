@@ -6,7 +6,7 @@ thread_local JSClassID glfw_size_class_id = 0;
 thread_local JSValue glfw_size_proto, glfw_size_class;
 
 // constructor/destructor
-JSValue
+static JSValue
 glfw_size_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
   GLFWsize* size;
   JSValue obj = JS_UNDEFINED;
@@ -41,25 +41,30 @@ fail:
   return JS_EXCEPTION;
 }
 
-void
+static void
 glfw_size_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWsize* size = JS_GetOpaque(val, glfw_size_class_id);
-  js_free_rt(rt, size);
+  GLFWsize* size;
+
+  if((size = JS_GetOpaque(val, glfw_size_class_id)))
+    js_free_rt(rt, size);
 }
 
 // properties
-JSValue
+static JSValue
 glfw_size_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+  GLFWsize* size;
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
+
   return JS_NewInt32(ctx, magic == 0 ? size->width : size->height);
 }
 
-JSValue
+static JSValue
 glfw_size_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+  GLFWsize* size;
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
 
   int value;
@@ -76,10 +81,11 @@ glfw_size_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic
 
 static JSValue
 glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+  GLFWsize* size;
   JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
 
   arr = JS_NewArray(ctx);
