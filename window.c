@@ -251,7 +251,7 @@ glfw_handle_windowsize(GLFWwindow* w, int width, int height) {
 }
 
 static JSValue
-glfw_window_create_window(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
+glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
   GLFWwindow* window;
 
   if(!glfw_initialized)
@@ -272,40 +272,53 @@ glfw_window_create_window(JSContext* ctx, int width, int height, const char* tit
 // constructor/destructor
 static JSValue
 glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  int width, height;
+  int32_t width, height;
   const char* title = 0;
+  GLFWsize* size;
   GLFWmonitor* monitor = NULL;
   GLFWwindow* share = NULL;
   JSValue ret = JS_UNDEFINED;
+  int i = 0;
 
-  if(JS_ToInt32(ctx, &width, argv[0]))
-    return JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
+  if(JS_IsObject(argv[i]) && (size = JS_GetOpaque(argv[i], glfw_size_class_id))) {
 
-  if(JS_ToInt32(ctx, &height, argv[1]))
-    return JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
+    width = size->width;
+    height = size->height;
 
-  if(argc > 2) {
-    if(JS_IsNull(argv[2]) || JS_IsUndefined(argv[2]))
+    ++i;
+
+  } else {
+    if(JS_ToInt32(ctx, &width, argv[i]))
+      return JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
+
+    if(JS_ToInt32(ctx, &height, argv[i + 1]))
+      return JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
+
+    i += 2;
+  }
+
+  if(argc > i) {
+    if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
       title = 0;
-    else if(!(title = JS_ToCString(ctx, argv[2])))
-      return JS_ThrowTypeError(ctx, "argument 3 (title) must be a string");
+    else if(!(title = JS_ToCString(ctx, argv[i])))
+      return JS_ThrowTypeError(ctx, "argument %d (title) must be a string", i + 1);
+
+    if(++i < argc) {
+      if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
+        monitor = 0;
+      else if(!(monitor = JS_GetOpaque(argv[i], glfw_monitor_class_id)))
+        return JS_ThrowTypeError(ctx, "argument %s (monitor) must be a glfw.Monitor or null|undefined", i + 1);
+
+      if(++i < argc) {
+        if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
+          share = 0;
+        else if(!(share = JS_GetOpaque(argv[i], glfw_window_class_id)))
+          return JS_ThrowTypeError(ctx, "argument %d (share) must be a glfw.Window or null|undefined", i + 1);
+      }
+    }
   }
 
-  if(argc > 3) {
-    if(JS_IsNull(argv[3]) || JS_IsUndefined(argv[3]))
-      monitor = 0;
-    else if(!(monitor = JS_GetOpaque(argv[3], glfw_monitor_class_id)))
-      return JS_ThrowTypeError(ctx, "argument 4 (monitor) must be a glfw.Monitor or null|undefined");
-  }
-
-  if(argc > 4) {
-    if(JS_IsNull(argv[4]) || JS_IsUndefined(argv[4]))
-      share = 0;
-    else if(!(share = JS_GetOpaque(argv[4], glfw_window_class_id)))
-      return JS_ThrowTypeError(ctx, "argument 5 (share) must be a glfw.Window or null|undefined");
-  }
-
-  ret = glfw_window_create_window(ctx, width, height, title, monitor, share);
+  ret = glfw_window_new(ctx, width, height, title, monitor, share);
 
   if(title)
     JS_FreeCString(ctx, title);
