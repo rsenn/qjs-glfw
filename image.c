@@ -224,14 +224,11 @@ glfw_image_get_own_property(JSContext* ctx, JSPropertyDescriptor* pdesc, JSValue
   return FALSE;
 }
 
-static JSClassExoticMethods glfw_image_exotic_methods = {
-    .get_own_property = glfw_image_get_own_property
-};
+static JSClassExoticMethods glfw_image_exotic_methods = {.get_own_property = glfw_image_get_own_property};
 
 // initialization
 static JSClassDef glfw_image_class_def = {
-    .class_name = "Image",
-    .finalizer = glfw_image_finalizer,
+    .class_name = "Image", .finalizer = glfw_image_finalizer,
     //.exotic = &glfw_image_exotic_methods,
 };
 
