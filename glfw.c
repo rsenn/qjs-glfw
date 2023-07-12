@@ -3,6 +3,7 @@
 #include <GL/gl3w.h>
 #endif
 #include <assert.h>
+#include <string.h>
 
 #include "glfw.h"
 #include "position.h"
@@ -196,13 +197,7 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
 }
 
 static JSValue
-glfw_raw_mouse_motion_suppored(JSContext* ctx, JSValueConst this_val) {
-  return JS_NewBool(ctx, glfwRawMouseMotionSupported() == GLFW_TRUE);
-}
-
-static JSValue
 glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
-  JSValue ret = JS_UNDEFINED;
   GLFWimage* image;
   GLFWposition* position;
   int32_t x, y;
@@ -226,7 +221,6 @@ glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 
 static JSValue
 glfw_cursor_create_std(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
-  JSValue ret = JS_UNDEFINED;
   int32_t shape;
 
   if(JS_ToInt32(ctx, &shape, argv[0]))
@@ -285,11 +279,6 @@ glfw_context_set_current(JSContext* ctx, JSValueConst this_val, JSValueConst val
     return JS_EXCEPTION;
   glfwMakeContextCurrent(window);
   return JS_UNDEFINED;
-}
-
-static JSValue
-glfw_context_get_proto(JSContext* ctx, JSValueConst this_val) {
-  return JS_NULL;
 }
 
 static JSValue
@@ -394,7 +383,6 @@ static const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_MAGIC_DEF("terminate", 0, glfw_other, TERMINATE),
     JS_CFUNC_MAGIC_DEF("postEmptyEvent", 0, glfw_other, POST_EMPTY_EVENT),
     JS_CFUNC_MAGIC_DEF("extensionSupported", 1, glfw_other, EXTENSION_SUPPORTED),
-    JS_CGETSET_DEF("rawMouseMotionSupported", glfw_raw_mouse_motion_suppored, NULL),
     JS_CFUNC_DEF("createCursor", 2, glfw_cursor_create),
     JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
     JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
@@ -409,6 +397,10 @@ static const JSCFunctionListEntry glfw_exports[] = {
 // initialization
 int
 glfw_init(JSContext* ctx, JSModuleDef* m) {
+
+  if(!glfw_initialized)
+    assert(glfw_initialize(ctx));
+
   JS_SetModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
 
   glfw_position_init(ctx, m);
@@ -432,6 +424,8 @@ glfw_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetPropertyStr(ctx, version, "toString", JS_NewCFunction(ctx, glfw_version_to_string, "toString", 0));
   JS_SetModuleExport(ctx, m, "version", version);
 
+  JS_SetModuleExport(ctx, m, "rawMouseMotionSupported", JS_NewBool(ctx, glfwRawMouseMotionSupported() == GLFW_TRUE));
+
   return 0;
 }
 
@@ -450,6 +444,7 @@ glfw_export(JSContext* ctx, JSModuleDef* m) {
   glfw_workarea_export(ctx, m);
 
   JS_AddModuleExport(ctx, m, "version");
+  JS_AddModuleExport(ctx, m, "rawMouseMotionSupported");
 
   return 0;
 }

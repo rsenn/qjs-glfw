@@ -21,9 +21,6 @@ glfw_workarea_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSV
   if(!(workarea->size = js_mallocz(ctx, sizeof(*size))))
     return JS_EXCEPTION;
 
-  workarea->position = position;
-  workarea->size = size;
-
   if(JS_IsObject(argv[i]) && (position = JS_GetOpaque(argv[i], glfw_position_class_id))) {
     *workarea->position = *position;
 
@@ -113,7 +110,7 @@ glfw_workarea_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic)
 static JSValue
 glfw_workarea_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWworkarea* workarea;
-  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, iter, generator = JS_UNDEFINED;
   JSAtom atom;
 
   if(!(workarea = JS_GetOpaque2(ctx, this_val, glfw_workarea_class_id)))

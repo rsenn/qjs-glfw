@@ -1,6 +1,7 @@
 #include "glfw.h"
 #include "image.h"
 #include "size.h"
+#include <string.h>
 
 thread_local JSClassID glfw_image_class_id = 0;
 thread_local JSValue glfw_image_proto, glfw_image_class;
@@ -54,7 +55,7 @@ image_clone(GLFWimage const* img) {
 // constructor/destructor
 static JSValue
 glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
-  GLFWimage* image;
+  GLFWimage* image = 0;
   GLFWsize* size;
   uint32_t width, height;
   JSValue proto, obj = JS_UNDEFINED;
@@ -68,6 +69,7 @@ glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
       JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
       goto fail;
     }
+
     if(JS_ToUint32(ctx, &height, argv[1])) {
       JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
       goto fail;
@@ -91,7 +93,8 @@ glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   return obj;
 
 fail:
-  js_free(ctx, image);
+  if(image)
+    js_free(ctx, image);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }

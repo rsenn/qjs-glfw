@@ -91,7 +91,7 @@ glfw_size_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
 static JSValue
 glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWsize* size;
-  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, iter, generator = JS_UNDEFINED;
   JSAtom atom;
 
   if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))

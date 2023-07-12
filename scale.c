@@ -85,7 +85,7 @@ glfw_scale_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
 static JSValue
 glfw_scale_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWscale* scale;
-  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, iter, generator = JS_UNDEFINED;
   JSAtom atom;
 
   if(!(scale = JS_GetOpaque2(ctx, this_val, glfw_scale_class_id)))

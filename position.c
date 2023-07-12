@@ -15,21 +15,21 @@ glfw_position_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSV
   if(JS_IsObject(argv[0]) && (other = JS_GetOpaque(argv[0], glfw_position_class_id))) {
     *position = *other;
   } else {
-    int32_t x,y;
+    int32_t x, y;
 
-    if(JS_ToInt32(ctx, &x, argv[0])){ 
-        JS_ThrowTypeError(ctx, "argument 1 (x-position) must be a number");
+    if(JS_ToInt32(ctx, &x, argv[0])) {
+      JS_ThrowTypeError(ctx, "argument 1 (x-position) must be a number");
       goto fail;
     }
 
-    if(JS_ToInt32(ctx, &y, argv[1])){ 
-        JS_ThrowTypeError(ctx, "argument 2 (y-position) must be a number");
+    if(JS_ToInt32(ctx, &y, argv[1])) {
+      JS_ThrowTypeError(ctx, "argument 2 (y-position) must be a number");
       goto fail;
     }
 
-    position->x=x;
-    position->y=y;
-   }
+    position->x = x;
+    position->y = y;
+  }
 
   return glfw_position_wrap(ctx, position);
 
@@ -79,7 +79,7 @@ glfw_position_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic)
 static JSValue
 glfw_position_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWposition* position;
-  JSValue arr, global_obj, symbol_constructor, symbol_iterator, iter, generator = JS_UNDEFINED;
+  JSValue arr, iter, generator = JS_UNDEFINED;
   JSAtom atom;
 
   if(!(position = JS_GetOpaque2(ctx, this_val, glfw_position_class_id)))
@@ -115,7 +115,7 @@ static const JSCFunctionListEntry glfw_position_proto_funcs[] = {
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWposition", JS_PROP_CONFIGURABLE),
 };
 
-JSValue
+int
 glfw_position_init(JSContext* ctx, JSModuleDef* m) {
   JS_NewClassID(&glfw_position_class_id);
   JS_NewClass(JS_GetRuntime(ctx), glfw_position_class_id, &glfw_position_class_def);
@@ -129,6 +129,8 @@ glfw_position_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetConstructor(ctx, glfw_position_class, glfw_position_proto);
 
   JS_SetModuleExport(ctx, m, "Position", glfw_position_class);
+
+  return 0;
 }
 
 JSValue

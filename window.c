@@ -133,6 +133,15 @@ static void
 glfw_handle_drop(GLFWwindow* w, int argc, const char* argv[]) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_DROP];
+  JSValueConst args[argc];
+
+  for(int i = 0; i < argc; i++)
+    args[i] = JS_NewString(wc->ctx, argv[i]);
+
+  JS_Call(wc->ctx, callback, wc->this_val, argc, args);
+
+  for(int i = 0; i < argc; i++)
+    JS_FreeValue(wc->ctx, args[i]);
 }
 
 // static void glfw_handle_error(int,const char*) {}
@@ -277,7 +286,7 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
   GLFWsize* size;
   GLFWmonitor* monitor = NULL;
   GLFWwindow* share = NULL;
-  JSValue ret = JS_UNDEFINED;
+  JSValue ret;
   int i = 0;
 
   if(JS_IsObject(argv[i]) && (size = JS_GetOpaque(argv[i], glfw_size_class_id))) {
@@ -305,7 +314,7 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
       if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
         monitor = 0;
       else if(!(monitor = JS_GetOpaque(argv[i], glfw_monitor_class_id)))
-        return JS_ThrowTypeError(ctx, "argument %s (monitor) must be a glfw.Monitor or null|undefined", i + 1);
+        return JS_ThrowTypeError(ctx, "argument %d (monitor) must be a glfw.Monitor or null|undefined", i + 1);
 
       if(++i < argc) {
         if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
@@ -320,6 +329,8 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
 
   if(title)
     JS_FreeCString(ctx, title);
+
+  return ret;
 }
 
 // instance methods
@@ -987,7 +998,11 @@ static const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWwindow", JS_PROP_CONFIGURABLE),
 };
 
-static const JSCFunctionListEntry glfw_window_proto_trigfuncs[] = {TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)};
+static const JSCFunctionListEntry glfw_window_proto_trigfuncs[] = {
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    MAKE_TRIGGER_METHOD_ENTRY(RequestWindowAttention, requestAttention)
+#endif
+        TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)};
 
 #define GETSET_HANDLER(name, const) JS_CGETSET_MAGIC_DEF((#name), glfw_window_get_callback, glfw_window_set_callback, CALLBACK_##const)
 
