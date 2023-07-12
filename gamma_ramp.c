@@ -1,5 +1,4 @@
 #include "glfw.h"
-
 #include "gamma_ramp.h"
 
 thread_local JSClassID glfw_gamma_ramp_class_id = 0;

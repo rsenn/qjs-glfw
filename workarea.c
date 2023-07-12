@@ -1,5 +1,4 @@
 #include "glfw.h"
-
 #include "workarea.h"
 
 thread_local JSClassID glfw_workarea_class_id = 0;

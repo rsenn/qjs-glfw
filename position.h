@@ -2,7 +2,6 @@
 #define GLFW_MODULE_POSITION 1
 
 #include "glfw.h"
-
 typedef struct {
   int x, y;
 } GLFWposition;

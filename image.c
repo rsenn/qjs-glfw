@@ -1,6 +1,6 @@
 #include "glfw.h"
-
 #include "image.h"
+#include "size.h"
 
 thread_local JSClassID glfw_image_class_id = 0;
 thread_local JSValue glfw_image_proto, glfw_image_class;
@@ -11,6 +11,23 @@ image_free(GLFWimage* img) {
     free(img->pixels);
 
   free(img);
+}
+
+static GLFWimage*
+image_new(int width, int height) {
+  GLFWimage* ret;
+
+  if((ret = malloc(sizeof(GLFWimage)))) {
+    ret->width = width;
+    ret->height = height;
+
+    if(!(ret->pixels = calloc(width * height, 4))) {
+      image_free(ret);
+      return 0;
+    }
+  }
+
+  return ret;
 }
 
 static GLFWimage*
@@ -37,7 +54,45 @@ image_clone(GLFWimage const* img) {
 // constructor/destructor
 static JSValue
 glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
-  JS_ThrowInternalError(ctx, "glfw.Image can not be constructed directly");
+  GLFWimage* image;
+  GLFWsize* size;
+  uint32_t width, height;
+  JSValue proto, obj = JS_UNDEFINED;
+
+  if(JS_IsObject(argv[0]) && (size = JS_GetOpaque(argv[0], glfw_size_class_id))) {
+    width = size->width;
+    height = size->height;
+  } else {
+
+    if(JS_ToUint32(ctx, &width, argv[0])) {
+      JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
+      goto fail;
+    }
+    if(JS_ToUint32(ctx, &height, argv[1])) {
+      JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
+      goto fail;
+    }
+  }
+
+  if(!(image = image_new(width, height)))
+    return JS_EXCEPTION;
+
+  /* using new_target to get the prototype is necessary when the class is extended. */
+  proto = JS_GetPropertyStr(ctx, new_target, "prototype");
+  if(JS_IsException(proto))
+    goto fail;
+
+  obj = JS_NewObjectProtoClass(ctx, proto, glfw_image_class_id);
+  JS_FreeValue(ctx, proto);
+  if(JS_IsException(obj))
+    goto fail;
+
+  JS_SetOpaque(obj, image);
+  return obj;
+
+fail:
+  js_free(ctx, image);
+  JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
 

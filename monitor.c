@@ -192,6 +192,27 @@ glfw_monitor_get_monitors(JSContext* ctx, JSValueConst this_val) {
   return array;
 }
 
+static JSValue
+glfw_monitor_get_ptr(JSContext* ctx, JSValueConst this_val) {
+  GLFWmonitor* monitor;
+
+  if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
+    return JS_EXCEPTION;
+
+  return js_newptr(ctx, glfwGetMonitorUserPointer(monitor));
+}
+
+static JSValue
+glfw_monitor_set_ptr(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
+  GLFWmonitor* monitor;
+
+  if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
+    return JS_EXCEPTION;
+
+  glfwSetMonitorUserPointer(monitor, js_getptr(ctx, value));
+  return JS_UNDEFINED;
+}
+
 // initialization
 static JSClassDef glfw_monitor_class_def = {
     .class_name = "Monitor",
@@ -206,6 +227,7 @@ static const JSCFunctionListEntry glfw_monitor_proto_funcs[] = {
     JS_CGETSET_DEF("currentVideoMode", glfw_monitor_get_current_video_mode, NULL),
     JS_CGETSET_DEF("videoModes", glfw_monitor_get_video_modes, NULL),
     JS_CGETSET_DEF("gamma", glfw_monitor_get_gamma, glfw_monitor_set_gamma),
+    JS_CGETSET_DEF("userPointer", glfw_monitor_get_ptr, glfw_monitor_set_ptr),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWmonitor", JS_PROP_CONFIGURABLE),
 };
 

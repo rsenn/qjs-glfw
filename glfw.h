@@ -64,9 +64,26 @@ js_iterator_atom(JSContext* ctx) {
 
 static inline JSValue
 js_newptr(JSContext* ctx, void* ptr) {
-  char buf[128];
-  snprintf(buf, sizeof(buf), "%p", ptr);
-  return JS_NewString(ctx, buf);
+  if(ptr != NULL) {
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%p", ptr);
+    return JS_NewString(ctx, buf);
+  }
+
+  return JS_NULL;
+}
+
+static inline void*
+js_getptr(JSContext* ctx, JSValueConst value) {
+
+  if(!JS_IsNull(value)) {
+    const char* str = JS_ToCString(ctx, value);
+    void* ptr = 0;
+    sscanf(str, "%p", &ptr);
+    return ptr;
+  }
+
+  return NULL;
 }
 
 #define GLFW_THROW() glfw_throw(ctx, __func__)

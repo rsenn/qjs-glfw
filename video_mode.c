@@ -1,5 +1,4 @@
 #include "glfw.h"
-
 #include "video_mode.h"
 
 thread_local JSClassID glfw_video_mode_class_id = 0;

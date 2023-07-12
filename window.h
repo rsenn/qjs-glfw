@@ -10,8 +10,7 @@ glfw_window_data2(JSContext* ctx, JSValueConst value) {
 }
 
 JSValue glfw_window_wrap(JSContext*, GLFWwindow*);
-int     glfw_window_init(JSContext*, JSModuleDef*);
-int     glfw_window_export(JSContext*, JSModuleDef*);
+int glfw_window_init(JSContext*, JSModuleDef*);
+int glfw_window_export(JSContext*, JSModuleDef*);
 
- 
 #endif

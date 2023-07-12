@@ -2,7 +2,7 @@
 #include "monitor.h"
 #include "position.h"
 #include "size.h"
-
+#include "image.h"
 #include "window.h"
 
 thread_local JSClassID glfw_window_class_id = 0;
@@ -449,10 +449,14 @@ glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst val
 static JSValue
 glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
+  GLFWposition* position;
+
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWposition* position = js_mallocz(ctx, sizeof(*position));
+  if(!(position = js_mallocz(ctx, sizeof(*position))))
+    return JS_EXCEPTION;
+
   glfwGetWindowPos(window, &position->x, &position->y);
   return glfw_position_wrap(ctx, position);
 }
@@ -461,6 +465,7 @@ glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
 static JSValue
 glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window;
+
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
@@ -475,6 +480,7 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
 static JSValue
 glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
+
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
@@ -486,6 +492,7 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
 static JSValue
 glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
+
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
@@ -497,6 +504,7 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
 static JSValue
 glfw_window_set_opacity(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window;
+
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
@@ -566,6 +574,53 @@ glfw_window_set_monitor(JSContext* ctx, JSValueConst this_val, int argc, JSValue
 
   glfwSetWindowMonitor(window, monitor, xpos, ypos, width, height, refreshRate);
 
+  return JS_UNDEFINED;
+}
+
+static JSValue
+glfw_window_get_cursor_pos(JSContext* ctx, JSValueConst this_val) {
+  GLFWwindow* window;
+  struct {
+    double x, y;
+  } pos;
+
+  if(!(window = glfw_window_data2(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  glfwGetCursorPos(window, &pos.x, &pos.y);
+
+  JSValue ret = JS_NewObject(ctx);
+
+  JS_SetPropertyStr(ctx, ret, "x", JS_NewFloat64(ctx, pos.x));
+  JS_SetPropertyStr(ctx, ret, "y", JS_NewFloat64(ctx, pos.y));
+  return ret;
+}
+
+static JSValue
+glfw_window_set_cursor_pos(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
+  GLFWwindow* window;
+  struct {
+    double x, y;
+  } pos;
+  JSValue x, y;
+
+  if(!(window = glfw_window_data2(ctx, this_val)))
+    return JS_EXCEPTION;
+
+  if(JS_IsArray(ctx, value)) {
+    x = JS_GetPropertyUint32(ctx, value, 0);
+    y = JS_GetPropertyUint32(ctx, value, 1);
+  } else {
+    x = JS_GetPropertyStr(ctx, value, "x");
+    y = JS_GetPropertyStr(ctx, value, "y");
+  }
+
+  JS_ToFloat64(ctx, &pos.x, x);
+  JS_FreeValue(ctx, x);
+  JS_ToFloat64(ctx, &pos.y, y);
+  JS_FreeValue(ctx, y);
+
+  glfwSetCursorPos(window, pos.x, pos.y);
   return JS_UNDEFINED;
 }
 
@@ -689,6 +744,15 @@ enum {
   GET_WINDOW_CONTENT_SCALE,
   GET_WINDOW_ATTRIB,
   SET_WINDOW_ATTRIB,
+  SET_CURSOR,
+  SET_WINDOW_ICON,
+  GET_MOUSE_BUTTON,
+  SET_CLIPBOARD_STRING,
+  GET_CLIPBOARD_STRING,
+  GET_INPUT_MODE,
+  SET_INPUT_MODE,
+  GET_KEY,
+  DESTROY_WINDOW,
 };
 
 static JSValue
@@ -780,6 +844,83 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
       glfwSetWindowAttrib(window, attrib, value);
       break;
     }
+
+    case SET_CURSOR: {
+      GLFWcursor* cursor = js_getptr(ctx, argv[0]);
+
+      glfwSetCursor(window, cursor);
+      break;
+    }
+
+    case SET_WINDOW_ICON: {
+      GLFWimage *im, images[argc];
+
+      for(int i = 0; i < argc; i++) {
+        if(!(im = JS_GetOpaque(argv[i], glfw_image_class_id)))
+          return JS_ThrowTypeError(ctx, "argument %d must be a glfw.Image", i + 1);
+
+        images[i] = *im;
+      }
+
+      glfwSetWindowIcon(window, argc, (GLFWimage const*)images);
+      break;
+    }
+
+    case GET_MOUSE_BUTTON: {
+      int32_t button = -1;
+      JS_ToInt32(ctx, &button, argv[0]);
+
+      ret = JS_NewInt32(ctx, glfwGetMouseButton(window, button));
+      break;
+    }
+
+    case GET_CLIPBOARD_STRING: {
+      const char* str;
+
+      if((str = glfwGetClipboardString(window)))
+        ret = JS_NewString(ctx, str);
+      break;
+    }
+
+    case SET_CLIPBOARD_STRING: {
+      const char* str;
+
+      if(!(str = JS_ToCString(ctx, argv[0])))
+        return JS_ThrowTypeError(ctx, "argument 1 must be a string");
+
+      glfwSetClipboardString(window, str);
+      break;
+    }
+
+    case GET_INPUT_MODE: {
+      int32_t mode = -1;
+      JS_ToInt32(ctx, &mode, argv[0]);
+
+      ret = JS_NewInt32(ctx, glfwGetInputMode(window, mode));
+      break;
+    }
+
+    case SET_INPUT_MODE: {
+      int32_t mode = -1, value = GLFW_FALSE;
+      JS_ToInt32(ctx, &mode, argv[0]);
+      JS_ToInt32(ctx, &value, argv[1]);
+
+      glfwSetInputMode(window, mode, value);
+      break;
+    }
+
+    case GET_KEY: {
+      int32_t key = -1;
+      JS_ToInt32(ctx, &key, argv[0]);
+
+      ret = JS_NewInt32(ctx, glfwGetKey(window, key));
+      break;
+    }
+    case DESTROY_WINDOW: {
+      glfwDestroyWindow(window);
+      JS_SetOpaque(this_val, NULL);
+      break;
+    }
   }
 
   return ret;
@@ -826,6 +967,7 @@ static const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_DEF("framebufferSize", glfw_window_get_framebuffer_size, NULL),
     JS_CGETSET_DEF("opacity", glfw_window_get_opacity, glfw_window_set_opacity),
     JS_CGETSET_DEF("monitor", glfw_window_get_monitor, 0),
+    JS_CGETSET_DEF("cursorPos", glfw_window_get_cursor_pos, glfw_window_set_cursor_pos),
     JS_CFUNC_DEF("setMonitor", 1, glfw_window_set_monitor),
     JS_CFUNC_MAGIC_DEF("setSizeLimits", 4, glfw_window_functions, SET_WINDOW_SIZE_LIMITS),
     JS_CFUNC_MAGIC_DEF("setAspectRatio", 2, glfw_window_functions, SET_WINDOW_ASPECT_RATIO),
@@ -833,6 +975,15 @@ static const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("getContentScale", 0, glfw_window_functions, GET_WINDOW_CONTENT_SCALE),
     JS_CFUNC_MAGIC_DEF("getAttrib", 1, glfw_window_functions, GET_WINDOW_ATTRIB),
     JS_CFUNC_MAGIC_DEF("setAttrib", 2, glfw_window_functions, SET_WINDOW_ATTRIB),
+    JS_CFUNC_MAGIC_DEF("setCursor", 1, glfw_window_functions, SET_CURSOR),
+    JS_CFUNC_MAGIC_DEF("setIcon", 1, glfw_window_functions, SET_WINDOW_ICON),
+    JS_CFUNC_MAGIC_DEF("getMouseButton", 1, glfw_window_functions, GET_MOUSE_BUTTON),
+    JS_CFUNC_MAGIC_DEF("getClipboardString", 0, glfw_window_functions, GET_CLIPBOARD_STRING),
+    JS_CFUNC_MAGIC_DEF("setClipboardString", 1, glfw_window_functions, SET_CLIPBOARD_STRING),
+    JS_CFUNC_MAGIC_DEF("getInputMode", 0, glfw_window_functions, GET_INPUT_MODE),
+    JS_CFUNC_MAGIC_DEF("setInputMode", 1, glfw_window_functions, SET_INPUT_MODE),
+    JS_CFUNC_MAGIC_DEF("getKey", 1, glfw_window_functions, GET_KEY),
+    JS_CFUNC_MAGIC_DEF("destroy", 0, glfw_window_functions, DESTROY_WINDOW),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWwindow", JS_PROP_CONFIGURABLE),
 };
 

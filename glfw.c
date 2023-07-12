@@ -123,6 +123,11 @@ glfw_time(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], 
 enum {
   GET_PLATFORM,
   SUPPORTED_PLATFORM,
+  KEY_NAME,
+  KEY_SCANCODE,
+  TERMINATE,
+  POST_EMPTY_EVENT,
+  EXTENSION_SUPPORTED,
 };
 
 static JSValue
@@ -141,9 +146,105 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
       ret = JS_NewInt32(ctx, glfwPlatformSupported(p));
       break;
     }
+
+    case KEY_NAME: {
+      int32_t key = -1, scancode = -1;
+      const char* name;
+
+      JS_ToInt32(ctx, &key, argv[0]);
+
+      if(argc > 1)
+        JS_ToInt32(ctx, &scancode, argv[1]);
+      else
+        scancode = glfwGetKeyScancode(key);
+
+      ret = (name = glfwGetKeyName(key, scancode)) ? JS_NewString(ctx, name) : JS_NULL;
+      break;
+    }
+
+    case KEY_SCANCODE: {
+      int32_t key = -1;
+
+      JS_ToInt32(ctx, &key, argv[0]);
+
+      ret = JS_NewInt32(ctx, glfwGetKeyScancode(key));
+      break;
+    }
+
+    case TERMINATE: {
+      glfwTerminate();
+      break;
+    }
+
+    case POST_EMPTY_EVENT: {
+      glfwPostEmptyEvent();
+      break;
+    }
+
+    case EXTENSION_SUPPORTED: {
+      const char* str;
+
+      if((str = JS_ToCString(ctx, argv[0]))) {
+        ret = JS_NewBool(ctx, glfwExtensionSupported(str) == GLFW_TRUE);
+        JS_FreeCString(ctx, str);
+      }
+      break;
+    }
   }
 
   return ret;
+}
+
+static JSValue
+glfw_raw_mouse_motion_suppored(JSContext* ctx, JSValueConst this_val) {
+  return JS_NewBool(ctx, glfwRawMouseMotionSupported() == GLFW_TRUE);
+}
+
+static JSValue
+glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+  JSValue ret = JS_UNDEFINED;
+  GLFWimage* image;
+  GLFWposition* position;
+  int32_t x, y;
+
+  if(!(image = JS_GetOpaque(argv[0], glfw_image_class_id)))
+    return JS_ThrowTypeError(ctx, "argument 1 must be a glfw.Image");
+
+  if(JS_IsObject(argv[1]) && (position = JS_GetOpaque(argv[1], glfw_position_class_id))) {
+    x = position->x;
+    y = position->y;
+  } else {
+    if(JS_ToInt32(ctx, &x, argv[1]))
+      return JS_ThrowTypeError(ctx, "argument 2 (hot-x) must be a number");
+
+    if(JS_ToInt32(ctx, &y, argv[2]))
+      return JS_ThrowTypeError(ctx, "argument 3 (hot-y) must be a number");
+  }
+
+  return js_newptr(ctx, glfwCreateCursor(image, x, y));
+}
+
+static JSValue
+glfw_cursor_create_std(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+  JSValue ret = JS_UNDEFINED;
+  int32_t shape;
+
+  if(JS_ToInt32(ctx, &shape, argv[0]))
+    return JS_ThrowTypeError(ctx, "argument 1 (shape) must be a number");
+
+  return js_newptr(ctx, glfwCreateStandardCursor(shape));
+}
+
+static JSValue
+glfw_cursor_destroy(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+  GLFWcursor* cursor;
+
+  if(!(cursor = js_getptr(ctx, argv[0])))
+    return JS_ThrowTypeError(ctx, "argument 1 must be a glfw.Cursor");
+
+  glfwDestroyCursor(cursor);
+
+  return JS_UNDEFINED;
 }
 
 static JSValue
@@ -154,21 +255,6 @@ glfw_poll_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst a
 
 static JSValue
 glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
-  if(JS_IsNumber(argv[0])) {
-    double timeout;
-    if(JS_ToFloat64(ctx, &timeout, argv[0]))
-      return JS_EXCEPTION;
-
-    glfwWaitEventsTimeout(timeout);
-  } else {
-    glfwWaitEvents();
-  }
-
-  return JS_UNDEFINED;
-}
-
-static JSValue
-glfw_post_empty_event(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   if(JS_IsNumber(argv[0])) {
     double timeout;
     if(JS_ToFloat64(ctx, &timeout, argv[0]))
@@ -294,16 +380,24 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 #define DEFINE_CONSTANT(Name) JS_PROP_INT32_DEF(#Name, GLFW_##Name, 0),
 
 static const JSCFunctionListEntry glfw_exports[] = {
-    JS_CFUNC_DEF("poll", 2, glfw_poll_events),
-    JS_CFUNC_DEF("wait", 2, glfw_wait_events),
+    JS_CFUNC_DEF("poll", 0, glfw_poll_events),
+    JS_CFUNC_DEF("wait", 1, glfw_wait_events),
     JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
-    JS_CFUNC_DEF("postEmptyEvent", 2, glfw_post_empty_event),
     JS_CFUNC_MAGIC_DEF("getTime", 0, glfw_time, TIME_GET),
     JS_CFUNC_MAGIC_DEF("setTime", 1, glfw_time, TIME_SET),
     JS_CFUNC_MAGIC_DEF("getTimerValue", 0, glfw_time, TIMER_VALUE_GET),
     JS_CFUNC_MAGIC_DEF("getTimerFrequency", 0, glfw_time, TIMER_FREQUENCY_GET),
     JS_CFUNC_MAGIC_DEF("getPlatform", 0, glfw_other, GET_PLATFORM),
     JS_CFUNC_MAGIC_DEF("platformSupported", 1, glfw_other, SUPPORTED_PLATFORM),
+    JS_CFUNC_MAGIC_DEF("getKeyName", 1, glfw_other, KEY_NAME),
+    JS_CFUNC_MAGIC_DEF("getKeyScancode", 1, glfw_other, KEY_SCANCODE),
+    JS_CFUNC_MAGIC_DEF("terminate", 0, glfw_other, TERMINATE),
+    JS_CFUNC_MAGIC_DEF("postEmptyEvent", 0, glfw_other, POST_EMPTY_EVENT),
+    JS_CFUNC_MAGIC_DEF("extensionSupported", 1, glfw_other, EXTENSION_SUPPORTED),
+    JS_CGETSET_DEF("rawMouseMotionSupported", glfw_raw_mouse_motion_suppored, NULL),
+    JS_CFUNC_DEF("createCursor", 2, glfw_cursor_create),
+    JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
+    JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
     CONSTANTS(DEFINE_CONSTANT)
     // CONSTANTS2(DEFINE_CONSTANT),

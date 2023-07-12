@@ -1,5 +1,4 @@
 #include "glfw.h"
-
 #include "position.h"
 
 thread_local JSClassID glfw_position_class_id = 0;
