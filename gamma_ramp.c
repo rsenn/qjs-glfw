@@ -117,7 +117,7 @@ static const JSCFunctionListEntry glfw_gamma_ramp_proto_funcs[] = {
     JS_CGETSET_MAGIC_DEF("red", glfw_gamma_ramp_array, NULL, GAMMA_RED),
     JS_CGETSET_MAGIC_DEF("green", glfw_gamma_ramp_array, NULL, GAMMA_GREEN),
     JS_CGETSET_MAGIC_DEF("blue", glfw_gamma_ramp_array, NULL, GAMMA_BLUE),
-    JS_CGETSET_DEF("size", glfw_gamma_ramp_size, NULL),
+    JS_CGETSET_ENUMERABLE_DEF("size", glfw_gamma_ramp_size, NULL),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWgammaramp", JS_PROP_CONFIGURABLE),
 };
 

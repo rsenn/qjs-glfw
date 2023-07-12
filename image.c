@@ -1,6 +1,7 @@
 #include "glfw.h"
 #include "image.h"
 #include "size.h"
+#include <assert.h>
 #include <string.h>
 
 thread_local JSClassID glfw_image_class_id = 0;
@@ -52,6 +53,43 @@ image_clone(GLFWimage const* img) {
   return ret;
 }
 
+static void
+image_unref(JSRuntime* rt, void* opaque, void* ptr) {
+  JSObject* obj = opaque;
+  JSValue image = JS_MKPTR(JS_TAG_OBJECT, obj);
+
+  JS_FreeValueRT(rt, image);
+}
+
+// properties
+static JSValue
+glfw_image_buffer(JSContext* ctx, JSValueConst value) {
+  GLFWimage* image = JS_GetOpaque(value, glfw_image_class_id);
+
+  return JS_NewArrayBuffer(ctx, (uint8_t*)image->pixels, image->width * image->height * 4, image_unref, JS_VALUE_GET_PTR(JS_DupValue(ctx, value)), FALSE);
+}
+
+// properties
+static JSValue
+create_typedarray(JSContext* ctx, const char* type, JSValueConst buffer, uint32_t offset, uint32_t count) {
+  JSValue args[3] = {
+      buffer,
+      JS_NewUint32(ctx, offset),
+      JS_NewUint32(ctx, count),
+  };
+
+  JSValue global = JS_GetGlobalObject(ctx);
+  JSValue ctor = JS_GetPropertyStr(ctx, global, type);
+  JS_FreeValue(ctx, global);
+  JSValue ret = JS_CallConstructor(ctx, ctor, count > 0 && count != UINT32_MAX ? 3 : 2, args);
+  JS_FreeValue(ctx, ctor);
+
+  JS_FreeValue(ctx, args[1]);
+  JS_FreeValue(ctx, args[2]);
+
+  return ret;
+}
+
 // constructor/destructor
 static JSValue
 glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
@@ -99,14 +137,6 @@ fail:
   return JS_EXCEPTION;
 }
 
-static void
-image_unref(JSRuntime* rt, void* opaque, void* ptr) {
-  JSObject* obj = opaque;
-  JSValue image = JS_MKPTR(JS_TAG_OBJECT, obj);
-
-  JS_FreeValueRT(rt, image);
-}
-
 enum {
   IMAGE_PIXELS,
 };
@@ -115,18 +145,12 @@ enum {
 static JSValue
 glfw_image_array(JSContext* ctx, JSValueConst this_val) {
   GLFWimage* image;
-  JSValue global, ctor, buf, ret;
 
   if(!(image = JS_GetOpaque2(ctx, this_val, glfw_image_class_id)))
     return JS_EXCEPTION;
 
-  buf = JS_NewArrayBuffer(ctx, (uint8_t*)image->pixels, image->width * image->height * 4, image_unref, JS_VALUE_GET_PTR(JS_DupValue(ctx, this_val)), FALSE);
-
-  global = JS_GetGlobalObject(ctx);
-  ctor = JS_GetPropertyStr(ctx, global, "Uint32Array");
-  JS_FreeValue(ctx, global);
-  ret = JS_CallConstructor(ctx, ctor, 1, &buf);
-  JS_FreeValue(ctx, ctor);
+  JSValue buf = glfw_image_buffer(ctx, this_val);
+  JSValue ret = create_typedarray(ctx, "Uint32Array", buf, 0, UINT32_MAX);
   JS_FreeValue(ctx, buf);
 
   return ret;
@@ -168,10 +192,47 @@ glfw_image_finalizer(JSRuntime* rt, JSValue val) {
     image_free(image);
 }
 
+static int
+glfw_image_get_own_property(JSContext* ctx, JSPropertyDescriptor* pdesc, JSValueConst obj, JSAtom atom) {
+  GLFWimage* image;
+  JSValue prop;
+  int32_t row = -1;
+
+  if(!(image = JS_GetOpaque2(ctx, obj, glfw_image_class_id)))
+    return FALSE;
+
+  prop = JS_AtomToValue(ctx, atom);
+  JS_ToInt32(ctx, &row, prop);
+
+  printf("%s prop=%s row=%li\n", __func__, JS_ToCString(ctx, prop), (long int)row);
+
+  if(pdesc && row >= 0 && row < image->height) {
+    JSValue buf = glfw_image_buffer(ctx, obj);
+
+    if(pdesc) {
+      pdesc->flags = 0;
+      pdesc->value = create_typedarray(ctx, "Uint32Array", buf, image->width * row * 4, image->width);
+      pdesc->getter = JS_UNDEFINED;
+      pdesc->setter = JS_UNDEFINED;
+    }
+
+    JS_FreeValue(ctx, buf);
+
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static JSClassExoticMethods glfw_image_exotic_methods = {
+    .get_own_property = glfw_image_get_own_property
+};
+
 // initialization
 static JSClassDef glfw_image_class_def = {
     .class_name = "Image",
     .finalizer = glfw_image_finalizer,
+    //.exotic = &glfw_image_exotic_methods,
 };
 
 static const JSCFunctionListEntry glfw_image_proto_funcs[] = {
