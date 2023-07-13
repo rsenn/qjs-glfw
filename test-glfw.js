@@ -1,6 +1,6 @@
 import { GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_LIGHTING, GL_LINE_LOOP, GL_MODELVIEW, GL_PROJECTION, GL_QUADS, GL_TEXTURE_2D, glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glewInit, glFlush, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPopMatrix, glPushMatrix, glTexCoord2f, glTranslatef, glVertex2f, glVertex3f, glViewport } from './js/glew.js';
 import { Window } from './js/gui.js';
-import { getProcAddress, poll } from 'glfw';
+import { getProcAddress, poll, Image } from 'glfw';
 
 function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
@@ -21,6 +21,9 @@ function DrawCircle(cx, cy, r, num_segments) {
 
 function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
+
+  const img = new Image(128,128);
+  console.log('img', img);
 
   //console.log('gladLoadGL() =', gladLoadGL());
   console.log('glewInit() =', glewInit());

@@ -224,7 +224,8 @@ glfw_image_get_own_property(JSContext* ctx, JSPropertyDescriptor* pdesc, JSValue
   return FALSE;
 }
 
-static JSClassExoticMethods glfw_image_exotic_methods = {.get_own_property = glfw_image_get_own_property};
+static JSClassExoticMethods glfw_image_exotic_methods = {.get_own_property = glfw_image_get_own_property,
+};
 
 // initialization
 static JSClassDef glfw_image_class_def = {
@@ -234,8 +235,8 @@ static JSClassDef glfw_image_class_def = {
 
 static const JSCFunctionListEntry glfw_image_proto_funcs[] = {
     JS_CGETSET_DEF("pixels", glfw_image_array, NULL),
-    JS_CGETSET_MAGIC_DEF("width", glfw_image_get, NULL, IMAGE_WIDTH),
-    JS_CGETSET_MAGIC_DEF("height", glfw_image_get, NULL, IMAGE_HEIGHT),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_image_get, NULL, IMAGE_WIDTH),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_image_get, NULL, IMAGE_HEIGHT),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWimage", JS_PROP_CONFIGURABLE),
 };
 
