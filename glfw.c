@@ -266,8 +266,10 @@ glfw_wait_events(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst a
 static JSValue
 glfw_context_get_current(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window = glfwGetCurrentContext();
-  if(!window)
-    return JS_EXCEPTION;
+
+  if(!(window = glfwGetCurrentContext()))
+    return JS_ThrowInternalError(ctx, "No GLFWwindow (glfwGetCurrentContext() returned NULL)");
+
   // TODO: window is not owned so finalizer should not destroy it
   return glfw_window_wrap(ctx, window);
 }
