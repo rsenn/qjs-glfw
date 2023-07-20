@@ -264,8 +264,11 @@ glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmo
   GLFWwindow* window;
 
   if(!glfw_initialized)
-    if(!glfw_initialize(ctx))
+    if(!glfw_initialize(ctx)) {
+#ifdef HAVE_GLFW_GET_ERROR
       return GLFW_THROW();
+#endif
+    }
 
   if((window = glfwCreateWindow(width, height, title ? title : "qjs-glfw", monitor, share)) == NULL) {
 #ifdef HAVE_GLFW_GET_ERROR
