@@ -224,7 +224,8 @@ glfw_image_get_own_property(JSContext* ctx, JSPropertyDescriptor* pdesc, JSValue
   return FALSE;
 }
 
-static JSClassExoticMethods glfw_image_exotic_methods = {.get_own_property = glfw_image_get_own_property,
+static JSClassExoticMethods glfw_image_exotic_methods = {
+    .get_own_property = glfw_image_get_own_property,
 };
 
 // initialization

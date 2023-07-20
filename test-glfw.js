@@ -22,7 +22,7 @@ function DrawCircle(cx, cy, r, num_segments) {
 function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
 
-  const img = new Image(128,128);
+  const img = new Image(128, 128);
   console.log('img', img);
 
   //console.log('gladLoadGL() =', gladLoadGL());
