@@ -1,6 +1,6 @@
-import { Screen, Window } from './js/gui.js';
+import { Screen } from './js/gui.js';
+import { Window } from './js/gui.js';
 import * as std from 'std';
-
 function main(...args) {
   let size = Screen.size(0);
 

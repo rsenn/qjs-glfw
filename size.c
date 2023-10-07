@@ -1,28 +1,37 @@
 #include "glfw.h"
-
 #include "size.h"
 
-JSClassID glfw_size_class_id = 0;
+thread_local JSClassID glfw_size_class_id = 0;
+thread_local JSValue glfw_size_proto, glfw_size_class;
 
 // constructor/destructor
-JSValue
-glfw_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv) {
-  GLFWsize* size;
-  JSValue obj = JS_UNDEFINED;
-  JSValue proto;
+static JSValue
+glfw_size_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
+  GLFWsize *size, *other;
+  JSValue proto, obj = JS_UNDEFINED;
 
-  size = js_mallocz(ctx, sizeof(*size));
-  if(!size)
+  if(!(size = js_mallocz(ctx, sizeof(*size))))
     return JS_EXCEPTION;
 
-  if(JS_ToInt32(ctx, &size->width, argv[0]))
-    goto fail;
+  if(JS_IsObject(argv[0]) && (other = JS_GetOpaque(argv[0], glfw_size_class_id))) {
+    *size = *other;
+  } else {
+    uint32_t w, h;
 
-  if(JS_ToInt32(ctx, &size->height, argv[1]))
-    goto fail;
+    if(JS_ToUint32(ctx, &w, argv[0])) {
+      JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
+      goto fail;
+    }
+    if(JS_ToUint32(ctx, &h, argv[1])) {
+      JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
+      goto fail;
+    }
 
-  /* using new_target to get the prototype is necessary when the
-      class is extended. */
+    size->width = w;
+    size->height = h;
+  }
+
+  /* using new_target to get the prototype is necessary when the class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
     goto fail;
@@ -34,31 +43,37 @@ glfw_size_ctor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* 
 
   JS_SetOpaque(obj, size);
   return obj;
+
 fail:
   js_free(ctx, size);
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
 
-void
+static void
 glfw_size_finalizer(JSRuntime* rt, JSValue val) {
-  GLFWsize* size = JS_GetOpaque(val, glfw_size_class_id);
-  js_free_rt(rt, size);
+  GLFWsize* size;
+
+  if((size = JS_GetOpaque(val, glfw_size_class_id)))
+    js_free_rt(rt, size);
 }
 
 // properties
-JSValue
-glfw_size_get_axis(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+static JSValue
+glfw_size_get(JSContext* ctx, JSValueConst this_val, int magic) {
+  GLFWsize* size;
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
+
   return JS_NewInt32(ctx, magic == 0 ? size->width : size->height);
 }
 
-JSValue
-glfw_size_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+static JSValue
+glfw_size_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
+  GLFWsize* size;
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
 
   int value;
@@ -74,11 +89,12 @@ glfw_size_set_axis(JSContext* ctx, JSValueConst this_val, JSValue val, int magic
 }
 
 static JSValue
-glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-  JSValue arr, global_obj, symbol_ctor, symbol_iterator, iter, generator = JS_UNDEFINED;
+glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+  GLFWsize* size;
+  JSValue arr, iter, generator = JS_UNDEFINED;
   JSAtom atom;
-  GLFWsize* size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id);
-  if(!size)
+
+  if(!(size = JS_GetOpaque2(ctx, this_val, glfw_size_class_id)))
     return JS_EXCEPTION;
 
   arr = JS_NewArray(ctx);
@@ -99,46 +115,42 @@ glfw_size_iterator(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
 }
 
 // initialization
-JSClassDef glfw_size_class_def = {
+static JSClassDef glfw_size_class_def = {
     .class_name = "Size",
     .finalizer = glfw_size_finalizer,
 };
 
-const JSCFunctionListEntry glfw_size_proto_funcs[] = {
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_size_get_axis, glfw_size_set_axis, 0),
-    JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_size_get_axis, glfw_size_set_axis, 1),
+static const JSCFunctionListEntry glfw_size_proto_funcs[] = {
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_size_get, glfw_size_set, 0),
+    JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_size_get, glfw_size_set, 1),
     JS_CFUNC_DEF("[Symbol.iterator]", 0, glfw_size_iterator),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWsize", JS_PROP_CONFIGURABLE),
 };
 
-JSValue glfw_size_proto, glfw_size_class;
+int
+glfw_size_init(JSContext* ctx, JSModuleDef* m) {
+  JS_NewClassID(&glfw_size_class_id);
+  JS_NewClass(JS_GetRuntime(ctx), glfw_size_class_id, &glfw_size_class_def);
 
-JSValue
-glfw_size_constructor(JSContext* ctx) {
-  JSRuntime* rt = JS_GetRuntime(ctx);
+  glfw_size_proto = JS_NewObject(ctx);
+  JS_SetPropertyFunctionList(ctx, glfw_size_proto, glfw_size_proto_funcs, countof(glfw_size_proto_funcs));
+  JS_SetClassProto(ctx, glfw_size_class_id, glfw_size_proto);
 
-  if(!JS_IsRegisteredClass(rt, glfw_size_class_id)) {
-    JS_NewClassID(&glfw_size_class_id);
-    JS_NewClass(JS_GetRuntime(ctx), glfw_size_class_id, &glfw_size_class_def);
+  glfw_size_class = JS_NewCFunction2(ctx, glfw_size_constructor, "Size", 2, JS_CFUNC_constructor, 0);
 
-    glfw_size_proto = JS_NewObject(ctx);
-    JS_SetPropertyFunctionList(ctx, glfw_size_proto, glfw_size_proto_funcs, countof(glfw_size_proto_funcs));
-    JS_SetClassProto(ctx, glfw_size_class_id, glfw_size_proto);
+  /* set proto.constructor and ctor.prototype */
+  JS_SetConstructor(ctx, glfw_size_class, glfw_size_proto);
 
-    glfw_size_class = JS_NewCFunction2(ctx, glfw_size_ctor, "Size", 2, JS_CFUNC_constructor, 0);
-    /* set proto.constructor and ctor.prototype */
-    JS_SetConstructor(ctx, glfw_size_class, glfw_size_proto);
-  }
-
-  return glfw_size_class;
+  JS_SetModuleExport(ctx, m, "Size", glfw_size_class);
+  return 0;
 }
 
 JSValue
-glfw_size_new_instance(JSContext* ctx, GLFWsize* size) {
+glfw_size_wrap(JSContext* ctx, GLFWsize* size) {
   JSValue obj = JS_UNDEFINED;
   JSValue proto;
 
-  proto = JS_GetPropertyStr(ctx, glfw_size_constructor(ctx), "prototype");
+  proto = JS_GetPropertyStr(ctx, glfw_size_class, "prototype");
   if(JS_IsException(proto))
     goto fail;
 
@@ -153,12 +165,6 @@ glfw_size_new_instance(JSContext* ctx, GLFWsize* size) {
 fail:
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
-}
-
-int
-glfw_size_init(JSContext* ctx, JSModuleDef* m) {
-  JS_SetModuleExport(ctx, m, "Size", glfw_size_constructor(ctx));
-  return 0;
 }
 
 int

@@ -14,8 +14,6 @@
 
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
-JSValue glfw_throw(JSContext* ctx);
-
 #ifndef JS_SHARED_LIBRARY
 #define js_init_module js_init_module_qjsc_glfw
 #endif
@@ -26,6 +24,16 @@ JSValue glfw_throw(JSContext* ctx);
 #else
 #define VISIBLE __attribute__((visibility("default")))
 #define HIDDEN __attribute__((visibility("hidden")))
+#endif
+
+#ifdef _Thread_local
+#define thread_local _Thread_local
+#elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#define thread_local __thread
+#elif defined(_WIN32)
+#define thread_local __declspec(thread)
+#else
+#error No TLS implementation found.
 #endif
 
 #define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
@@ -44,23 +52,49 @@ static inline JSAtom
 js_iterator_atom(JSContext* ctx) {
 
   JSValue global_obj = JS_GetGlobalObject(ctx);
-  JSValue symbol_ctor = JS_GetPropertyStr(ctx, global_obj, "Symbol");
-  JSValue symbol_iterator = JS_GetPropertyStr(ctx, symbol_ctor, "iterator");
+  JSValue symbol_constructor = JS_GetPropertyStr(ctx, global_obj, "Symbol");
+  JSValue symbol_iterator = JS_GetPropertyStr(ctx, symbol_constructor, "iterator");
   JSAtom atom = JS_ValueToAtom(ctx, symbol_iterator);
 
   JS_FreeValue(ctx, global_obj);
-  JS_FreeValue(ctx, symbol_ctor);
+  JS_FreeValue(ctx, symbol_constructor);
   JS_FreeValue(ctx, symbol_iterator);
   return atom;
 }
 
 static inline JSValue
 js_newptr(JSContext* ctx, void* ptr) {
-  char buf[128];
-  snprintf(buf, sizeof(buf), "%p", ptr);
-  return JS_NewString(ctx, buf);
+  if(ptr != NULL) {
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%p", ptr);
+    return JS_NewString(ctx, buf);
+  }
+
+  return JS_NULL;
 }
 
+static inline void*
+js_getptr(JSContext* ctx, JSValueConst value) {
+
+  if(!JS_IsNull(value)) {
+    const char* str = JS_ToCString(ctx, value);
+    void* ptr = 0;
+    sscanf(str, "%p", &ptr);
+    return ptr;
+  }
+
+  return NULL;
+}
+
+#define GLFW_THROW() glfw_throw(ctx, __func__)
+
+extern thread_local BOOL glfw_initialized;
+
 VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
+
+JSValue glfw_throw(JSContext* ctx, const char* func);
+BOOL glfw_initialize(JSContext*);
+int glfw_init(JSContext*, JSModuleDef*);
+int glfw_export(JSContext*, JSModuleDef*);
 
 #endif

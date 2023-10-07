@@ -1,11 +1,12 @@
-import { getProcAddress, poll, context } from 'glfw';
+import { GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_LIGHTING, GL_LINE_LOOP, GL_MODELVIEW, GL_PROJECTION, GL_QUADS, GL_TEXTURE_2D, glBegin, glBindTexture, glClear, glClearColor, glColor3f, glDisable, glEnable, glEnd, glewInit, glFlush, glLineWidth, glLoadIdentity, glMatrixMode, glOrtho, glPopMatrix, glPushMatrix, glTexCoord2f, glTranslatef, glVertex2f, glVertex3f, glViewport } from './js/glew.js';
 import { Window } from './js/gui.js';
-import { glewInit, GL_BLEND, glBlendFunc, glHint, GL_LINE_SMOOTH, GL_LINE_SMOOTH_HINT, GL_NICEST, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, glLineWidth, glTranslatef, glColor3ub, glColor3f, glFlush, glBegin, glBindTexture, glClear, glClearColor, glEnable, glEnd, glTexCoord2f, glVertex2f, glVertex3f, glViewport, GL_COLOR_BUFFER_BIT, GL_QUADS, GL_TEXTURE_2D, glDisable, glLoadIdentity, glMatrixMode, glOrtho, glPushMatrix, glPopMatrix, GL_LIGHTING, GL_MODELVIEW, GL_PROJECTION, GL_LINE_LOOP, GL_DEPTH_BUFFER_BIT } from './js/glew.js';
+import { getProcAddress, poll, Image } from 'glfw';
 
 function shuffle(arr, rnd = Math.random) {
   arr.sort((a, b) => 0.5 - rnd());
   return arr;
 }
+
 function DrawCircle(cx, cy, r, num_segments) {
   glBegin(GL_LINE_LOOP);
   for(let ii = 0; ii < num_segments; ii++) {
@@ -20,6 +21,9 @@ function DrawCircle(cx, cy, r, num_segments) {
 
 function main(...args) {
   const window = new Window(800, 600, 'OpenGL');
+
+  const img = new Image(128, 128);
+  console.log('img', img);
 
   //console.log('gladLoadGL() =', gladLoadGL());
   console.log('glewInit() =', glewInit());
@@ -57,7 +61,8 @@ function main(...args) {
   ];
 
   const clamp = (n, min, max) => Math.min(Math.max(min, n), max);
-  const interpolate = (x, y, sigma) => (Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma);
+  const interpolate = (x, y, sigma) =>
+    Array.isArray(x) ? x.map((xx, i) => interpolate(xx, y[i], sigma)) : x * (1.0 - sigma) + y * sigma;
 
   while(!window.shouldClose) {
     glViewport(0, 0, width, height);
@@ -136,7 +141,8 @@ const runMain = () => {
     main(...scriptArgs.slice(1));
     std.exit(0);
   } catch(error) {
-    console.log('ERROR:', error);
+    if(typeof error == 'object') console.log('ERROR: ' + error.message + '\n' + error.stack);
+    else console.log(`ERROR (${typeof error}): ` + error);
   }
 };
 import('console') .catch(runMain) .then(({ Console }) => ((globalThis.console = new Console({ inspectOptions: {} })), runMain()));

@@ -11,7 +11,10 @@ export class Window {
   #handle = null;
 
   constructor(...args) {
-    const size = typeof args[0] == 'number' && typeof args[1] == 'number' ? new glfw.Size(...args.splice(0, 2)) : Screen.size(args[1]);
+    const size =
+      typeof args[0] == 'number' && typeof args[1] == 'number'
+        ? new glfw.Size(...args.splice(0, 2))
+        : Screen.size(args[1]);
     const [name, screenIndex = 0] = args;
     console.log('size', size);
     console.log('name', name);
@@ -186,7 +189,16 @@ export class Window {
               'Menu'
             ][keycode - 0x100]
           : String.fromCharCode(keycode);
-      const ev = { type: action ? 'keydown' : 'keyup', repeat: action > 1, key, keycode, code, altKey: !!(mods & 4), shiftKey: !!(mods & 1), ctrlKey: !!(mods & 2) };
+      const ev = {
+        type: action ? 'keydown' : 'keyup',
+        repeat: action > 1,
+        key,
+        keycode,
+        code,
+        altKey: !!(mods & 4),
+        shiftKey: !!(mods & 1),
+        ctrlKey: !!(mods & 2)
+      };
       if(mods > 7) ev.mods = mods;
       if(keycode < 0x100 && !ev.shiftKey) ev.key = ev.key.toLowerCase();
       handler(ev);

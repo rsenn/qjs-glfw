@@ -1,10 +1,11 @@
 #ifndef GLFW_MODULE_MONITOR
 #define GLFW_MODULE_MONITOR 1
 
-extern JSClassID glfw_monitor_class_id;
-int glfw_monitor_init(JSContext* ctx, JSModuleDef* m);
-int glfw_monitor_export(JSContext* ctx, JSModuleDef* m);
+extern thread_local JSClassID glfw_monitor_class_id;
+extern thread_local JSValue glfw_monitor_proto, glfw_monitor_class;
 
-JSValue glfw_monitor_new_instance(JSContext* ctx, GLFWmonitor* monitor);
+int glfw_monitor_init(JSContext*, JSModuleDef*);
+JSValue glfw_monitor_wrap(JSContext*, GLFWmonitor*);
+int glfw_monitor_export(JSContext*, JSModuleDef*);
 
 #endif
