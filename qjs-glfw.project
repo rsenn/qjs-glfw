@@ -3,6 +3,7 @@
 	<VirtualDirectory Name="src">
 		<File Name="gamma_ramp.c"/>
 		<File Name="glfw.c"/>
+		<File Name="image.c"/>
 		<File Name="monitor.c"/>
 		<File Name="position.c"/>
 		<File Name="scale.c"/>
@@ -14,6 +15,7 @@
 	<VirtualDirectory Name="include">
 		<File Name="gamma_ramp.h"/>
 		<File Name="glfw.h"/>
+		<File Name="image.h"/>
 		<File Name="monitor.h"/>
 		<File Name="position.h"/>
 		<File Name="scale.h"/>
@@ -23,7 +25,7 @@
 		<File Name="workarea.h"/>
 	</VirtualDirectory>
 	<Settings Type="">
-		<Configuration Name="RelWithDebInfo" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+		<Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
 			<Compiler Options="-g" Required="yes" PreCompiledHeader="">
 				<IncludePath Value="."/>
 			</Compiler>
