@@ -134,7 +134,7 @@ enum {
 };
 
 static JSValue
-  (JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
+glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
