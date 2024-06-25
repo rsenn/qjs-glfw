@@ -8,57 +8,53 @@
 thread_local JSClassID glfw_window_class_id = 0;
 thread_local JSValue glfw_window_proto, glfw_window_class;
 
-/*
-
-  const defaultCallbacks = {
-    handlePos(x, y)  {
-      console.log('handlePos', { x, y)  });
-    },
-    handleSize(width, height)  {
-      console.log('handleSize', { width, height)  });
-    },
-    handleClose(w)  {
-      console.log('handleClose', { w)  });
-    },
-    handleRefresh(w)  {
-      console.log('handleRefresh', { w)  });
-    },
-    handleFocus(focused)  {
-      console.log('handleFocus', { focused)  });
-    },
-    handleIconify(iconified)  {
-      console.log('handleIconify', { iconified)  });
-    },
-    handleFramebufferSize(width, height)  {
-      console.log('handleFramebufferSize', { width, height)  });
-    },
-    handleMouseButton(button, action, mods)  {
-      console.log('handleMouseButton', { button, action, mods)  });
-    },
-    handleCursorPos(x, y)  {
-      console.log('handleCursorPos', { x, y)  });
-    },
-    handleCursorEnter(cur)  {
-      console.log('handleCursorEnter', { cur)  });
-    },
-    handleScroll(xoffset, yoffset)  {
-      console.log('handleScroll', { xoffset, yoffset)  });
-    },
-    handleKey(key, scancode, action, mods)  {
-      console.log('handleKey', { key, scancode, action, mods)  });
-    },
-    handleChar(c)  {
-      console.log('handleChar', { c)  });
-    },
-    handleCharMods(c, mods)  {
-      console.log('handleCharMods', { c, mods)  });
-    },
-    handleDrop(argcargv)  {
-      console.log('handleDrop', { argcargv)  });
-    }
-  });
-
- */
+/*const defaultCallbacks = {
+  handlePos(x, y)  {
+    console.log('handlePos', { x, y)  });
+  },
+  handleSize(width, height)  {
+    console.log('handleSize', { width, height)  });
+  },
+  handleClose(w)  {
+    console.log('handleClose', { w)  });
+  },
+  handleRefresh(w)  {
+    console.log('handleRefresh', { w)  });
+  },
+  handleFocus(focused)  {
+    console.log('handleFocus', { focused)  });
+  },
+  handleIconify(iconified)  {
+    console.log('handleIconify', { iconified)  });
+  },
+  handleFramebufferSize(width, height)  {
+    console.log('handleFramebufferSize', { width, height)  });
+  },
+  handleMouseButton(button, action, mods)  {
+    console.log('handleMouseButton', { button, action, mods)  });
+  },
+  handleCursorPos(x, y)  {
+    console.log('handleCursorPos', { x, y)  });
+  },
+  handleCursorEnter(cur)  {
+    console.log('handleCursorEnter', { cur)  });
+  },
+  handleScroll(xoffset, yoffset)  {
+    console.log('handleScroll', { xoffset, yoffset)  });
+  },
+  handleKey(key, scancode, action, mods)  {
+    console.log('handleKey', { key, scancode, action, mods)  });
+  },
+  handleChar(c)  {
+    console.log('handleChar', { c)  });
+  },
+  handleCharMods(c, mods)  {
+    console.log('handleCharMods', { c, mods)  });
+  },
+  handleDrop(argcargv)  {
+    console.log('handleDrop', { argcargv)  });
+  }
+});*/
 
 enum CallbackID {
   CALLBACK_WINDOW_POS = 0,
@@ -677,70 +673,86 @@ glfw_window_set_callback(JSContext* ctx, JSValueConst this_val, JSValueConst val
         glfwSetWindowPosCallback(window, enable ? &glfw_handle_windowpos : 0);
         break;
       }
+
       case CALLBACK_WINDOW_SIZE: {
         glfwSetWindowSizeCallback(window, enable ? &glfw_handle_windowsize : 0);
         break;
       }
+
       case CALLBACK_WINDOW_CLOSE: {
         glfwSetWindowCloseCallback(window, enable ? &glfw_handle_windowclose : 0);
         break;
       }
+
       case CALLBACK_WINDOW_REFRESH: {
         glfwSetWindowRefreshCallback(window, enable ? &glfw_handle_windowrefresh : 0);
         break;
       }
+
       case CALLBACK_WINDOW_FOCUS: {
         glfwSetWindowFocusCallback(window, enable ? &glfw_handle_windowfocus : 0);
         break;
       }
+
       case CALLBACK_WINDOW_ICONIFY: {
         glfwSetWindowIconifyCallback(window, enable ? &glfw_handle_windowiconify : 0);
         break;
       }
+
       case CALLBACK_WINDOW_MAXIMIZE: {
 #ifdef HAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK
         glfwSetWindowMaximizeCallback(window, enable ? &glfw_handle_windowmaximize : 0);
 #endif
         break;
       }
+
       case CALLBACK_FRAMEBUFFER_SIZE: {
         glfwSetFramebufferSizeCallback(window, enable ? &glfw_handle_framebuffersize : 0);
         break;
       }
+
       case CALLBACK_WINDOW_CONTENT_SCALE: {
 #ifdef HAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK
         glfwSetWindowContentScaleCallback(window, enable ? &glfw_handle_windowcontentscale : 0);
 #endif
         break;
       }
+
       case CALLBACK_MOUSE_BUTTON: {
         glfwSetMouseButtonCallback(window, enable ? &glfw_handle_mousebutton : 0);
         break;
       }
+
       case CALLBACK_CURSOR_POS: {
         glfwSetCursorPosCallback(window, enable ? &glfw_handle_cursorpos : 0);
         break;
       }
+
       case CALLBACK_CURSOR_ENTER: {
         glfwSetCursorEnterCallback(window, enable ? &glfw_handle_cursorenter : 0);
         break;
       }
+
       case CALLBACK_SCROLL: {
         glfwSetScrollCallback(window, enable ? &glfw_handle_scroll : 0);
         break;
       }
+
       case CALLBACK_KEY: {
         glfwSetKeyCallback(window, enable ? &glfw_handle_key : 0);
         break;
       }
+
       case CALLBACK_CHAR: {
         glfwSetCharCallback(window, enable ? &glfw_handle_char : 0);
         break;
       }
+
       case CALLBACK_CHAR_MODS: {
         glfwSetCharModsCallback(window, enable ? &glfw_handle_charmods : 0);
         break;
       }
+
       case CALLBACK_DROP: {
         glfwSetDropCallback(window, enable ? &glfw_handle_drop : 0);
         break;
@@ -930,6 +942,7 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
       ret = JS_NewInt32(ctx, glfwGetKey(window, key));
       break;
     }
+
     case DESTROY_WINDOW: {
       glfwDestroyWindow(window);
       JS_SetOpaque(this_val, NULL);

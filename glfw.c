@@ -108,10 +108,12 @@ glfw_time(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], 
       glfwSetTime(t);
       break;
     }
+
     case TIMER_VALUE_GET: {
       ret = JS_NewInt64(ctx, glfwGetTimerValue());
       break;
     }
+
     case TIMER_FREQUENCY_GET: {
       ret = JS_NewInt64(ctx, glfwGetTimerFrequency());
       break;
@@ -132,7 +134,7 @@ enum {
 };
 
 static JSValue
-glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
+  (JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
@@ -140,6 +142,7 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
       ret = JS_NewInt32(ctx, glfwGetPlatform());
       break;
     }
+
     case SUPPORTED_PLATFORM: {
       int32_t p = -1;
       JS_ToInt32(ctx, &p, argv[0]);

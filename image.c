@@ -175,6 +175,7 @@ glfw_image_get(JSContext* ctx, JSValueConst this_val, int magic) {
       ret = JS_NewUint32(ctx, image->width);
       break;
     }
+
     case IMAGE_HEIGHT: {
       ret = JS_NewUint32(ctx, image->height);
       break;
