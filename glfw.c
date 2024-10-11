@@ -138,11 +138,14 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
   JSValue ret = JS_UNDEFINED;
 
   switch(magic) {
+#ifdef HAVE_GLFW_GET_PLATFORM
     case GET_PLATFORM: {
       ret = JS_NewInt32(ctx, glfwGetPlatform());
       break;
     }
+#endif
 
+#ifdef HAVE_GLFW_PLATFORM_SUPPORTED
     case SUPPORTED_PLATFORM: {
       int32_t p = -1;
       JS_ToInt32(ctx, &p, argv[0]);
@@ -150,6 +153,7 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
       ret = JS_NewInt32(ctx, glfwPlatformSupported(p));
       break;
     }
+#endif
 
     case KEY_NAME: {
       int32_t key = -1, scancode = -1;
@@ -309,6 +313,8 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   return JS_NewString(ctx, glfwGetVersionString());
 }
 
+#define GLFW_PLATFORM_CONST X11
+
 #define CONSTANTS(V) \
   V(FOCUSED) \
   V(ICONIFIED) \
@@ -348,13 +354,7 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   V(OPENGL_CORE_PROFILE) \
   V(VERSION_MAJOR) \
   V(VERSION_MINOR) \
-  V(VERSION_REVISION) \
-  V(ANY_PLATFORM) \
-  V(PLATFORM_WIN32) \
-  V(PLATFORM_COCOA) \
-  V(PLATFORM_WAYLAND) \
-  V(PLATFORM_X11) \
-  V(PLATFORM_NULL)
+  V(VERSION_REVISION)
 
 #define CONSTANTS2(V) \
   V(CENTER_CURSOR) \
@@ -381,8 +381,12 @@ static const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_MAGIC_DEF("setTime", 1, glfw_time, TIME_SET),
     JS_CFUNC_MAGIC_DEF("getTimerValue", 0, glfw_time, TIMER_VALUE_GET),
     JS_CFUNC_MAGIC_DEF("getTimerFrequency", 0, glfw_time, TIMER_FREQUENCY_GET),
+#ifdef HAVE_GLFW_GET_PLATFORM
     JS_CFUNC_MAGIC_DEF("getPlatform", 0, glfw_other, GET_PLATFORM),
+#endif
+#ifdef HAVE_GLFW_PLATFORM_SUPPORTED
     JS_CFUNC_MAGIC_DEF("platformSupported", 1, glfw_other, SUPPORTED_PLATFORM),
+#endif
     JS_CFUNC_MAGIC_DEF("getKeyName", 1, glfw_other, KEY_NAME),
     JS_CFUNC_MAGIC_DEF("getKeyScancode", 1, glfw_other, KEY_SCANCODE),
     JS_CFUNC_MAGIC_DEF("terminate", 0, glfw_other, TERMINATE),
@@ -392,6 +396,24 @@ static const JSCFunctionListEntry glfw_exports[] = {
     JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
     JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
     JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
+#ifdef GLFW_PLATFORM_WAYLAND
+    JS_PROP_INT32_DEF("PLATFORM_WAYLAND", GLFW_PLATFORM_WAYLAND, 0),
+#endif
+#ifdef GLFW_PLATFORM_COCOA
+    JS_PROP_INT32_DEF("PLATFORM_COCOA", GLFW_PLATFORM_COCOA, 0),
+#endif
+#ifdef GLFW_PLATFORM_WIN32
+    JS_PROP_INT32_DEF("PLATFORM_WIN32", GLFW_PLATFORM_WIN32, 0),
+#endif
+#ifdef GLFW_PLATFORM_X11
+    JS_PROP_INT32_DEF("PLATFORM_X11", GLFW_PLATFORM_X11, 0),
+#endif
+#ifdef GLFW_PLATFORM_NULL
+    JS_PROP_INT32_DEF("PLATFORM_NULL", GLFW_PLATFORM_NULL, 0),
+#endif
+#ifdef GLFW_ANY_PLATFORM
+    JS_PROP_INT32_DEF("ANY_PLATFORM", GLFW_ANY_PLATFORM, 0),
+#endif
     CONSTANTS(DEFINE_CONSTANT)
     // CONSTANTS2(DEFINE_CONSTANT),
 };

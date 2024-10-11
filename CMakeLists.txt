@@ -68,6 +68,16 @@ if(NOT BUILD_GLFW)
   list(APPEND CMAKE_REQUIRED_INCLUDES ${GLFW_INCLUDE_DIR} ${GL3W_INCLUDE_DIR})
   list(APPEND CMAKE_REQUIRED_LIBRARIES ${GLFW_LIBRARY} ${GL3W_LIBRARY})
 
+  check_function_exists(glfwGetPlatform GLFW_GET_PLATFORM)
+  if(GLFW_GET_PLATFORM)
+    add_definitions(-DHAVE_GLFW_GET_PLATFORM=1)
+  endif(GLFW_GET_PLATFORM)
+
+  check_function_exists(glfwPlatformSupported GLFW_PLATFORM_SUPPORTED)
+  if(GLFW_PLATFORM_SUPPORTED)
+    add_definitions(-DHAVE_GLFW_PLATFORM_SUPPORTED=1)
+  endif(GLFW_PLATFORM_SUPPORTED)
+
   check_function_exists(glfwGetError GLFW_GET_ERROR)
   if(GLFW_GET_ERROR)
     add_definitions(-DHAVE_GLFW_GET_ERROR=1)
