@@ -51,5 +51,5 @@ if(NOT CMAKE_ARCH_LIBDIR)
   endif(SYSTEM_NAME AND NOT "${SYSTEM_NAME}" STREQUAL "")
 endif(NOT CMAKE_ARCH_LIBDIR)
 
-# message("${CMAKE_C_COMPILER}: ${CMAKE_C_COMPILER}")
+#message("${CMAKE_C_COMPILER}: ${CMAKE_C_COMPILER}")
 message("Architecture-specific library directory: ${CMAKE_ARCH_LIBDIR}")
