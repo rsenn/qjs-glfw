@@ -5,8 +5,8 @@
 #include "image.h"
 #include "window.h"
 
-thread_local JSClassID glfw_window_class_id = 0;
-thread_local JSValue glfw_window_proto, glfw_window_class;
+JSClassID glfw_window_class_id = 0;
+JSValue glfw_window_proto, glfw_window_class;
 
 /*const defaultCallbacks = {
   handlePos(x, y)  {

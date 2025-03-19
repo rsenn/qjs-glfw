@@ -2,8 +2,8 @@
 #include "gamma_ramp.h"
 #include <string.h>
 
-thread_local JSClassID glfw_gamma_ramp_class_id = 0;
-thread_local JSValue glfw_gamma_ramp_proto, glfw_gamma_ramp_class;
+JSClassID glfw_gamma_ramp_class_id = 0;
+JSValue glfw_gamma_ramp_proto, glfw_gamma_ramp_class;
 
 static void
 gamma_ramp_free(GLFWgammaramp* gr) {

@@ -1,8 +1,8 @@
 #include "glfw.h"
 #include "workarea.h"
 
-thread_local JSClassID glfw_workarea_class_id = 0;
-thread_local JSValue glfw_workarea_proto, glfw_workarea_class;
+JSClassID glfw_workarea_class_id = 0;
+JSValue glfw_workarea_proto, glfw_workarea_class;
 
 // constructor/destructor
 static JSValue

@@ -1,8 +1,8 @@
 #include "glfw.h"
 #include "size.h"
 
-thread_local JSClassID glfw_size_class_id = 0;
-thread_local JSValue glfw_size_proto, glfw_size_class;
+JSClassID glfw_size_class_id = 0;
+JSValue glfw_size_proto, glfw_size_class;
 
 // constructor/destructor
 static JSValue

@@ -18,7 +18,7 @@
 
 //#include "gl3w/src/gl3w.c"
 //
-thread_local BOOL glfw_initialized = FALSE;
+BOOL glfw_initialized = FALSE;
 
 BOOL
 glfw_initialize(JSContext* ctx) {

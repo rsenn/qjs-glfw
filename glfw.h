@@ -27,13 +27,14 @@
 #endif
 
 #ifdef _Thread_local
-#define thread_local _Thread_local
+#define thread_local
 #elif defined(__GNUC__) || defined(__INTEL_COMPILER) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
 #define thread_local __thread
 #elif defined(_WIN32)
 #define thread_local __declspec(thread)
 #else
-#error No TLS implementation found.
+#define thread_local 
+#warning No TLS implementation found.
 #endif
 
 #define JS_CGETSET_ENUMERABLE_DEF(prop_name, fgetter, fsetter) \
@@ -88,7 +89,7 @@ js_getptr(JSContext* ctx, JSValueConst value) {
 
 #define GLFW_THROW() glfw_throw(ctx, __func__)
 
-extern thread_local BOOL glfw_initialized;
+extern BOOL glfw_initialized;
 
 VISIBLE JSModuleDef* js_init_module(JSContext* ctx, const char* module_name);
 

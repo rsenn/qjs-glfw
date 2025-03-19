@@ -4,8 +4,8 @@
 #include <assert.h>
 #include <string.h>
 
-thread_local JSClassID glfw_image_class_id = 0;
-thread_local JSValue glfw_image_proto, glfw_image_class;
+JSClassID glfw_image_class_id = 0;
+JSValue glfw_image_proto, glfw_image_class;
 
 static void
 image_free(GLFWimage* img) {

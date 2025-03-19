@@ -7,8 +7,8 @@
 
 #include "monitor.h"
 
-thread_local JSClassID glfw_monitor_class_id = 0;
-thread_local JSValue glfw_monitor_proto, glfw_monitor_class;
+JSClassID glfw_monitor_class_id = 0;
+JSValue glfw_monitor_proto, glfw_monitor_class;
 
 // constructor/destructor
 static JSValue

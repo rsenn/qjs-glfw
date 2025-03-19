@@ -1,8 +1,8 @@
 #include "glfw.h"
 #include "position.h"
 
-thread_local JSClassID glfw_position_class_id = 0;
-thread_local JSValue glfw_position_proto, glfw_position_class;
+JSClassID glfw_position_class_id = 0;
+JSValue glfw_position_proto, glfw_position_class;
 
 // constructor/destructor
 static JSValue
