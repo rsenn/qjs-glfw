@@ -248,20 +248,3 @@ function(CHECK_EXTERNAL NAME LIBS LDFLAGS OUTPUT_VAR)
   set(${OUTPUT_VAR} "${${OUTPUT_VAR}}" PARENT_SCOPE)
 endfunction(CHECK_EXTERNAL NAME LIBS LDFLAGS OUTPUT_VAR)
 
-function(CHECK_FLAG FLAG VAR)
-  if(NOT VAR OR VAR STREQUAL "")
-    string(TOUPPER "${FLAG}" TMP)
-    string(REGEX REPLACE "[^0-9A-Za-z]" _ VAR "${TMP}")
-  endif(NOT VAR OR VAR STREQUAL "")
-  set(CMAKE_REQUIRED_QUIET ON)
-  check_c_compiler_flag("${FLAG}" "${VAR}")
-  set(CMAKE_REQUIRED_QUIET OFF)
-
-  set(RESULT "${${VAR}}")
-  if(RESULT)
-    append_vars(${FLAG} ${ARGN})
-
-    message(STATUS "Compiler flag ${FLAG} ... supported")
-
-  endif(RESULT)
-endfunction(CHECK_FLAG FLAG VAR)

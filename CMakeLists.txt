@@ -10,6 +10,7 @@ option(BUILD_GLFW OFF "Build GLFW from sources")
 option(USE_GL3W OFF "Use GL3W instead of GLEW")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/check-flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindGLEW.cmake)
