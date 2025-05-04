@@ -32,8 +32,10 @@ find_glew()
 if(BUILD_GLFW)
   build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
-  add_definitions(-DHAVE_GLFW_GET_ERROR -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE -DHAVE_GLFW_GET_MONITOR_WORKAREA -DHAVE_GLFW_GET_WINDOW_OPACITY -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK -DHAVE_GLFW_SET_WINDOW_OPACITY
-                  -DHAVE_GLFW_WINDOW_HINT_STRING)
+  add_definitions(
+    -DHAVE_GLFW_GET_ERROR -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE -DHAVE_GLFW_GET_MONITOR_WORKAREA
+    -DHAVE_GLFW_GET_WINDOW_OPACITY -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK
+    -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK -DHAVE_GLFW_SET_WINDOW_OPACITY -DHAVE_GLFW_WINDOW_HINT_STRING)
 else(BUILD_GLFW)
   find_glfw()
 endif(BUILD_GLFW)
@@ -42,8 +44,10 @@ if(USE_GL3W)
 
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/GL)
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/KHR)
-  file(DOWNLOAD "https://www.khronos.org/registry/OpenGL/api/GL/glcorearb.h" ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/GL/glcorearb.h SHOW_PROGRESS)
-  file(DOWNLOAD "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h" ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/KHR/khrplatform.h SHOW_PROGRESS)
+  file(DOWNLOAD "https://www.khronos.org/registry/OpenGL/api/GL/glcorearb.h"
+       ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/GL/glcorearb.h SHOW_PROGRESS)
+  file(DOWNLOAD "https://www.khronos.org/registry/EGL/api/KHR/khrplatform.h"
+       ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include/KHR/khrplatform.h SHOW_PROGRESS)
 
   build_gl3w()
 
@@ -52,9 +56,11 @@ if(USE_GL3W)
   set(GL3W_SOURCE ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c)
 endif(USE_GL3W)
 
-# message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}") message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}") message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
+# message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}") message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}") message(STATUS
+# "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR}
+                    ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
 link_directories(${GL3W_LIBRARY_DIR} ${GLFW_LIBRARY_DIR} ${QUICKJS_LIBRARY_DIR})
 
 if(WIN32)
@@ -130,7 +136,8 @@ if(NOT BUILD_GLFW)
 endif(NOT BUILD_GLFW)
 
 # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
-set(QJS_GLFW_SOURCES gamma_ramp.c gamma_ramp.h glfw.c glfw.h image.c image.h monitor.c monitor.h position.c position.h scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
+set(QJS_GLFW_SOURCES gamma_ramp.c gamma_ramp.h glfw.c glfw.h image.c image.h monitor.c monitor.h position.c position.h
+                     scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
 
 if(USE_GL3W)
   list(APPEND IMGUI_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c)
@@ -166,4 +173,5 @@ if(NOT QUICKJS_C_MODULE_DIR)
   set(QUICKJS_C_MODULE_DIR "${CMAKE_INSTALL_LIBDIR}/quickjs")
 endif(NOT QUICKJS_C_MODULE_DIR)
 
-install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}"
+        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
