@@ -315,13 +315,13 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
       if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
         monitor = 0;
       else if(!(monitor = JS_GetOpaque(argv[i], glfw_monitor_class_id)))
-        return JS_ThrowTypeError(ctx, "argument %d (monitor) must be a glfw.Monitor or null|undefined", i + 1);
+        return JS_ThrowTypeError(ctx, "argument %d (monitor) must be a GLFWMonitor or null|undefined", i + 1);
 
       if(++i < argc) {
         if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
           share = 0;
         else if(!(share = JS_GetOpaque(argv[i], glfw_window_class_id)))
-          return JS_ThrowTypeError(ctx, "argument %d (share) must be a glfw.Window or null|undefined", i + 1);
+          return JS_ThrowTypeError(ctx, "argument %d (share) must be a GLFWWindow or null|undefined", i + 1);
       }
     }
   }
@@ -567,7 +567,7 @@ glfw_window_set_monitor(JSContext* ctx, JSValueConst this_val, int argc, JSValue
   if(JS_IsNull(argv[0]) || JS_IsUndefined(argv[0]))
     monitor = NULL;
   else if(!(monitor = JS_GetOpaque(argv[0], glfw_monitor_class_id)))
-    return JS_ThrowTypeError(ctx, "argument 1 must be a glfw.Monitor or null|undefined");
+    return JS_ThrowTypeError(ctx, "argument 1 must be a GLFWMonitor or null|undefined");
 
   if(argc > 1)
     JS_ToInt32(ctx, &xpos, argv[1]);
@@ -867,7 +867,7 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
 
       for(int i = 0; i < argc; i++) {
         if(!(im = JS_GetOpaque(argv[i], glfw_image_class_id)))
-          return JS_ThrowTypeError(ctx, "argument %d must be a glfw.Image", i + 1);
+          return JS_ThrowTypeError(ctx, "argument %d must be a GLFWImage", i + 1);
 
         images[i] = *im;
       }
