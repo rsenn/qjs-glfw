@@ -1,7 +1,7 @@
-#include "glfw.h"
+#include "size.h"
 
 void
-glfw_size_read(JSContext* ctx, GLFWsize* pos, JSValueConst value) {
+glfw_size_read(JSContext* ctx, GLFWsize* size, JSValueConst value) {
   JSValue width, height;
 
   if(JS_IsArray(ctx, value)) {
@@ -18,14 +18,14 @@ glfw_size_read(JSContext* ctx, GLFWsize* pos, JSValueConst value) {
   JS_ToInt32(ctx, &h, height);
   JS_FreeValue(ctx, height);
 
-  pos->width = w;
-  pos->height = h;
+  size->width = w;
+  size->height = h;
 }
 
 JSValue
-glfw_size_write(JSContext* ctx, GLFWsize pos) {
+glfw_size_write(JSContext* ctx, GLFWsize size) {
   JSValue ret = JS_NewArray(ctx);
-  JS_SetPropertyUint32(ctx, ret, 0, JS_NewInt32(ctx, pos.width));
-  JS_SetPropertyUint32(ctx, ret, 1, JS_NewInt32(ctx, pos.height));
+  JS_SetPropertyUint32(ctx, ret, 0, JS_NewInt32(ctx, size.width));
+  JS_SetPropertyUint32(ctx, ret, 1, JS_NewInt32(ctx, size.height));
   return ret;
 }

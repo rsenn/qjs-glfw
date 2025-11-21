@@ -146,15 +146,15 @@ set(QJS_GLFW_SOURCES
   monitor.c
   monitor.h
   
-#[[  position.c
+  position.c
   position.h
-  scale.c
-  scale.h
+#[[  scale.c
+  scale.h]]
   size.c
   size.h
   workarea.c
   workarea.h
-]]
+
   video_mode.c
   video_mode.h
   window.c

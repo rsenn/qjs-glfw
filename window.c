@@ -446,12 +446,12 @@ glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value)
 static JSValue
 glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window;
-  GLFWposition_i position;
+  GLFWposition position;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  glfw_position_i_read(ctx, &position, value);
+  glfw_position_read(ctx, &position, value);
 
   glfwSetWindowPos(window, position.x, position.y);
   return JS_UNDEFINED;
@@ -460,13 +460,13 @@ glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst val
 static JSValue
 glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
-  GLFWposition_i position;
+  GLFWposition position;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
   glfwGetWindowPos(window, &position.x, &position.y);
-  return glfw_position_i_write(ctx, position);
+  return glfw_position_write(ctx, position);
 }
 
 // TODO: magic these with position setter/getter?
@@ -477,9 +477,9 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWposition_i size;
+  GLFWposition size;
 
-  glfw_position_i_read(ctx, &size, value);
+  glfw_position_read(ctx, &size, value);
 
   glfwSetWindowSize(window, size.x, size.y);
   return JS_UNDEFINED;
@@ -492,9 +492,9 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWposition_i size;
+  GLFWposition size;
   glfwGetWindowSize(window, &size.x, &size.y);
-  return glfw_position_i_write(ctx, size);
+  return glfw_position_write(ctx, size);
 }
 
 static JSValue
@@ -504,9 +504,9 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWposition_i size;
+  GLFWposition size;
   glfwGetFramebufferSize(window, &size.x, &size.y);
-  return glfw_position_i_write(ctx, size);
+  return glfw_position_write(ctx, size);
 }
 
 static JSValue

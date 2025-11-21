@@ -5,7 +5,7 @@
 #include "size.h"
 
 typedef struct {
-  GLFWposition_i position;
+  GLFWposition position;
   GLFWsize size;
 } GLFWworkarea;
 

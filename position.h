@@ -5,10 +5,10 @@
 
 typedef struct {
   int x, y;
-} GLFWposition_i;
+} GLFWposition;
 
-void glfw_position_i_read(JSContext*, GLFWposition_i*, JSValueConst);
-JSValue glfw_position_i_write(JSContext*, GLFWposition_i);
+void glfw_position_read(JSContext*, GLFWposition*, JSValueConst);
+JSValue glfw_position_write(JSContext*, GLFWposition);
 
 typedef struct {
   float x, y;

@@ -203,14 +203,14 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
 static JSValue
 glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWimage* image;
-  GLFWposition_i position;
+  GLFWposition position;
   int32_t x, y;
 
   if(!(image = JS_GetOpaque(argv[0], glfw_image_class_id)))
     return JS_ThrowTypeError(ctx, "argument 1 must be a glfw.Image");
 
   if(JS_IsObject(argv[1])) {
-    glfw_position_i_read(ctx, &position, argv[1]);
+    glfw_position_read(ctx, &position, argv[1]);
     x = position.x;
     y = position.y;
   } else {
@@ -488,15 +488,11 @@ glfw_init(JSContext* ctx, JSModuleDef* m) {
 
   JS_SetModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
 
-  glfw_position_init(ctx, m);
-  glfw_size_init(ctx, m);
   glfw_gamma_ramp_init(ctx, m);
   glfw_image_init(ctx, m);
   glfw_monitor_init(ctx, m);
-  glfw_scale_init(ctx, m);
   glfw_video_mode_init(ctx, m);
   glfw_window_init(ctx, m);
-  glfw_workarea_init(ctx, m);
 
   // TODO: lazy-load version info with a getter?
   int major, minor, revision;
@@ -518,15 +514,11 @@ int
 glfw_export(JSContext* ctx, JSModuleDef* m) {
   JS_AddModuleExportList(ctx, m, glfw_exports, countof(glfw_exports));
 
-  glfw_position_export(ctx, m);
-  glfw_size_export(ctx, m);
   glfw_gamma_ramp_export(ctx, m);
   glfw_image_export(ctx, m);
   glfw_monitor_export(ctx, m);
-  glfw_scale_export(ctx, m);
   glfw_video_mode_export(ctx, m);
   glfw_window_export(ctx, m);
-  glfw_workarea_export(ctx, m);
 
   JS_AddModuleExport(ctx, m, "version");
   JS_AddModuleExport(ctx, m, "rawMouseMotionSupported");

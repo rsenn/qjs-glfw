@@ -28,18 +28,18 @@ glfw_workarea_read(JSContext* ctx, GLFWworkarea* workarea, JSValueConst value) {
   JS_ToInt32(ctx, &tmp_height, height);
   JS_FreeValue(ctx, height);
 
-  pos->x = tmp_x;
-  pos->y = tmp_y;
-  pos->width = tmp_width;
-  pos->height = tmp_height;
+  workarea->position.x = tmp_x;
+  workarea->position.y = tmp_y;
+  workarea->size.width = tmp_width;
+  workarea->size.height = tmp_height;
 }
 
 JSValue
 glfw_workarea_write(JSContext* ctx, GLFWworkarea workarea) {
   JSValue ret = JS_NewArray(ctx);
-  JS_SetPropertyUint32(ctx, ret, 0, JS_NewInt32(ctx, workarea.x));
-  JS_SetPropertyUint32(ctx, ret, 1, JS_NewInt32(ctx, workarea.y));
-  JS_SetPropertyUint32(ctx, ret, 2, JS_NewInt32(ctx, workarea.width));
-  JS_SetPropertyUint32(ctx, ret, 3, JS_NewInt32(ctx, workarea.height));
+  JS_SetPropertyUint32(ctx, ret, 0, JS_NewInt32(ctx, workarea.position.x));
+  JS_SetPropertyUint32(ctx, ret, 1, JS_NewInt32(ctx, workarea.position.y));
+  JS_SetPropertyUint32(ctx, ret, 2, JS_NewInt32(ctx, workarea.size.width));
+  JS_SetPropertyUint32(ctx, ret, 3, JS_NewInt32(ctx, workarea.size.height));
   return ret;
 }

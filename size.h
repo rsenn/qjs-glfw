@@ -1,6 +1,8 @@
 #ifndef GLFW_MODULE_SIZE
 #define GLFW_MODULE_SIZE 1
 
+#include "glfw.h"
+
 typedef struct {
   int width, height;
 } GLFWsize;

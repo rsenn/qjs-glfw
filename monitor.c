@@ -37,14 +37,14 @@ static JSValue
 glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor;
   int x, y;
-  GLFWposition_i pos;
+  GLFWposition pos;
 
   if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
     return JS_EXCEPTION;
 
   glfwGetMonitorPos(monitor, &pos.x, &pos.y);
 
-  return glfw_position_i_write(ctx, pos);
+  return glfw_position_write(ctx, pos);
 }
 
 static JSValue
