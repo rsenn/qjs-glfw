@@ -32,22 +32,9 @@ glfw_position_write(JSContext* ctx, GLFWposition pos) {
 
 void
 glfw_position_f_read(JSContext* ctx, GLFWposition_f* pos, JSValueConst value) {
-  JSValue x, y;
-
-  if(JS_IsArray(ctx, value)) {
-    x = JS_GetPropertyUint32(ctx, value, 0);
-    y = JS_GetPropertyUint32(ctx, value, 1);
-  } else {
-    x = JS_GetPropertyStr(ctx, value, "x");
-    y = JS_GetPropertyStr(ctx, value, "y");
-  }
-
   GLFWposition_d tmp;
 
-  JS_ToFloat64(ctx, &tmp.x, x);
-  JS_FreeValue(ctx, x);
-  JS_ToFloat64(ctx, &tmp.y, y);
-  JS_FreeValue(ctx, y);
+  glfw_position_f_read(ctx, &tmp, value);
 
   pos->x = tmp.x;
   pos->y = tmp.y;
@@ -55,10 +42,7 @@ glfw_position_f_read(JSContext* ctx, GLFWposition_f* pos, JSValueConst value) {
 
 JSValue
 glfw_position_f_write(JSContext* ctx, GLFWposition_f pos) {
-  JSValue ret = JS_NewArray(ctx);
-  JS_SetPropertyUint32(ctx, ret, 0, JS_NewFloat64(ctx, pos.x));
-  JS_SetPropertyUint32(ctx, ret, 1, JS_NewFloat64(ctx, pos.y));
-  return ret;
+  return glfw_position_d_write(ctx, (GLFWposition_d){pos.x, pos.y});
 }
 
 void
