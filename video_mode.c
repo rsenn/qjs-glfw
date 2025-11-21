@@ -14,8 +14,9 @@ glfw_video_mode_constructor(JSContext* ctx, JSValueConst new_target, int argc, J
 // properties
 static JSValue
 glfw_video_mode_get(JSContext* ctx, JSValueConst this_val, int magic) {
-  GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
-  if(!video_mode)
+  GLFWvidmode* video_mode;
+
+  if(!(video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id)))
     return JS_EXCEPTION;
 
   int value;
@@ -34,11 +35,13 @@ glfw_video_mode_get(JSContext* ctx, JSValueConst this_val, int magic) {
 
 static JSValue
 glfw_video_mode_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magic) {
-  GLFWvidmode* video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id);
-  if(!video_mode)
+  GLFWvidmode* video_mode;
+
+  if(!(video_mode = JS_GetOpaque2(ctx, this_val, glfw_video_mode_class_id)))
     return JS_EXCEPTION;
 
   int value;
+
   if(JS_ToInt32(ctx, &value, val))
     return JS_EXCEPTION;
 
@@ -54,9 +57,18 @@ glfw_video_mode_set(JSContext* ctx, JSValueConst this_val, JSValue val, int magi
   return JS_UNDEFINED;
 }
 
+static void
+glfw_video_mode_finalizer(JSRuntime* rt, JSValue val) {
+  GLFWvidmode* video_mode;
+
+  if((video_mode = JS_GetOpaque(val, glfw_video_mode_class_id)))
+    js_free_rt(rt, video_mode);
+}
+
 // initialization
 JSClassDef glfw_video_mode_class_def = {
     .class_name = "VideoMode",
+    .finalizer = glfw_video_mode_finalizer,
 };
 
 static const JSCFunctionListEntry glfw_video_mode_proto_funcs[] = {
@@ -75,10 +87,14 @@ glfw_video_mode_init(JSContext* ctx, JSModuleDef* m) {
   JS_NewClass(JS_GetRuntime(ctx), glfw_video_mode_class_id, &glfw_video_mode_class_def);
 
   glfw_video_mode_proto = JS_NewObject(ctx);
-  JS_SetPropertyFunctionList(ctx, glfw_video_mode_proto, glfw_video_mode_proto_funcs, countof(glfw_video_mode_proto_funcs));
+  JS_SetPropertyFunctionList(ctx,
+                             glfw_video_mode_proto,
+                             glfw_video_mode_proto_funcs,
+                             countof(glfw_video_mode_proto_funcs));
   JS_SetClassProto(ctx, glfw_video_mode_class_id, glfw_video_mode_proto);
 
   glfw_video_mode_class = JS_NewCFunction2(ctx, glfw_video_mode_constructor, "VideoMode", 2, JS_CFUNC_constructor, 0);
+
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, glfw_video_mode_class, glfw_video_mode_proto);
   JS_SetModuleExport(ctx, m, "VideoMode", glfw_video_mode_class);
@@ -86,7 +102,14 @@ glfw_video_mode_init(JSContext* ctx, JSModuleDef* m) {
 }
 
 JSValue
-glfw_video_mode_wrap(JSContext* ctx, const GLFWvidmode* video_mode) {
+glfw_video_mode_wrap(JSContext* ctx, GLFWvidmode video_mode) {
+  GLFWvidmode* ptr;
+
+  if(!(ptr = js_malloc(ctx, sizeof(GLFWvidmode))))
+    return JS_EXCEPTION;
+
+  *ptr = video_mode;
+
   JSValue proto = JS_GetPropertyStr(ctx, glfw_video_mode_class, "prototype");
   if(JS_IsException(proto)) {
     JS_FreeValue(ctx, proto);
@@ -100,7 +123,7 @@ glfw_video_mode_wrap(JSContext* ctx, const GLFWvidmode* video_mode) {
     return JS_EXCEPTION;
   }
 
-  JS_SetOpaque(obj, (void*)video_mode);
+  JS_SetOpaque(obj, ptr);
   return obj;
 }
 

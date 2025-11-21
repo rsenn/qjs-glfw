@@ -34,7 +34,7 @@ void
 glfw_position_f_read(JSContext* ctx, GLFWposition_f* pos, JSValueConst value) {
   GLFWposition_d tmp;
 
-  glfw_position_f_read(ctx, &tmp, value);
+  glfw_position_d_read(ctx, &tmp, value);
 
   pos->x = tmp.x;
   pos->y = tmp.y;

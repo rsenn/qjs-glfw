@@ -119,6 +119,34 @@ glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
   if(!(image = image_new(width, height)))
     return JS_EXCEPTION;
 
+  if(i < argc) {
+    size_t byte_offset, byte_length, bytes_per_element;
+    JSValue buffer = JS_GetTypedArrayBuffer(ctx, argv[i], &byte_offset, &byte_length, &bytes_per_element);
+    uint8_t* ptr;
+    size_t len;
+
+    if(JS_IsException(buffer)) {
+      ptr = JS_GetArrayBuffer(ctx, &len, argv[i]);
+      byte_length = len;
+
+      if(JS_IsException(buffer))
+        return JS_ThrowTypeError(ctx, "argument %d must be Uint32Array or ArrayBuffer", i + 1);
+    } else {
+      ptr = JS_GetArrayBuffer(ctx, &len, buffer);
+      ptr += byte_offset;
+    }
+
+    size_t buf_size = size.width * size.height * 4;
+
+    if(byte_length < buf_size)
+      return JS_ThrowRangeError(ctx,
+                                "Image of dimensions %zux%zu needs at least a buffer of %zu bytes",
+                                size.width,
+                                buf_size);
+
+    memcpy(image->pixels, ptr, buf_size);
+  }
+
   /* using new_target to get the prototype is necessary when the class is extended. */
   proto = JS_GetPropertyStr(ctx, new_target, "prototype");
   if(JS_IsException(proto))
@@ -134,7 +162,8 @@ glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValu
 
 fail:
   if(image)
-    js_free(ctx, image);
+    image_free(image);
+
   JS_FreeValue(ctx, obj);
   return JS_EXCEPTION;
 }
@@ -161,6 +190,7 @@ glfw_image_array(JSContext* ctx, JSValueConst this_val) {
 enum {
   IMAGE_WIDTH,
   IMAGE_HEIGHT,
+  IMAGE_SIZE,
 };
 
 // properties
@@ -180,6 +210,11 @@ glfw_image_get(JSContext* ctx, JSValueConst this_val, int magic) {
 
     case IMAGE_HEIGHT: {
       ret = JS_NewUint32(ctx, image->height);
+      break;
+    }
+
+    case IMAGE_SIZE: {
+      ret = glfw_size_write(ctx, (GLFWsize){image->width, image->height});
       break;
     }
   }
@@ -241,6 +276,7 @@ static const JSCFunctionListEntry glfw_image_proto_funcs[] = {
     JS_CGETSET_DEF("pixels", glfw_image_array, NULL),
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("width", glfw_image_get, NULL, IMAGE_WIDTH),
     JS_CGETSET_ENUMERABLE_MAGIC_DEF("height", glfw_image_get, NULL, IMAGE_HEIGHT),
+    JS_CGETSET_MAGIC_DEF("size", glfw_image_get, NULL, IMAGE_SIZE),
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWimage", JS_PROP_CONFIGURABLE),
 };
 
@@ -254,35 +290,11 @@ glfw_image_init(JSContext* ctx, JSModuleDef* m) {
   JS_SetClassProto(ctx, glfw_image_class_id, glfw_image_proto);
 
   glfw_image_class = JS_NewCFunction2(ctx, glfw_image_constructor, "Image", 2, JS_CFUNC_constructor, 0);
+
   /* set proto.constructor and ctor.prototype */
   JS_SetConstructor(ctx, glfw_image_class, glfw_image_proto);
   JS_SetModuleExport(ctx, m, "Image", glfw_image_class);
   return 0;
-}
-
-JSValue
-glfw_image_wrap(JSContext* ctx, const GLFWimage* img) {
-  JSValue obj, proto = JS_GetPropertyStr(ctx, glfw_image_class, "prototype");
-  GLFWimage* image;
-
-  if(!(image = image_clone(img)))
-    return JS_EXCEPTION;
-
-  if(JS_IsException(proto)) {
-    JS_FreeValue(ctx, proto);
-    return JS_EXCEPTION;
-  }
-
-  obj = JS_NewObjectProtoClass(ctx, proto, glfw_image_class_id);
-  JS_FreeValue(ctx, proto);
-
-  if(JS_IsException(proto)) {
-    JS_FreeValue(ctx, obj);
-    return JS_EXCEPTION;
-  }
-
-  JS_SetOpaque(obj, image);
-  return obj;
 }
 
 int

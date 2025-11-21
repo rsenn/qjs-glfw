@@ -207,7 +207,7 @@ glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst
   int32_t x, y;
 
   if(!(image = JS_GetOpaque(argv[0], glfw_image_class_id)))
-    return JS_ThrowTypeError(ctx, "argument 1 must be a glfw.Image");
+    return JS_ThrowTypeError(ctx, "argument 1 must be a GLFWimage");
 
   if(JS_IsObject(argv[1])) {
     glfw_position_read(ctx, &position, argv[1]);

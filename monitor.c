@@ -98,7 +98,7 @@ glfw_monitor_get_current_video_mode(JSContext* ctx, JSValueConst this_val) {
     return JS_EXCEPTION;
 
   if((video_mode = glfwGetVideoMode(monitor)))
-    return glfw_video_mode_wrap(ctx, video_mode);
+    return glfw_video_mode_wrap(ctx, *video_mode);
 
   return JS_UNDEFINED;
 }
@@ -117,7 +117,7 @@ glfw_monitor_get_video_modes(JSContext* ctx, JSValueConst this_val) {
   JSValue array = JS_NewArray(ctx);
 
   for(int i = 0; i < count; i++) {
-    JSValue video_mode = glfw_video_mode_wrap(ctx, &video_modes[i]);
+    JSValue video_mode = glfw_video_mode_wrap(ctx, video_modes[i]);
     JS_SetPropertyInt64(ctx, array, i, video_mode);
   }
 

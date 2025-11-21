@@ -5,7 +5,6 @@ extern JSClassID glfw_image_class_id;
 extern JSValue glfw_image_proto, glfw_image_class;
 
 int glfw_image_init(JSContext*, JSModuleDef*);
-JSValue glfw_image_wrap(JSContext*, const GLFWimage*);
 int glfw_image_export(JSContext*, JSModuleDef*);
 
 #endif
