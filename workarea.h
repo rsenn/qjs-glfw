@@ -5,15 +5,11 @@
 #include "size.h"
 
 typedef struct {
-  GLFWposition* position;
-  GLFWsize* size;
+  GLFWposition_i position;
+  GLFWsize size;
 } GLFWworkarea;
 
-extern JSClassID glfw_workarea_class_id;
-extern JSValue glfw_workarea_proto, glfw_workarea_class;
-
-int glfw_workarea_init(JSContext*, JSModuleDef*);
-JSValue glfw_workarea_wrap(JSContext*, GLFWworkarea*);
-int glfw_workarea_export(JSContext*, JSModuleDef*);
+void glfw_workarea_read(JSContext*, GLFWworkarea*, JSValueConst);
+JSValue glfw_workarea_write(JSContext*, GLFWworkarea);
 
 #endif

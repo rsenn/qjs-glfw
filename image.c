@@ -66,7 +66,12 @@ static JSValue
 glfw_image_buffer(JSContext* ctx, JSValueConst value) {
   GLFWimage* image = JS_GetOpaque(value, glfw_image_class_id);
 
-  return JS_NewArrayBuffer(ctx, (uint8_t*)image->pixels, image->width * image->height * 4, image_unref, JS_VALUE_GET_PTR(JS_DupValue(ctx, value)), FALSE);
+  return JS_NewArrayBuffer(ctx,
+                           (uint8_t*)image->pixels,
+                           image->width * image->height * 4,
+                           image_unref,
+                           JS_VALUE_GET_PTR(JS_DupValue(ctx, value)),
+                           FALSE);
 }
 
 // properties
@@ -94,24 +99,21 @@ create_typedarray(JSContext* ctx, const char* type, JSValueConst buffer, uint32_
 static JSValue
 glfw_image_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
   GLFWimage* image = 0;
-  GLFWsize* size;
   uint32_t width, height;
   JSValue proto, obj = JS_UNDEFINED;
+  int i = 0;
+  GLFWsize size;
 
-  if(JS_IsObject(argv[0]) && (size = JS_GetOpaque(argv[0], glfw_size_class_id))) {
-    width = size->width;
-    height = size->height;
+  if(JS_IsObject(argv[i])) {
+    glfw_size_read(ctx, &size, argv[i++]);
   } else {
+    if(JS_ToInt32(ctx, &size.width, argv[i]))
+      return JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
 
-    if(JS_ToUint32(ctx, &width, argv[0])) {
-      JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
-      goto fail;
-    }
+    if(JS_ToInt32(ctx, &size.height, argv[i + 1]))
+      return JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
 
-    if(JS_ToUint32(ctx, &height, argv[1])) {
-      JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
-      goto fail;
-    }
+    i += 2;
   }
 
   if(!(image = image_new(width, height)))

@@ -1,11 +1,8 @@
 #include "glfw.h"
-#include "position.h"
-#include "workarea.h"
-#include "scale.h"
 #include "video_mode.h"
 #include "gamma_ramp.h"
-
 #include "monitor.h"
+#include "workarea.h"
 
 JSClassID glfw_monitor_class_id = 0;
 JSValue glfw_monitor_proto, glfw_monitor_class;
@@ -39,73 +36,57 @@ glfw_monitor_get_name(JSContext* ctx, JSValueConst this_val) {
 static JSValue
 glfw_monitor_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor;
-  GLFWposition* position;
+  int x, y;
+  GLFWposition_i pos;
 
   if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
     return JS_EXCEPTION;
 
-  if(!(position = js_mallocz(ctx, sizeof(*position))))
-    return JS_EXCEPTION;
+  glfwGetMonitorPos(monitor, &pos.x, &pos.y);
 
-  glfwGetMonitorPos(monitor, &position->x, &position->y);
-
-  return glfw_position_wrap(ctx, position);
+  return glfw_position_i_write(ctx, pos);
 }
 
 static JSValue
 glfw_monitor_get_workarea(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor;
-  GLFWworkarea* workarea;
+  GLFWworkarea workarea;
 
   if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
     return JS_EXCEPTION;
 
-  if(!(workarea = js_malloc(ctx, sizeof(GLFWworkarea))))
-    return JS_EXCEPTION;
-
-  if(!(workarea->position = js_malloc(ctx, sizeof(GLFWposition))))
-    return JS_EXCEPTION;
-
-  if(!(workarea->size = js_malloc(ctx, sizeof(GLFWsize))))
-    return JS_EXCEPTION;
-
 #ifdef HAVE_GLFW_GET_MONITOR_WORKAREA
-  glfwGetMonitorWorkarea(monitor, &workarea->position->x, &workarea->position->y, &workarea->size->width, &workarea->size->height);
+  glfwGetMonitorWorkarea(
+      monitor, &workarea.position.x, &workarea.position.y, &workarea.size.width, &workarea.size.height);
 #endif
 
-  return glfw_workarea_wrap(ctx, workarea);
+  return glfw_workarea_write(ctx, workarea);
 }
 
 static JSValue
 glfw_monitor_get_physical_size(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor;
-  GLFWsize* size;
+  GLFWsize size;
 
   if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
     return JS_EXCEPTION;
 
-  if(!(size = js_mallocz(ctx, sizeof(*size))))
-    return JS_EXCEPTION;
-
-  glfwGetMonitorPhysicalSize(monitor, &size->width, &size->height);
-  return glfw_size_wrap(ctx, size);
+  glfwGetMonitorPhysicalSize(monitor, &size.width, &size.height);
+  return glfw_size_write(ctx, size);
 }
 
 static JSValue
 glfw_monitor_get_content_scale(JSContext* ctx, JSValueConst this_val) {
   GLFWmonitor* monitor;
-  GLFWscale* scale;
+  GLFWposition_f scale;
 
   if(!(monitor = JS_GetOpaque2(ctx, this_val, glfw_monitor_class_id)))
     return JS_EXCEPTION;
 
-  if(!(scale = js_mallocz(ctx, sizeof(*scale))))
-    return JS_EXCEPTION;
-
 #ifdef HAVE_GLFW_GET_MONITOR_CONTENT_SCALE
-  glfwGetMonitorContentScale(monitor, (float*)&scale->x, (float*)&scale->y);
+  glfwGetMonitorContentScale(monitor, &scale.x, &scale.y);
 #endif
-  return glfw_scale_wrap(ctx, scale);
+  return glfw_position_f_write(ctx, scale);
 }
 
 static JSValue

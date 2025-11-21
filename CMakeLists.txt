@@ -136,8 +136,29 @@ if(NOT BUILD_GLFW)
 endif(NOT BUILD_GLFW)
 
 # ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c
-set(QJS_GLFW_SOURCES gamma_ramp.c gamma_ramp.h glfw.c glfw.h image.c image.h monitor.c monitor.h position.c position.h
-                     scale.c scale.h size.c size.h video_mode.c video_mode.h window.c window.h workarea.c workarea.h)
+set(QJS_GLFW_SOURCES 
+  gamma_ramp.c
+  gamma_ramp.h
+  glfw.c
+  glfw.h
+  image.c
+  image.h
+  monitor.c
+  monitor.h
+  
+#[[  position.c
+  position.h
+  scale.c
+  scale.h
+  size.c
+  size.h
+  workarea.c
+  workarea.h
+]]
+  video_mode.c
+  video_mode.h
+  window.c
+  window.h)
 
 if(USE_GL3W)
   list(APPEND IMGUI_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c)

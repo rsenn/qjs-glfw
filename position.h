@@ -2,15 +2,26 @@
 #define GLFW_MODULE_POSITION 1
 
 #include "glfw.h"
+
 typedef struct {
   int x, y;
-} GLFWposition;
+} GLFWposition_i;
 
-extern JSClassID glfw_position_class_id;
-extern JSValue glfw_position_proto, glfw_position_class;
+void glfw_position_i_read(JSContext*, GLFWposition_i*, JSValueConst);
+JSValue glfw_position_i_write(JSContext*, GLFWposition_i);
 
-int glfw_position_init(JSContext*, JSModuleDef*);
-JSValue glfw_position_wrap(JSContext*, GLFWposition*);
-int glfw_position_export(JSContext*, JSModuleDef*);
+typedef struct {
+  float x, y;
+} GLFWposition_f;
+
+void glfw_position_f_read(JSContext*, GLFWposition_f*, JSValueConst);
+JSValue glfw_position_f_write(JSContext*, GLFWposition_f);
+
+typedef struct {
+  double x, y;
+} GLFWposition_d;
+
+void glfw_position_d_read(JSContext*, GLFWposition_d*, JSValueConst);
+JSValue glfw_position_d_write(JSContext*, GLFWposition_d);
 
 #endif

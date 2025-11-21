@@ -1,9 +1,9 @@
 #include "glfw.h"
 #include "monitor.h"
-#include "position.h"
-#include "size.h"
 #include "image.h"
 #include "window.h"
+#include "size.h"
+#include "position.h"
 
 JSClassID glfw_window_class_id = 0;
 JSValue glfw_window_proto, glfw_window_class;
@@ -82,8 +82,10 @@ typedef struct WindowContext {
   JSValue this_val;
   union {
     struct {
-      JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler, window_focus_handler, window_iconify_handler, window_maximize_handler, framebuffer_size_handler,
-          window_content_scale_handler, mouse_button_handler, cursor_pos_handler, cursor_enter_handler, scroll_handler, key_handler, char_handler, char_mods_handler, drop_handler;
+      JSValue window_pos_handler, window_size_handler, window_close_handler, window_refresh_handler,
+          window_focus_handler, window_iconify_handler, window_maximize_handler, framebuffer_size_handler,
+          window_content_scale_handler, mouse_button_handler, cursor_pos_handler, cursor_enter_handler, scroll_handler,
+          key_handler, char_handler, char_mods_handler, drop_handler;
     };
     JSValue list[_CALLBACK_LAST];
   } handlers;
@@ -155,7 +157,10 @@ static void
 glfw_handle_key(GLFWwindow* w, int key, int scancode, int action, int mods) {
   WindowContext* wc = glfwGetWindowUserPointer(w);
   JSValue callback = wc->handlers.list[CALLBACK_KEY];
-  JSValueConst args[] = {JS_NewInt32(wc->ctx, key), JS_NewInt32(wc->ctx, scancode), JS_NewInt32(wc->ctx, action), JS_NewInt32(wc->ctx, mods)};
+  JSValueConst args[] = {JS_NewInt32(wc->ctx, key),
+                         JS_NewInt32(wc->ctx, scancode),
+                         JS_NewInt32(wc->ctx, action),
+                         JS_NewInt32(wc->ctx, mods)};
 
   JS_Call(wc->ctx, callback, wc->this_val, 4, args);
 }
@@ -256,7 +261,7 @@ glfw_handle_windowsize(GLFWwindow* w, int width, int height) {
 }
 
 static JSValue
-glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
+glfw_window_new(JSContext* ctx, GLFWsize size, const char* title, GLFWmonitor* monitor, GLFWwindow* share) {
   GLFWwindow* window;
 
   if(!glfw_initialized)
@@ -266,7 +271,7 @@ glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmo
 #endif
     }
 
-  if((window = glfwCreateWindow(width, height, title ? title : "qjs-glfw", monitor, share)) == NULL) {
+  if((window = glfwCreateWindow(size.width, size.height, title ? title : "qjs-glfw", monitor, share)) == NULL) {
 #ifdef HAVE_GLFW_GET_ERROR
     return GLFW_THROW();
 #else
@@ -282,22 +287,19 @@ static JSValue
 glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
   int32_t width, height;
   const char* title = 0;
-  GLFWsize* size;
   GLFWmonitor* monitor = NULL;
   GLFWwindow* share = NULL;
   JSValue ret;
   int i = 0;
+  GLFWsize size;
 
-  if(JS_IsObject(argv[i]) && (size = JS_GetOpaque(argv[i], glfw_size_class_id))) {
-    width = size->width;
-    height = size->height;
-
-    ++i;
+  if(JS_IsObject(argv[i])) {
+    glfw_size_read(ctx, &size, argv[i++]);
   } else {
-    if(JS_ToInt32(ctx, &width, argv[i]))
+    if(JS_ToInt32(ctx, &size.width, argv[i]))
       return JS_ThrowTypeError(ctx, "argument 1 (width) must be a number");
 
-    if(JS_ToInt32(ctx, &height, argv[i + 1]))
+    if(JS_ToInt32(ctx, &size.height, argv[i + 1]))
       return JS_ThrowTypeError(ctx, "argument 2 (height) must be a number");
 
     i += 2;
@@ -324,7 +326,7 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
     }
   }
 
-  ret = glfw_window_new(ctx, width, height, title, monitor, share);
+  ret = glfw_window_new(ctx, size, title, monitor, share);
 
   if(title)
     JS_FreeCString(ctx, title);
@@ -444,31 +446,27 @@ glfw_window_set_title(JSContext* ctx, JSValueConst this_val, JSValueConst value)
 static JSValue
 glfw_window_set_position(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window;
-  GLFWposition* position;
+  GLFWposition_i position;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  if(!(position = JS_GetOpaque2(ctx, value, glfw_position_class_id)))
-    return JS_EXCEPTION;
+  glfw_position_i_read(ctx, &position, value);
 
-  glfwSetWindowPos(window, position->x, position->y);
+  glfwSetWindowPos(window, position.x, position.y);
   return JS_UNDEFINED;
 }
 
 static JSValue
 glfw_window_get_position(JSContext* ctx, JSValueConst this_val) {
   GLFWwindow* window;
-  GLFWposition* position;
+  GLFWposition_i position;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  if(!(position = js_mallocz(ctx, sizeof(*position))))
-    return JS_EXCEPTION;
-
-  glfwGetWindowPos(window, &position->x, &position->y);
-  return glfw_position_wrap(ctx, position);
+  glfwGetWindowPos(window, &position.x, &position.y);
+  return glfw_position_i_write(ctx, position);
 }
 
 // TODO: magic these with position setter/getter?
@@ -479,11 +477,11 @@ glfw_window_set_size(JSContext* ctx, JSValueConst this_val, JSValueConst value) 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWsize* size = JS_GetOpaque2(ctx, value, glfw_size_class_id);
-  if(!size)
-    return JS_EXCEPTION;
+  GLFWposition_i size;
 
-  glfwSetWindowSize(window, size->width, size->height);
+  glfw_position_i_read(ctx, &size, value);
+
+  glfwSetWindowSize(window, size.x, size.y);
   return JS_UNDEFINED;
 }
 
@@ -494,9 +492,9 @@ glfw_window_get_size(JSContext* ctx, JSValueConst this_val) {
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
-  glfwGetWindowSize(window, &size->width, &size->height);
-  return glfw_size_wrap(ctx, size);
+  GLFWposition_i size;
+  glfwGetWindowSize(window, &size.x, &size.y);
+  return glfw_position_i_write(ctx, size);
 }
 
 static JSValue
@@ -506,9 +504,9 @@ glfw_window_get_framebuffer_size(JSContext* ctx, JSValueConst this_val) {
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  GLFWsize* size = js_mallocz(ctx, sizeof(*size));
-  glfwGetFramebufferSize(window, &size->width, &size->height);
-  return glfw_size_wrap(ctx, size);
+  GLFWposition_i size;
+  glfwGetFramebufferSize(window, &size.x, &size.y);
+  return glfw_position_i_write(ctx, size);
 }
 
 static JSValue
@@ -609,26 +607,12 @@ glfw_window_get_cursor_pos(JSContext* ctx, JSValueConst this_val) {
 static JSValue
 glfw_window_set_cursor_pos(JSContext* ctx, JSValueConst this_val, JSValueConst value) {
   GLFWwindow* window;
-  struct {
-    double x, y;
-  } pos;
-  JSValue x, y;
+  GLFWposition_d pos;
 
   if(!(window = glfw_window_data2(ctx, this_val)))
     return JS_EXCEPTION;
 
-  if(JS_IsArray(ctx, value)) {
-    x = JS_GetPropertyUint32(ctx, value, 0);
-    y = JS_GetPropertyUint32(ctx, value, 1);
-  } else {
-    x = JS_GetPropertyStr(ctx, value, "x");
-    y = JS_GetPropertyStr(ctx, value, "y");
-  }
-
-  JS_ToFloat64(ctx, &pos.x, x);
-  JS_FreeValue(ctx, x);
-  JS_ToFloat64(ctx, &pos.y, y);
-  JS_FreeValue(ctx, y);
+  glfw_position_d_read(ctx, &pos, value);
 
   glfwSetCursorPos(window, pos.x, pos.y);
   return JS_UNDEFINED;
@@ -1020,7 +1004,8 @@ static const JSCFunctionListEntry glfw_window_proto_trigfuncs[] = {
 #endif
         TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)};
 
-#define GETSET_HANDLER(name, const) JS_CGETSET_MAGIC_DEF((#name), glfw_window_get_callback, glfw_window_set_callback, CALLBACK_##const)
+#define GETSET_HANDLER(name, const) \
+  JS_CGETSET_MAGIC_DEF((#name), glfw_window_get_callback, glfw_window_set_callback, CALLBACK_##const)
 
 static const JSCFunctionListEntry glfw_window_proto_handlers[] = {
     GETSET_HANDLER(handlePos, WINDOW_POS),
