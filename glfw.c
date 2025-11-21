@@ -373,49 +373,230 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
 
 #define DEFINE_CONSTANT(Name) JS_PROP_INT32_DEF(#Name, GLFW_##Name, 0),
 
-static const JSCFunctionListEntry glfw_exports[] = {
-    JS_CFUNC_DEF("poll", 0, glfw_poll_events),
-    JS_CFUNC_DEF("wait", 1, glfw_wait_events),
-    JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
-    JS_CFUNC_MAGIC_DEF("getTime", 0, glfw_time, TIME_GET),
-    JS_CFUNC_MAGIC_DEF("setTime", 1, glfw_time, TIME_SET),
-    JS_CFUNC_MAGIC_DEF("getTimerValue", 0, glfw_time, TIMER_VALUE_GET),
-    JS_CFUNC_MAGIC_DEF("getTimerFrequency", 0, glfw_time, TIMER_FREQUENCY_GET),
+    static const JSCFunctionListEntry glfw_exports[] = {
+        JS_CFUNC_DEF("poll", 0, glfw_poll_events),
+        JS_CFUNC_DEF("wait", 1, glfw_wait_events),
+        JS_CFUNC_DEF("getProcAddress", 1, glfw_getprocaddress),
+        JS_CFUNC_MAGIC_DEF("getTime", 0, glfw_time, TIME_GET),
+        JS_CFUNC_MAGIC_DEF("setTime", 1, glfw_time, TIME_SET),
+        JS_CFUNC_MAGIC_DEF("getTimerValue", 0, glfw_time, TIMER_VALUE_GET),
+        JS_CFUNC_MAGIC_DEF("getTimerFrequency", 0, glfw_time, TIMER_FREQUENCY_GET),
 #ifdef HAVE_GLFW_GET_PLATFORM
-    JS_CFUNC_MAGIC_DEF("getPlatform", 0, glfw_other, GET_PLATFORM),
+        JS_CFUNC_MAGIC_DEF("getPlatform", 0, glfw_other, GET_PLATFORM),
 #endif
 #ifdef HAVE_GLFW_PLATFORM_SUPPORTED
-    JS_CFUNC_MAGIC_DEF("platformSupported", 1, glfw_other, SUPPORTED_PLATFORM),
+        JS_CFUNC_MAGIC_DEF("platformSupported", 1, glfw_other, SUPPORTED_PLATFORM),
 #endif
-    JS_CFUNC_MAGIC_DEF("getKeyName", 1, glfw_other, KEY_NAME),
-    JS_CFUNC_MAGIC_DEF("getKeyScancode", 1, glfw_other, KEY_SCANCODE),
-    JS_CFUNC_MAGIC_DEF("terminate", 0, glfw_other, TERMINATE),
-    JS_CFUNC_MAGIC_DEF("postEmptyEvent", 0, glfw_other, POST_EMPTY_EVENT),
-    JS_CFUNC_MAGIC_DEF("extensionSupported", 1, glfw_other, EXTENSION_SUPPORTED),
-    JS_CFUNC_DEF("createCursor", 2, glfw_cursor_create),
-    JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
-    JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
-    JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
+        JS_CFUNC_MAGIC_DEF("getKeyName", 1, glfw_other, KEY_NAME),
+        JS_CFUNC_MAGIC_DEF("getKeyScancode", 1, glfw_other, KEY_SCANCODE),
+        JS_CFUNC_MAGIC_DEF("terminate", 0, glfw_other, TERMINATE),
+        JS_CFUNC_MAGIC_DEF("postEmptyEvent", 0, glfw_other, POST_EMPTY_EVENT),
+        JS_CFUNC_MAGIC_DEF("extensionSupported", 1, glfw_other, EXTENSION_SUPPORTED),
+        JS_CFUNC_DEF("createCursor", 2, glfw_cursor_create),
+        JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
+        JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
+        JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
 #ifdef GLFW_PLATFORM_WAYLAND
-    JS_PROP_INT32_DEF("PLATFORM_WAYLAND", GLFW_PLATFORM_WAYLAND, 0),
+        JS_PROP_INT32_DEF("PLATFORM_WAYLAND", GLFW_PLATFORM_WAYLAND, 0),
 #endif
 #ifdef GLFW_PLATFORM_COCOA
-    JS_PROP_INT32_DEF("PLATFORM_COCOA", GLFW_PLATFORM_COCOA, 0),
+        JS_PROP_INT32_DEF("PLATFORM_COCOA", GLFW_PLATFORM_COCOA, 0),
 #endif
 #ifdef GLFW_PLATFORM_WIN32
-    JS_PROP_INT32_DEF("PLATFORM_WIN32", GLFW_PLATFORM_WIN32, 0),
+        JS_PROP_INT32_DEF("PLATFORM_WIN32", GLFW_PLATFORM_WIN32, 0),
 #endif
 #ifdef GLFW_PLATFORM_X11
-    JS_PROP_INT32_DEF("PLATFORM_X11", GLFW_PLATFORM_X11, 0),
+        JS_PROP_INT32_DEF("PLATFORM_X11", GLFW_PLATFORM_X11, 0),
 #endif
 #ifdef GLFW_PLATFORM_NULL
-    JS_PROP_INT32_DEF("PLATFORM_NULL", GLFW_PLATFORM_NULL, 0),
+        JS_PROP_INT32_DEF("PLATFORM_NULL", GLFW_PLATFORM_NULL, 0),
 #endif
 #ifdef GLFW_ANY_PLATFORM
-    JS_PROP_INT32_DEF("ANY_PLATFORM", GLFW_ANY_PLATFORM, 0),
+        JS_PROP_INT32_DEF("ANY_PLATFORM", GLFW_ANY_PLATFORM, 0),
 #endif
-    CONSTANTS(DEFINE_CONSTANT)
-    // CONSTANTS2(DEFINE_CONSTANT),
+        CONSTANTS(DEFINE_CONSTANT)
+
+            
+  DEFINE_CONSTANT(KEY_UNKNOWN) 
+  DEFINE_CONSTANT(KEY_SPACE) 
+  DEFINE_CONSTANT(KEY_APOSTROPHE) 
+  DEFINE_CONSTANT(KEY_COMMA) 
+  DEFINE_CONSTANT(KEY_MINUS) 
+  DEFINE_CONSTANT(KEY_PERIOD)
+
+                  
+  DEFINE_CONSTANT(KEY_SLASH) 
+  DEFINE_CONSTANT(KEY_0) 
+  DEFINE_CONSTANT(KEY_1) 
+  DEFINE_CONSTANT(KEY_2) 
+  DEFINE_CONSTANT(KEY_3) 
+  DEFINE_CONSTANT(KEY_4) 
+  DEFINE_CONSTANT(KEY_5)
+                      
+  DEFINE_CONSTANT(KEY_6)
+
+                          
+  DEFINE_CONSTANT(KEY_7) 
+  DEFINE_CONSTANT(KEY_8) 
+  DEFINE_CONSTANT(KEY_9) 
+  DEFINE_CONSTANT(KEY_SEMICOLON) 
+  DEFINE_CONSTANT(KEY_EQUAL) 
+  DEFINE_CONSTANT(KEY_A) 
+  DEFINE_CONSTANT(KEY_B)
+
+                              
+  DEFINE_CONSTANT(KEY_C) 
+  DEFINE_CONSTANT(KEY_D) 
+  DEFINE_CONSTANT(KEY_E) 
+  DEFINE_CONSTANT(KEY_F) 
+  DEFINE_CONSTANT(KEY_G) 
+  DEFINE_CONSTANT(KEY_H) 
+  DEFINE_CONSTANT(KEY_I)
+
+                                  
+  DEFINE_CONSTANT(KEY_J) 
+  DEFINE_CONSTANT(KEY_K) 
+  DEFINE_CONSTANT(KEY_L) 
+  DEFINE_CONSTANT(KEY_M) 
+  DEFINE_CONSTANT(KEY_N) 
+  DEFINE_CONSTANT(KEY_O) 
+  DEFINE_CONSTANT(KEY_P)
+
+                                      
+  DEFINE_CONSTANT(KEY_Q) 
+  DEFINE_CONSTANT(KEY_R) 
+  DEFINE_CONSTANT(KEY_S) 
+  DEFINE_CONSTANT(KEY_T) 
+  DEFINE_CONSTANT(KEY_U) 
+  DEFINE_CONSTANT(KEY_V) 
+  DEFINE_CONSTANT(KEY_W)
+
+                                          
+  DEFINE_CONSTANT(KEY_X) 
+  DEFINE_CONSTANT(KEY_Y) 
+  DEFINE_CONSTANT(KEY_Z) 
+  DEFINE_CONSTANT(KEY_LEFT_BRACKET) 
+  DEFINE_CONSTANT(KEY_BACKSLASH) 
+  DEFINE_CONSTANT(KEY_RIGHT_BRACKET)
+
+                                              
+  DEFINE_CONSTANT(KEY_GRAVE_ACCENT) 
+  DEFINE_CONSTANT(KEY_WORLD_1) 
+  DEFINE_CONSTANT(KEY_WORLD_2) 
+  DEFINE_CONSTANT(KEY_ESCAPE) 
+  DEFINE_CONSTANT(KEY_ENTER)
+
+                                                  
+  DEFINE_CONSTANT(KEY_TAB) 
+  DEFINE_CONSTANT(KEY_BACKSPACE) 
+  DEFINE_CONSTANT(KEY_INSERT) 
+  DEFINE_CONSTANT(KEY_DELETE) 
+  DEFINE_CONSTANT(KEY_RIGHT)
+
+                                                      
+  DEFINE_CONSTANT(KEY_LEFT) 
+  DEFINE_CONSTANT(KEY_DOWN) 
+  DEFINE_CONSTANT(KEY_UP) 
+  DEFINE_CONSTANT(KEY_PAGE_UP) 
+  DEFINE_CONSTANT(KEY_PAGE_DOWN)
+
+                                                          
+  DEFINE_CONSTANT(KEY_HOME) 
+  DEFINE_CONSTANT(KEY_END) 
+  DEFINE_CONSTANT(KEY_CAPS_LOCK) 
+  DEFINE_CONSTANT(KEY_SCROLL_LOCK) 
+  DEFINE_CONSTANT(KEY_NUM_LOCK)
+
+                                                              
+  DEFINE_CONSTANT(KEY_PRINT_SCREEN) 
+  DEFINE_CONSTANT(KEY_PAUSE) 
+  DEFINE_CONSTANT(KEY_F1) 
+  DEFINE_CONSTANT(KEY_F2) 
+  DEFINE_CONSTANT(KEY_F3)
+
+                                                                  
+  DEFINE_CONSTANT(KEY_F4) 
+  DEFINE_CONSTANT(KEY_F5) 
+  DEFINE_CONSTANT(KEY_F6) 
+  DEFINE_CONSTANT(KEY_F7) 
+  DEFINE_CONSTANT(KEY_F8)
+                                                                      
+  DEFINE_CONSTANT(KEY_F9)
+
+                                                                          
+  DEFINE_CONSTANT(KEY_F10) 
+  DEFINE_CONSTANT(KEY_F11) 
+  DEFINE_CONSTANT(KEY_F12) 
+  DEFINE_CONSTANT(KEY_F13) 
+  DEFINE_CONSTANT(KEY_F14)
+
+                                                                              
+  DEFINE_CONSTANT(KEY_F15) 
+  DEFINE_CONSTANT(KEY_F16) 
+  DEFINE_CONSTANT(KEY_F17) 
+  DEFINE_CONSTANT(KEY_F18) 
+  DEFINE_CONSTANT(KEY_F19)
+
+                                                                                  
+  DEFINE_CONSTANT(KEY_F20) 
+  DEFINE_CONSTANT(KEY_F21) 
+  DEFINE_CONSTANT(KEY_F22) 
+  DEFINE_CONSTANT(KEY_F23)
+                                                                                      
+  DEFINE_CONSTANT(KEY_F24)
+
+                                                                                          
+  DEFINE_CONSTANT(KEY_F25) 
+  DEFINE_CONSTANT(KEY_KP_0) 
+  DEFINE_CONSTANT(KEY_KP_1) 
+  DEFINE_CONSTANT(KEY_KP_2)
+                                                                                              
+  DEFINE_CONSTANT(KEY_KP_3)
+
+                                                                                                  
+  DEFINE_CONSTANT(KEY_KP_4) 
+  DEFINE_CONSTANT(KEY_KP_5) 
+  DEFINE_CONSTANT(KEY_KP_6) 
+  DEFINE_CONSTANT(KEY_KP_7)
+
+                                                                                                      
+  DEFINE_CONSTANT(KEY_KP_8) 
+  DEFINE_CONSTANT(KEY_KP_9) 
+  DEFINE_CONSTANT(KEY_KP_DECIMAL)
+                                                                                                          
+  DEFINE_CONSTANT(KEY_KP_DIVIDE)
+
+                                                                                                              
+  DEFINE_CONSTANT(KEY_KP_MULTIPLY) 
+  DEFINE_CONSTANT(KEY_KP_SUBTRACT)
+                                                                                                                  
+  DEFINE_CONSTANT(KEY_KP_ADD)
+
+                                                                                                                      
+  DEFINE_CONSTANT(KEY_KP_ENTER) 
+  DEFINE_CONSTANT(KEY_KP_EQUAL)
+                                                                                                                          
+  DEFINE_CONSTANT(KEY_LEFT_SHIFT)
+
+                                                                                                                              
+  DEFINE_CONSTANT(KEY_LEFT_CONTROL) 
+  DEFINE_CONSTANT(KEY_LEFT_ALT)
+                                                                                                                                  
+  DEFINE_CONSTANT(KEY_LEFT_SUPER)
+
+                                                                                                                                      
+  DEFINE_CONSTANT(KEY_RIGHT_SHIFT) 
+  DEFINE_CONSTANT(KEY_RIGHT_CONTROL)
+                                                                                                                                          
+  DEFINE_CONSTANT(KEY_RIGHT_ALT)
+
+                                                                                                                                              
+  DEFINE_CONSTANT(KEY_RIGHT_SUPER) 
+  DEFINE_CONSTANT(KEY_MENU)
+                                                                                                                                                  
+  DEFINE_CONSTANT(KEY_LAST)
+
+        // CONSTANTS2(DEFINE_CONSTANT),
 };
 
 #undef CONSTANTS
