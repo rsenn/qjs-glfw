@@ -1,4 +1,10 @@
-import { call, define, dlopen, dlsym, pointerSize, RTLD_NOW, toArrayBuffer } from 'ffi';
+import { call } from 'ffi';
+import { define } from 'ffi';
+import { dlopen } from 'ffi';
+import { dlsym } from 'ffi';
+import { pointerSize } from 'ffi';
+import { RTLD_NOW } from 'ffi';
+import { toArrayBuffer } from 'ffi';
 
 export const GL_VERSION_1_1 = 1;
 export const GL_VERSION_1_2 = 1;
