@@ -1,64 +1,122 @@
-# quickjs-glfw
+# qjs-glfw Reference
 
-NOTE: This is _EXPERIMENTAL_. As such, expect missing/broken features.
+GLFW bindings for QuickJS. Wraps GLFW 3 for OpenGL window/context creation and input.
 
-GLFW bindings for QuickJS. Meant to be built as a static library and imported
-with `qjs`.
+Import: `import { poll, Window, ... } from 'glfw';`
 
-If you can get it to work with `qjsc -M glfw.so ...` also, PRs are welcome. 🙂
-
-## Build
-
-```sh
-make
-```
-
-## Usage
+## Quick Start
 
 ```js
 import {
-  poll,
-  Window,
-
-  // Constants
-  CONTEXT_VERSION_MAJOR,
-  CONTEXT_VERSION_MINOR,
-  OPENGL_PROFILE,
-  OPENGL_CORE_PROFILE,
+  poll, Window,
+  CONTEXT_VERSION_MAJOR, CONTEXT_VERSION_MINOR,
+  OPENGL_PROFILE, OPENGL_CORE_PROFILE,
   OPENGL_FORWARD_COMPAT,
-  RESIZABLE,
-  SAMPLES,
-} from 'glfw.so'
+  RESIZABLE, SAMPLES,
+} from 'glfw';
 
-Window.hint(CONTEXT_VERSION_MAJOR, 3)
-Window.hint(CONTEXT_VERSION_MINOR, 2)
-Window.hint(OPENGL_PROFILE, OPENGL_CORE_PROFILE)
-Window.hint(OPENGL_FORWARD_COMPAT, true)
-Window.hint(RESIZABLE, false)
-Window.hint(SAMPLES, 4)
+// Set window hints before creating the window
+Window.hint(CONTEXT_VERSION_MAJOR, 3);
+Window.hint(CONTEXT_VERSION_MINOR, 2);
+Window.hint(OPENGL_PROFILE, OPENGL_CORE_PROFILE);
+Window.hint(OPENGL_FORWARD_COMPAT, true);
+Window.hint(RESIZABLE, false);
+Window.hint(SAMPLES, 4);
 
-const window = new Window(800, 600, "OpenGL")
-window.makeContextCurrent()
+const win = new Window(800, 600, 'My App');
+win.makeContextCurrent();
 
-const { width, height } = window.size
-const { x, y } = window.position
-
-console.log(`width: ${width}, height: ${height}, x: ${x}, y: ${y}`)
-
-while (!window.shouldClose) {
-  window.swapBuffers()
-  poll()
+while (!win.shouldClose) {
+  // ... draw here ...
+  win.swapBuffers();
+  poll();
 }
 ```
 
----
+## `Window` class
 
-### Copyright (c) 2020 Stephen Belanger
+### Static methods
 
-#### Licensed under MIT License
+```js
+Window.hint(hint, value)   // set window/context hints before construction
+```
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+### Constructor
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+```js
+const win = new Window(width, height, title[, monitor, share]);
+```
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+### Instance properties
+
+```js
+win.shouldClose          // boolean — true when user closed the window
+win.size                 // { width, height }
+win.position             // { x, y }
+win.framebufferSize      // { width, height } — pixel size (HiDPI aware)
+```
+
+### Instance methods
+
+```js
+win.makeContextCurrent()           // make this window's GL context active
+win.swapBuffers()                  // swap front/back buffers
+win.setTitle(title)                // change window title
+win.setShouldClose(bool)           // programmatically signal close
+win.getKey(key)                    // → PRESS or RELEASE
+win.getMouseButton(button)         // → PRESS or RELEASE
+win.getCursorPos()                 // → { x, y }
+win.setInputMode(mode, value)
+win.setKeyCallback(fn)             // fn(win, key, scancode, action, mods)
+win.setMouseButtonCallback(fn)     // fn(win, button, action, mods)
+win.setCursorPosCallback(fn)       // fn(win, x, y)
+win.setScrollCallback(fn)          // fn(win, xoffset, yoffset)
+win.setFramebufferSizeCallback(fn) // fn(win, w, h)
+win.setCharCallback(fn)            // fn(win, codepoint)
+win.destroy()
+```
+
+## Free functions
+
+```js
+poll()                   // process pending events (non-blocking)
+waitEvents()             // block until at least one event arrives
+waitEventsTimeout(secs)  // block up to secs seconds
+postEmptyEvent()         // wake waitEvents() from another thread
+getTime()                // → seconds since init (float)
+setTime(t)
+getMonitors()            // → array of monitor handles
+getPrimaryMonitor()      // → primary monitor handle
+```
+
+## Common constants
+
+### Window hints
+
+| Constant | Typical value |
+|----------|--------------|
+| `CONTEXT_VERSION_MAJOR` | 3 |
+| `CONTEXT_VERSION_MINOR` | 2 |
+| `OPENGL_PROFILE` | use with `OPENGL_CORE_PROFILE` or `OPENGL_COMPAT_PROFILE` |
+| `OPENGL_CORE_PROFILE` | — |
+| `OPENGL_COMPAT_PROFILE` | — |
+| `OPENGL_FORWARD_COMPAT` | `true` (required on macOS) |
+| `RESIZABLE` | `true` / `false` |
+| `SAMPLES` | 4 (MSAA) |
+| `VISIBLE` | `true` / `false` |
+| `DECORATED` | `true` / `false` |
+| `DOUBLEBUFFER` | `true` (default) |
+
+### Key / action constants
+
+`KEY_ESCAPE`, `KEY_ENTER`, `KEY_SPACE`, `KEY_LEFT`, `KEY_RIGHT`, `KEY_UP`, `KEY_DOWN`, `KEY_A`…`KEY_Z`, `KEY_0`…`KEY_9`, `KEY_F1`…`KEY_F12`, etc.
+
+`PRESS`, `RELEASE`, `REPEAT`
+
+### Mouse buttons
+
+`MOUSE_BUTTON_LEFT`, `MOUSE_BUTTON_RIGHT`, `MOUSE_BUTTON_MIDDLE`
+
+### Modifier keys (in callbacks)
+
+`MOD_SHIFT`, `MOD_CONTROL`, `MOD_ALT`, `MOD_SUPER`
