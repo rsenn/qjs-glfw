@@ -8,6 +8,6 @@ function(MD2HTML)
     file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc")
 
     add_custom_target(DOC_${NAME} ALL ${MARKDOWN_EXECUTABLE} -o "${HTML}" "${SRC}" SOURCES "${SRC}")
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${HTML}" DESTINATION doc/qjs-glfw)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${HTML}" DESTINATION share/doc/${PROJECT_NAME})
   endforeach(ARG ${ARGV})
 endfunction(MD2HTML FILE)
