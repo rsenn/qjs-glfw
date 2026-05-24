@@ -1,8 +1,8 @@
 include(CheckFunctionExists)
 
-##
-## var2define <VARIABLE NAMES...>
-##
+#
+# var2define <VARIABLE NAMES...>
+#
 function(DUMP)
   foreach(VAR ${ARGN})
     if("${SEPARATOR}" STREQUAL "")
@@ -18,9 +18,9 @@ function(DUMP)
   endforeach(VAR ${ARGN})
 endfunction(DUMP)
 
-##
-## var2define <NAME> [DEFINED_VALUE] [VAR_NAME]
-##
+#
+# var2define <NAME> [DEFINED_VALUE] [VAR_NAME]
+#
 function(VAR2DEFINE NAME)
   if("${ARGC}" GREATER 2)
     list(GET ARGN 1 VAR_NAME)
@@ -45,9 +45,9 @@ function(VAR2DEFINE NAME)
 
 endfunction(VAR2DEFINE NAME)
 
-##
-## canonicalize <OUTPUT VARIABLE> <STR>
-##
+#
+# canonicalize <OUTPUT VARIABLE> <STR>
+#
 function(CANONICALIZE OUTPUT_VAR STR)
   string(REGEX REPLACE "^-W" "WARN_" TMP_STR "${STR}")
 
@@ -57,9 +57,9 @@ function(CANONICALIZE OUTPUT_VAR STR)
   set("${OUTPUT_VAR}" "${TMP_STR}" PARENT_SCOPE)
 endfunction(CANONICALIZE OUTPUT_VAR STR)
 
-##
-## basename <OUTPUT VARIABLE> <STR>
-##
+#
+# basename <OUTPUT VARIABLE> <STR>
+#
 function(BASENAME OUTPUT_VAR STR)
   string(REGEX REPLACE ".*/" "" TMP_STR "${STR}")
   if(ARGN)
@@ -69,9 +69,9 @@ function(BASENAME OUTPUT_VAR STR)
   set("${OUTPUT_VAR}" "${TMP_STR}" PARENT_SCOPE)
 endfunction(BASENAME OUTPUT_VAR FILE)
 
-##
-## dirname <OUTPUT VARIABLE> <STR>
-##
+#
+# dirname <OUTPUT VARIABLE> <STR>
+#
 function(DIRNAME OUTPUT_VAR STR)
   string(REGEX REPLACE "/[^/]+/*$" "" TMP_STR "${STR}")
   if(ARGN)
@@ -81,9 +81,9 @@ function(DIRNAME OUTPUT_VAR STR)
   set("${OUTPUT_VAR}" "${TMP_STR}" PARENT_SCOPE)
 endfunction(DIRNAME OUTPUT_VAR FILE)
 
-##
-## addprefix <OUTPUT VARIABLE> <PREFIX>
-##
+#
+# addprefix <OUTPUT VARIABLE> <PREFIX>
+#
 function(ADDPREFIX OUTPUT_VAR PREFIX)
   set(OUTPUT "")
   foreach(ARG ${ARGN})
@@ -92,9 +92,9 @@ function(ADDPREFIX OUTPUT_VAR PREFIX)
   set("${OUTPUT_VAR}" "${OUTPUT}" PARENT_SCOPE)
 endfunction(ADDPREFIX OUTPUT_VAR PREFIX)
 
-##
-## addsuffix <OUTPUT VARIABLE> <PREFIX>
-##
+#
+# addsuffix <OUTPUT VARIABLE> <PREFIX>
+#
 function(ADDSUFFIX OUTPUT_VAR SUFFIX)
   set(OUTPUT "")
   foreach(ARG ${ARGN})
@@ -103,9 +103,9 @@ function(ADDSUFFIX OUTPUT_VAR SUFFIX)
   set("${OUTPUT_VAR}" "${OUTPUT}" PARENT_SCOPE)
 endfunction(ADDSUFFIX OUTPUT_VAR SUFFIX)
 
-##
-## relative_path <OUTPUT VARIABLE> <RELATIVE_TO>
-##
+#
+# relative_path <OUTPUT VARIABLE> <RELATIVE_TO>
+#
 function(RELATIVE_PATH OUT_VAR RELATIVE_TO)
   set(LIST "")
 
@@ -117,9 +117,9 @@ function(RELATIVE_PATH OUT_VAR RELATIVE_TO)
   set("${OUT_VAR}" "${LIST}" PARENT_SCOPE)
 endfunction(RELATIVE_PATH RELATIVE_TO OUT_VAR)
 
-##
-## check_function_def <FUNCTION NAME> [RESULT VARIABLE] [PREPROC_DEF]
-##
+#
+# check_function_def <FUNCTION NAME> [RESULT VARIABLE] [PREPROC_DEF]
+#
 macro(CHECK_FUNCTION_DEF FUNC)
   if(${ARGC} GREATER 1)
     set(RESULT_VAR "${ARGV1}")
@@ -152,14 +152,14 @@ macro(CHECK_FUNCTION_DEF FUNC)
     endif(NOT "${PREPROC_DEF}" STREQUAL "")
   endif(${${RESULT_VAR}})
 
-  #message("${RESULT_VAR}: ${${RESULT_VAR}}")
+  # message("${RESULT_VAR}: ${${RESULT_VAR}}")
 
   list(APPEND CHECKED_FUNCTIONS "${FUNC}")
 endmacro(CHECK_FUNCTION_DEF FUNC)
 
-##
-## check_functions <FUNCTION NAMES...>
-##
+#
+# check_functions <FUNCTION NAMES...>
+#
 macro(CHECK_FUNCTIONS)
   foreach(FUNC ${ARGN})
     string(TOUPPER "HAVE_${FUNC}" RESULT_VAR)
@@ -167,27 +167,27 @@ macro(CHECK_FUNCTIONS)
   endforeach(FUNC ${ARGN})
 endmacro(CHECK_FUNCTIONS)
 
-##
-## check_functions_def <FUNCTION NAMES...>
-##
+#
+# check_functions_def <FUNCTION NAMES...>
+#
 macro(CHECK_FUNCTIONS_DEF)
   foreach(FUNC ${ARGN})
     check_function_def("${FUNC}")
   endforeach(FUNC ${ARGN})
 endmacro(CHECK_FUNCTIONS_DEF)
 
-##
-## clean_name <STRING> <OUTPUT VAR>
-##
+#
+# clean_name <STRING> <OUTPUT VAR>
+#
 function(CLEAN_NAME STR OUTPUT_VAR)
   string(TOUPPER "${STR}" STR)
   string(REGEX REPLACE "[^A-Za-z0-9_]" "_" STR "${STR}")
   set("${OUTPUT_VAR}" "${STR}" PARENT_SCOPE)
 endfunction(CLEAN_NAME STR OUTPUT_VAR)
 
-##
-## check_include_def <INCLUDE> [RESULT VARIABLE] [PREPROC_DEF]
-##
+#
+# check_include_def <INCLUDE> [RESULT VARIABLE] [PREPROC_DEF]
+#
 macro(CHECK_INCLUDE_DEF INC)
   if(ARGC GREATER_EQUAL 2)
     set(RESULT_VAR "${ARGV1}")
@@ -211,9 +211,9 @@ macro(CHECK_INCLUDE_DEF INC)
   list(APPEND CHECKED_INCLUDES "${INC}")
 endmacro(CHECK_INCLUDE_DEF INC)
 
-##
-## check_includes <INCLUDE FILES...>
-##
+#
+# check_includes <INCLUDE FILES...>
+#
 macro(CHECK_INCLUDES)
   foreach(INC ${ARGN})
     clean_name("HAVE_${INC}" RESULT_VAR)
@@ -221,18 +221,18 @@ macro(CHECK_INCLUDES)
   endforeach(INC ${ARGN})
 endmacro(CHECK_INCLUDES)
 
-##
-## check_includes_def <INCLUDE FILES...>
-##
+#
+# check_includes_def <INCLUDE FILES...>
+#
 macro(CHECK_INCLUDES_DEF)
   foreach(INC ${ARGN})
     check_include_def("${INC}")
   endforeach(INC ${ARGN})
 endmacro(CHECK_INCLUDES_DEF)
 
-##
-## check_function_and_include <FUNCTION> <INCLUDE>
-##
+#
+# check_function_and_include <FUNCTION> <INCLUDE>
+#
 macro(CHECK_FUNCTION_AND_INCLUDE FUNC INC)
   clean_name("HAVE_${INC}" INC_RESULT)
   clean_name("HAVE_${FUNC}" FUNC_RESULT)
@@ -244,9 +244,9 @@ macro(CHECK_FUNCTION_AND_INCLUDE FUNC INC)
   endif(${${INC_RESULT}})
 endmacro(CHECK_FUNCTION_AND_INCLUDE FUNC INC)
 
-##
-## check_include_cxx_def <INCLUDE> [RESULT VARIABLE] [PREPROC_DEF]
-##
+#
+# check_include_cxx_def <INCLUDE> [RESULT VARIABLE] [PREPROC_DEF]
+#
 macro(CHECK_INCLUDE_CXX_DEF INC)
   if(ARGC GREATER_EQUAL 2)
     set(RESULT_VAR "${ARGV1}")
@@ -268,18 +268,18 @@ macro(CHECK_INCLUDE_CXX_DEF INC)
   endif(${${RESULT_VAR}})
 endmacro(CHECK_INCLUDE_CXX_DEF INC)
 
-##
-## append_parent <VARIABLE NAME>
-##
+#
+# append_parent <VARIABLE NAME>
+#
 macro(APPEND_PARENT VAR)
   set(LIST "${${VAR}}")
   list(APPEND LIST ${ARGN})
   set("${VAR}" "${LIST}" PARENT_SCOPE)
 endmacro(APPEND_PARENT VAR)
 
-##
-## contains <LIST NAME> <VALUE> <OUTPUT VARIABE>
-##
+#
+# contains <LIST NAME> <VALUE> <OUTPUT VARIABE>
+#
 function(CONTAINS LIST VALUE OUTPUT)
   list(FIND "${LIST}" "${VALUE}" INDEX)
 
@@ -300,9 +300,9 @@ function(CONTAINS LIST VALUE OUTPUT)
   set("${OUTPUT}" "${RESULT}" PARENT_SCOPE)
 endfunction(CONTAINS LIST VALUE OUTPUT)
 
-##
-## add_unique <LIST NAME> <VALUES...>
-##
+#
+# add_unique <LIST NAME> <VALUES...>
+#
 function(ADD_UNIQUE LIST)
   set(RESULT "${${LIST}}")
 
@@ -317,18 +317,16 @@ function(ADD_UNIQUE LIST)
   set("${LIST}" "${RESULT}" PARENT_SCOPE)
 endfunction(ADD_UNIQUE LIST)
 
-##
-## symlink <TARGET> <SYMLINK PATH>
-##
+#
+# symlink <TARGET> <SYMLINK PATH>
+#
 macro(SYMLINK TARGET LINK_NAME)
-  install(
-    CODE "message(\"Create symlink '$ENV{DESTDIR}${LINK_NAME}' to '${TARGET}'\")\nexecute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${TARGET} $ENV{DESTDIR}${LINK_NAME})"
-  )
+  install(CODE "message(\"Create symlink '$ENV{DESTDIR}${LINK_NAME}' to '${TARGET}'\")\nexecute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${TARGET} $ENV{DESTDIR}${LINK_NAME})")
 endmacro(SYMLINK TARGET LINK_NAME)
 
-##
-## rpath_append <VARIABLE NAME>
-##
+#
+# rpath_append <VARIABLE NAME>
+#
 macro(RPATH_APPEND VAR)
   foreach(VALUE ${ARGN})
     if("${${VAR}}" STREQUAL "")
@@ -339,44 +337,38 @@ macro(RPATH_APPEND VAR)
   endforeach(VALUE ${ARGN})
 endmacro(RPATH_APPEND VAR)
 
-##
-## try_code <FILENAME> <CODE> <RESULT VARIABLE> <OUTPUT VARIABLE> <LIBS> <LINKER FLAGS>
-##
+#
+# try_code <FILENAME> <CODE> <RESULT VARIABLE> <OUTPUT VARIABLE> <LIBS> <LINKER FLAGS>
+#
 function(TRY_CODE FILE CODE RESULT_VAR OUTPUT_VAR LIBS LDFLAGS)
   if(NOT DEFINED "${RESULT_VAR}" OR NOT DEFINED "${OUTPUT_VAR}")
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/${FILE}" "${CODE}")
 
-    try_compile(
-      RESULT "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${FILE}" CMAKE_FLAGS "${CMAKE_REQUIRED_FLAGS}"
-      COMPILE_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}" LINK_OPTIONS "${LDFLAGS}" LINK_LIBRARIES "${LIBS}"
-      OUTPUT_VARIABLE OUTPUT)
+    try_compile(RESULT "${CMAKE_CURRENT_BINARY_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/${FILE}" CMAKE_FLAGS "${CMAKE_REQUIRED_FLAGS}" COMPILE_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}" LINK_OPTIONS "${LDFLAGS}" LINK_LIBRARIES "${LIBS}" OUTPUT_VARIABLE OUTPUT)
 
     set(${RESULT_VAR} "${RESULT}" PARENT_SCOPE)
     set(${OUTPUT_VAR} "${OUTPUT}" PARENT_SCOPE)
   endif(NOT DEFINED "${RESULT_VAR}" OR NOT DEFINED "${OUTPUT_VAR}")
 endfunction()
 
-##
-## check_external <NAME> <LIBS> <LINKER FLAGS> <OUTPUT VARIABLE>
-##
+#
+# check_external <NAME> <LIBS> <LINKER FLAGS> <OUTPUT VARIABLE>
+#
 function(CHECK_EXTERNAL NAME LIBS LDFLAGS OUTPUT_VAR)
-  try_code("test-${NAME}.c" "\n  extern int ${NAME}(void);\n  int main() {\n    ${NAME}();\n    return 0;\n  }\n  "
-           "${OUTPUT_VAR}" OUT "${LIBS}" "${LDFLAGS}")
-  #dump(OUTPUT_VAR OUT)
+  try_code("test-${NAME}.c" "\n  extern int ${NAME}(void);\n  int main() {\n    ${NAME}();\n    return 0;\n  }\n  " "${OUTPUT_VAR}" OUT "${LIBS}" "${LDFLAGS}")
+  # dump(OUTPUT_VAR OUT)
 endfunction(CHECK_EXTERNAL NAME LIBS LDFLAGS OUTPUT_VAR)
 
-##
-## run_code <FILENAME> <CODE> <RESULT VARIABLE> <OUTPUT VARIABLE> <LIBS> <LINKER FLAGS>
-##
+#
+# run_code <FILENAME> <CODE> <RESULT VARIABLE> <OUTPUT VARIABLE> <LIBS> <LINKER FLAGS>
+#
 function(RUN_CODE FILE CODE RESULT_VAR OUTPUT_VAR LIBS LDFLAGS)
   string(RANDOM LENGTH 8 RND)
   set(FN "${CMAKE_CURRENT_BINARY_DIR}/${RND}-${FILE}")
   file(WRITE "${FN}" "${CODE}")
   string(REGEX REPLACE "\.[^./]+$" ".log" LOG "${FN}")
 
-  try_run(RUN_RESULT COMPILE_RESULT SOURCES "${FN}" COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT
-          RUN_OUTPUT_VARIABLE RUN_OUTPUT CMAKE_FLAGS "${CMAKE_REQUIRED_FLAGS}"
-          COMPILE_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}" LINK_OPTIONS "${LDFLAGS}" LINK_LIBRARIES "${LIBS}")
+  try_run(RUN_RESULT COMPILE_RESULT SOURCES "${FN}" COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT RUN_OUTPUT_VARIABLE RUN_OUTPUT CMAKE_FLAGS "${CMAKE_REQUIRED_FLAGS}" COMPILE_DEFINITIONS "${CMAKE_REQUIRED_DEFINITIONS}" LINK_OPTIONS "${LDFLAGS}" LINK_LIBRARIES "${LIBS}")
 
   file(WRITE "${LOG}" "Compile output:\n${COMPILE_OUTPUT}\n\nRun output:\n${RUN_OUTPUT}\n")
   unset(LOG)
@@ -400,9 +392,9 @@ function(RUN_CODE FILE CODE RESULT_VAR OUTPUT_VAR LIBS LDFLAGS)
   unset(RND)
 endfunction()
 
-##
-## libname <OUTPUT VARIABLE> <FILENAME>
-##
+#
+# libname <OUTPUT VARIABLE> <FILENAME>
+#
 function(LIBNAME OUT_VAR FILENAME)
   string(REGEX REPLACE ".*/(lib|)" "" LIBNAME "${FILENAME}")
   string(REGEX REPLACE "\.[^/.]+$" "" LIBNAME "${LIBNAME}")
@@ -410,9 +402,9 @@ function(LIBNAME OUT_VAR FILENAME)
   set(${OUT_VAR} "${LIBNAME}" PARENT_SCOPE)
 endfunction(LIBNAME OUT_VAR FILENAME)
 
-##
-## check_flag <FLAG> <VARIABLE>
-##
+#
+# check_flag <FLAG> <VARIABLE>
+#
 function(CHECK_FLAG FLAG VAR)
   if(NOT VAR OR VAR STREQUAL "")
     string(TOUPPER "${FLAG}" TMP)
