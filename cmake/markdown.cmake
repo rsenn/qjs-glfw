@@ -1,7 +1,7 @@
 function(MD2HTML)
   foreach(ARG ${ARGV})
     file(RELATIVE_PATH FILE "${CMAKE_CURRENT_SOURCE_DIR}" "${ARG}")
-    string(REGEX REPLACE  "\\.md$" "" BASE "${FILE}" )
+    string(REGEX REPLACE "\\.md$" "" BASE "${FILE}")
     set(HTML "${BASE}.html")
     set(SRC "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}")
     string(MAKE_C_IDENTIFIER "${BASE}" NAME)
@@ -11,4 +11,3 @@ function(MD2HTML)
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${HTML}" DESTINATION doc/qjs-glfw)
   endforeach(ARG ${ARGV})
 endfunction(MD2HTML FILE)
-
