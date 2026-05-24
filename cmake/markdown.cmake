@@ -1,0 +1,13 @@
+function(MD2HTML)
+  foreach(FILE ${ARGV})
+    string(REGEX REPLACE  "\\.md$" "" BASE "${FILE}" )
+    set(HTML "${BASE}.html")
+    set(SRC "${CMAKE_CURRENT_SOURCE_DIR}/${FILE}")
+    string(MAKE_C_IDENTIFIER "${BASE}" NAME)
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc")
+
+    add_custom_target(DOC_${NAME} ALL ${MARKDOWN_EXECUTABLE} -o "${HTML}" "${SRC}" SOURCES "${SRC}")
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${HTML}" DESTINATION doc/qjs-glfw)
+  endforeach(FILE ${ARGV})
+endfunction(MD2HTML FILE)
+
