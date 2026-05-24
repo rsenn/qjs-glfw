@@ -172,10 +172,8 @@ install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER
 
 
 #include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pandoc-helper.cmake)
-md2html(doc/gamma_ramp.md doc/glfw.md doc/image.md doc/monitor.md doc/position.md doc/scale.md doc/size.md doc/video_mode.md doc/window.md doc/workarea.md)
 
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doc/style.css ${CMAKE_CURRENT_BINARY_DIR}/style.css COPYONLY)
-#covert_md_to_html(mytarget "--css=style.css --include-after-body=${CMAKE_CURRENT_SOURCE_DIR}/doc/footer.html" "${doc_resources}")
-#add_dependencies(doc mytarget)
+file(GLOB MARKDOWN_DOCS doc/*.md)
+md2html(${MARKDOWN_DOCS})
 
 
