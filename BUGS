@@ -1,0 +1,7 @@
+# Bugs
+
+Bugs discovered while working through TODO.md, not yet fixed.
+
+- [FIXED] window.c glfw_window_hint(): the string-hint branch called `JS_ToCString(ctx, argv[1])` but
+  never `JS_FreeCString`d the result — leaked one string per string-valued hint call. Fixed while
+  refactoring the hint-apply logic into `glfw_window_hint_apply` for the Window.hints() feature.

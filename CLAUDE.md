@@ -77,14 +77,29 @@ calls to `glfw_init` / `glfw_export` in `glfw.c`.
 - Window event callbacks are **assignable getset properties**, not `setXxxCallback` methods:
   `win.handleKey`, `win.handleCursorPos`, `win.handleMouseButton`, `win.handleScroll`,
   `win.handleFramebufferSize`, `win.handleChar`, etc. (full list in `window.c`
-  `glfw_window_proto_handlers[]`).
+  `glfw_window_proto_handlers[]`). This is a deliberate direct-mount model (one callback slot per
+  event, last assignment wins) rather than a multi-tenant `on`/`off` emitter, since it maps 1:1 onto
+  GLFW's own C API, which likewise only supports a single callback per event per window.
 - Window hints and context are static/namespaced: `Window.hint(hint, value)`, and the current GL
   context is set with `context.current = win` (or `win.makeContextCurrent()`). Event pumping is
   `poll()` and `wait([timeoutSeconds])`.
+- Hints can also be set in bulk via `Window.hints({ [glfw.RESIZABLE]: false, ... })` (keys are the
+  numeric hint constants exported on the module, used as computed properties), or passed straight
+  to the `Window` constructor as a trailing options object: `new Window(w, h, title?, { hints,
+  monitor, share })`. The options object is detected by shape (a plain object that isn't a `Size`,
+  `Monitor`, or `Window` instance) and may appear either right after `width`/`height` or after
+  `title`, replacing the positional `monitor`/`share` arguments in that call. See
+  `glfw_window_options_apply` in `window.c`.
 
 **`README.md` is partly aspirational and drifts from the source** (e.g. it lists `setKeyCallback`,
 `waitEvents`, `getCursorPos`). When the docs and the C exports disagree, the truth is the
 `JSCFunctionListEntry` tables in `glfw.c` and `window.c`. `TODO.md` lists window APIs not yet bound.
+
+## Workflow
+
+Work is driven off `TODO.md` (list of window APIs not yet bound / planned work). When a bug is
+discovered during work (not a TODO item), record it in a `BUGS` file at the repo root instead of
+fixing it inline unless asked to fix it immediately.
 
 ## OpenGL in examples (`js/`)
 

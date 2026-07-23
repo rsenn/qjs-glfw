@@ -278,6 +278,49 @@ glfw_window_new(JSContext* ctx, int width, int height, const char* title, GLFWmo
 }
 
 // constructor/destructor
+static int glfw_window_hints_apply(JSContext* ctx, JSValueConst hints);
+
+// true for a plain object that isn't one of our known opaque-backed classes,
+// i.e. a candidate for the trailing { hints, monitor, share } options object
+static BOOL
+glfw_window_is_options(JSValueConst v) {
+  return JS_IsObject(v) && !JS_GetOpaque(v, glfw_size_class_id) && !JS_GetOpaque(v, glfw_monitor_class_id) &&
+         !JS_GetOpaque(v, glfw_window_class_id);
+}
+
+// applies hints/monitor/share from a { hints, [title,] monitor, share } options object;
+// title is only read when *title is non-NULL-sentinel (i.e. not already parsed positionally)
+static int
+glfw_window_options_apply(JSContext* ctx, JSValueConst options, const char** title, GLFWmonitor** monitor, GLFWwindow** share) {
+  JSValue v;
+
+  v = JS_GetPropertyStr(ctx, options, "hints");
+  if(JS_IsObject(v) && glfw_window_hints_apply(ctx, v)) {
+    JS_FreeValue(ctx, v);
+    return -1;
+  }
+  JS_FreeValue(ctx, v);
+
+  if(title) {
+    v = JS_GetPropertyStr(ctx, options, "title");
+    if(JS_IsString(v))
+      *title = JS_ToCString(ctx, v);
+    JS_FreeValue(ctx, v);
+  }
+
+  v = JS_GetPropertyStr(ctx, options, "monitor");
+  if(!JS_IsUndefined(v) && !JS_IsNull(v))
+    *monitor = JS_GetOpaque(v, glfw_monitor_class_id);
+  JS_FreeValue(ctx, v);
+
+  v = JS_GetPropertyStr(ctx, options, "share");
+  if(!JS_IsUndefined(v) && !JS_IsNull(v))
+    *share = JS_GetOpaque(v, glfw_window_class_id);
+  JS_FreeValue(ctx, v);
+
+  return 0;
+}
+
 static JSValue
 glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst argv[]) {
   int32_t width, height;
@@ -303,13 +346,21 @@ glfw_window_constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVal
     i += 2;
   }
 
-  if(argc > i) {
+  if(argc > i && glfw_window_is_options(argv[i])) {
+    if(glfw_window_options_apply(ctx, argv[i], &title, &monitor, &share))
+      return JS_EXCEPTION;
+
+  } else if(argc > i) {
     if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
       title = 0;
     else if(!(title = JS_ToCString(ctx, argv[i])))
       return JS_ThrowTypeError(ctx, "argument %d (title) must be a string", i + 1);
 
-    if(++i < argc) {
+    if(++i < argc && glfw_window_is_options(argv[i])) {
+      if(glfw_window_options_apply(ctx, argv[i], NULL, &monitor, &share))
+        return JS_EXCEPTION;
+
+    } else {
       if(JS_IsNull(argv[i]) || JS_IsUndefined(argv[i]))
         monitor = 0;
       else if(!(monitor = JS_GetOpaque(argv[i], glfw_monitor_class_id)))
@@ -366,6 +417,30 @@ glfw_window_swap_buffers(JSContext* ctx, JSValueConst this_val, int argc, JSValu
 }
 
 // static methods
+static int
+glfw_window_hint_apply(JSContext* ctx, int key, JSValueConst value) {
+  if(JS_IsString(value)) {
+    const char* str = JS_ToCString(ctx, value);
+#ifdef HAVE_GLFW_WINDOW_HINT_STRING
+    glfwWindowHintString(key, str);
+#endif
+    JS_FreeCString(ctx, str);
+  } else if(JS_IsBool(value)) {
+    glfwWindowHint(key, JS_VALUE_GET_BOOL(value) == 1 ? GL_TRUE : GL_FALSE);
+  } else if(JS_IsNumber(value)) {
+    int v;
+    if(JS_ToInt32(ctx, &v, value))
+      return -1;
+
+    glfwWindowHint(key, v);
+  } else {
+    JS_ThrowTypeError(ctx, "Value must be a number or string");
+    return -1;
+  }
+
+  return 0;
+}
+
 static JSValue
 glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   int key;
@@ -373,24 +448,51 @@ glfw_window_hint(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst a
   if(JS_ToInt32(ctx, &key, argv[0]))
     return JS_EXCEPTION;
 
-  if(JS_IsString(argv[1])) {
-    const char* value = JS_ToCString(ctx, argv[1]);
-#ifdef HAVE_GLFW_WINDOW_HINT_STRING
-    glfwWindowHintString(key, value);
-#endif
-  } else if(JS_IsBool(argv[1])) {
-    int value = JS_VALUE_GET_BOOL(argv[1]) == 1 ? GL_TRUE : GL_FALSE;
-    glfwWindowHint(key, value);
-  } else if(JS_IsNumber(argv[1])) {
-    int value;
-    if(JS_ToInt32(ctx, &value, argv[1]))
-      return JS_EXCEPTION;
-
-    glfwWindowHint(key, value);
-  } else {
-    JS_ThrowTypeError(ctx, "Value must be a number or string");
+  if(glfw_window_hint_apply(ctx, key, argv[1]))
     return JS_EXCEPTION;
+
+  return JS_UNDEFINED;
+}
+
+static int
+glfw_window_hints_apply(JSContext* ctx, JSValueConst hints) {
+  JSPropertyEnum* tab;
+  uint32_t len, i;
+  int ret = 0;
+
+  if(JS_GetOwnPropertyNames(ctx, &tab, &len, hints, JS_GPN_STRING_MASK | JS_GPN_ENUM_ONLY))
+    return -1;
+
+  for(i = 0; i < len; i++) {
+    JSValue key_val = JS_AtomToValue(ctx, tab[i].atom);
+    JSValue value = JS_GetProperty(ctx, hints, tab[i].atom);
+    int key;
+
+    if(JS_ToInt32(ctx, &key, key_val) || glfw_window_hint_apply(ctx, key, value))
+      ret = -1;
+
+    JS_FreeValue(ctx, key_val);
+    JS_FreeValue(ctx, value);
+
+    if(ret)
+      break;
   }
+
+  for(i = 0; i < len; i++)
+    JS_FreeAtom(ctx, tab[i].atom);
+
+  js_free(ctx, tab);
+
+  return ret;
+}
+
+static JSValue
+glfw_window_hints(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
+  if(!JS_IsObject(argv[0]))
+    return JS_ThrowTypeError(ctx, "argument 1 (hints) must be an object");
+
+  if(glfw_window_hints_apply(ctx, argv[0]))
+    return JS_EXCEPTION;
 
   return JS_UNDEFINED;
 }
@@ -1046,6 +1148,7 @@ static const JSCFunctionListEntry glfw_window_proto_handlers[] = {
 
 static const JSCFunctionListEntry glfw_window_funcs[] = {
     JS_CFUNC_DEF("hint", 0, glfw_window_hint),
+    JS_CFUNC_DEF("hints", 1, glfw_window_hints),
     JS_CFUNC_DEF("defaultHints", 0, glfw_window_default_hints),
 };
 
