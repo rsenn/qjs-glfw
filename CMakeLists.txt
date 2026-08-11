@@ -140,12 +140,9 @@ endif(USE_GL3W)
 
 add_library(qjs-glfw SHARED ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
 
-if(USE_GL3W)
-  if(NOT TARGET gl3w_gen)
-    add_subdirectory(gl3w EXCLUDE_FROM_ALL)
-  endif(NOT TARGET gl3w_gen)
+#[[if(USE_GL3W)
   add_dependencies(qjs-glfw gl3w_gen)
-endif(USE_GL3W)
+endif(USE_GL3W)]]
 
 set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS "${MODULE_COMPILE_FLAGS}"
 )

@@ -27,6 +27,38 @@ import * as glfw from 'glfw';
 | `getPlatform()` | Current platform constant. *Only present when built against GLFW with `glfwGetPlatform` (`HAVE_GLFW_GET_PLATFORM`).* |
 | `platformSupported(platform)` | Whether a platform constant is supported. *Only present with `HAVE_GLFW_PLATFORM_SUPPORTED`.* |
 
+### Vulkan
+
+Vulkan support functions. Vulkan handles (`VkInstance`, `VkPhysicalDevice`, `VkSurfaceKHR`) are passed as pointer strings (like cursors).
+
+| Function | Description |
+|----------|-------------|
+| `vulkanSupported()` | `true` if Vulkan loader and ICD found. |
+| `getRequiredInstanceExtensions()` | Array of extension names required for surface creation, or `null` if unavailable. Always includes `VK_KHR_surface`. |
+| `getInstanceProcAddress(instance, name)` | Resolve a Vulkan function address. `instance` is a pointer string (or `null` for loader functions). Returns pointer string. |
+| `getPhysicalDevicePresentationSupport(instance, device, queuefamily)` | Whether a queue family supports presentation. `instance` and `device` are pointer strings. Returns boolean. |
+| `createWindowSurface(instance, window)` | Create a `VkSurfaceKHR` for a window. Returns surface pointer string, or `null` on failure. Window must have `CLIENT_API` set to `NO_API`. |
+
+Example:
+
+```js
+if(!glfw.vulkanSupported()) {
+  console.log("Vulkan not available");
+} else {
+  const extensions = glfw.getRequiredInstanceExtensions();
+  // Create VkInstance with these extensions...
+  // const instance = ... (from Vulkan library)
+  const surface = glfw.createWindowSurface(instance, window);
+}
+```
+
+When creating a window for Vulkan, set the client API hint:
+
+```js
+const win = new Window(800, 600, "Vulkan Window");
+win.hint(glfw.CLIENT_API, glfw.NO_API);
+```
+
 ### Cursors
 
 Cursors have no wrapper class; they are passed around as pointer strings.
@@ -75,6 +107,18 @@ Plain integer properties exported on the module:
   `KEY_SLASH`, `KEY_0`…`KEY_9`, `KEY_A`…`KEY_Z`, punctuation keys, `KEY_ESCAPE`, `KEY_ENTER`,
   `KEY_TAB`, arrows/navigation, `KEY_F1`…`KEY_F25`, the keypad `KEY_KP_*`, the modifier keys
   (`KEY_LEFT_SHIFT` … `KEY_RIGHT_SUPER`), `KEY_MENU`, `KEY_LAST`.
+- **Joysticks:** `JOYSTICK_1`…`JOYSTICK_16`, `JOYSTICK_LAST`.
+- **Gamepad buttons:** `GAMEPAD_BUTTON_A`, `GAMEPAD_BUTTON_B`, `GAMEPAD_BUTTON_X`, `GAMEPAD_BUTTON_Y`,
+  `GAMEPAD_BUTTON_LEFT_BUMPER`, `GAMEPAD_BUTTON_RIGHT_BUMPER`, `GAMEPAD_BUTTON_BACK`,
+  `GAMEPAD_BUTTON_START`, `GAMEPAD_BUTTON_GUIDE`, `GAMEPAD_BUTTON_LEFT_THUMB`,
+  `GAMEPAD_BUTTON_RIGHT_THUMB`, `GAMEPAD_BUTTON_DPAD_UP`, `GAMEPAD_BUTTON_DPAD_RIGHT`,
+  `GAMEPAD_BUTTON_DPAD_DOWN`, `GAMEPAD_BUTTON_DPAD_LEFT`, `GAMEPAD_BUTTON_LAST`,
+  `GAMEPAD_BUTTON_CROSS`, `GAMEPAD_BUTTON_CIRCLE`, `GAMEPAD_BUTTON_SQUARE`, `GAMEPAD_BUTTON_TRIANGLE`.
+- **Gamepad axes:** `GAMEPAD_AXIS_LEFT_X`, `GAMEPAD_AXIS_LEFT_Y`, `GAMEPAD_AXIS_RIGHT_X`,
+  `GAMEPAD_AXIS_RIGHT_Y`, `GAMEPAD_AXIS_LEFT_TRIGGER`, `GAMEPAD_AXIS_RIGHT_TRIGGER`, `GAMEPAD_AXIS_LAST`.
+- **Hat states:** `HAT_CENTERED`, `HAT_UP`, `HAT_RIGHT`, `HAT_DOWN`, `HAT_LEFT`,
+  `HAT_RIGHT_UP`, `HAT_RIGHT_DOWN`, `HAT_LEFT_UP`, `HAT_LEFT_DOWN`.
+- **Client API:** `NO_API`, `OPENGL_API`, `OPENGL_ES_API`.
 - **Platforms** (each present only if defined by the GLFW headers): `PLATFORM_WAYLAND`,
   `PLATFORM_COCOA`, `PLATFORM_WIN32`, `PLATFORM_X11`, `PLATFORM_NULL`, `ANY_PLATFORM`.
 

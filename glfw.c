@@ -203,6 +203,213 @@ glfw_other(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[],
   return ret;
 }
 
+enum {
+  JOYSTICK_PRESENT,
+  JOYSTICK_GET_AXES,
+  JOYSTICK_GET_BUTTONS,
+  JOYSTICK_GET_HATS,
+  JOYSTICK_GET_NAME,
+  JOYSTICK_GET_GUID,
+  JOYSTICK_IS_GAMEPAD,
+  GAMEPAD_UPDATE_MAPPINGS,
+  GAMEPAD_GET_NAME,
+  GAMEPAD_GET_STATE,
+};
+
+enum {
+  VULKAN_SUPPORTED,
+  VULKAN_GET_REQUIRED_EXTENSIONS,
+  VULKAN_GET_INSTANCE_PROC_ADDR,
+  VULKAN_GET_PHYSICAL_DEVICE_PRESENTATION_SUPPORT,
+  VULKAN_CREATE_WINDOW_SURFACE,
+};
+
+static JSValue
+glfw_joystick(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
+  JSValue ret = JS_UNDEFINED;
+  int32_t jid = 0;
+
+  if(argc > 0)
+    JS_ToInt32(ctx, &jid, argv[0]);
+
+  switch(magic) {
+    case JOYSTICK_PRESENT: {
+      ret = JS_NewBool(ctx, glfwJoystickPresent(jid) == GLFW_TRUE);
+      break;
+    }
+
+    case JOYSTICK_GET_AXES: {
+      int count;
+      const float* axes = glfwGetJoystickAxes(jid, &count);
+
+      if(axes) {
+        ret = JS_NewArray(ctx);
+        for(int i = 0; i < count; i++)
+          JS_SetPropertyUint32(ctx, ret, i, JS_NewFloat64(ctx, axes[i]));
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+
+    case JOYSTICK_GET_BUTTONS: {
+      int count;
+      const unsigned char* buttons = glfwGetJoystickButtons(jid, &count);
+
+      if(buttons) {
+        ret = JS_NewArray(ctx);
+        for(int i = 0; i < count; i++)
+          JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, buttons[i]));
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+
+    case JOYSTICK_GET_HATS: {
+      int count;
+      const unsigned char* hats = glfwGetJoystickHats(jid, &count);
+
+      if(hats) {
+        ret = JS_NewArray(ctx);
+        for(int i = 0; i < count; i++)
+          JS_SetPropertyUint32(ctx, ret, i, JS_NewInt32(ctx, hats[i]));
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+
+    case JOYSTICK_GET_NAME: {
+      const char* name = glfwGetJoystickName(jid);
+      ret = name ? JS_NewString(ctx, name) : JS_NULL;
+      break;
+    }
+
+    case JOYSTICK_GET_GUID: {
+      const char* guid = glfwGetJoystickGUID(jid);
+      ret = guid ? JS_NewString(ctx, guid) : JS_NULL;
+      break;
+    }
+
+    case JOYSTICK_IS_GAMEPAD: {
+      ret = JS_NewBool(ctx, glfwJoystickIsGamepad(jid) == GLFW_TRUE);
+      break;
+    }
+
+    case GAMEPAD_UPDATE_MAPPINGS: {
+      const char* mappings;
+      if((mappings = JS_ToCString(ctx, argv[0]))) {
+        ret = JS_NewBool(ctx, glfwUpdateGamepadMappings(mappings) == GLFW_TRUE);
+        JS_FreeCString(ctx, mappings);
+      }
+      break;
+    }
+
+    case GAMEPAD_GET_NAME: {
+      const char* name = glfwGetGamepadName(jid);
+      ret = name ? JS_NewString(ctx, name) : JS_NULL;
+      break;
+    }
+
+    case GAMEPAD_GET_STATE: {
+      GLFWgamepadstate state;
+      if(glfwGetGamepadState(jid, &state)) {
+        ret = JS_NewObject(ctx);
+        JSValue buttons = JS_NewArray(ctx);
+        for(int i = 0; i < 15; i++)
+          JS_SetPropertyUint32(ctx, buttons, i, JS_NewInt32(ctx, state.buttons[i]));
+        JS_SetPropertyStr(ctx, ret, "buttons", buttons);
+
+        JSValue axes = JS_NewArray(ctx);
+        for(int i = 0; i < 6; i++)
+          JS_SetPropertyUint32(ctx, axes, i, JS_NewFloat64(ctx, state.axes[i]));
+        JS_SetPropertyStr(ctx, ret, "axes", axes);
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+  }
+
+  return ret;
+}
+
+static JSValue
+glfw_vulkan(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[], int magic) {
+  JSValue ret = JS_UNDEFINED;
+
+  switch(magic) {
+    case VULKAN_SUPPORTED: {
+      ret = JS_NewBool(ctx, glfwVulkanSupported() == GLFW_TRUE);
+      break;
+    }
+
+    case VULKAN_GET_REQUIRED_EXTENSIONS: {
+      uint32_t count;
+      const char** extensions = glfwGetRequiredInstanceExtensions(&count);
+
+      if(extensions) {
+        ret = JS_NewArray(ctx);
+        for(uint32_t i = 0; i < count; i++)
+          JS_SetPropertyUint32(ctx, ret, i, JS_NewString(ctx, extensions[i]));
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+
+    case VULKAN_GET_INSTANCE_PROC_ADDR: {
+      void* instance = js_getptr(ctx, argv[0]);
+      const char* procname;
+
+      if(!(procname = JS_ToCString(ctx, argv[1])))
+        return JS_ThrowTypeError(ctx, "argument 2 must be a string");
+
+      GLFWvkproc proc = glfwGetInstanceProcAddress((VkInstance)instance, procname);
+      JS_FreeCString(ctx, procname);
+
+      ret = js_newptr(ctx, (void*)proc);
+      break;
+    }
+
+    case VULKAN_GET_PHYSICAL_DEVICE_PRESENTATION_SUPPORT: {
+      void* instance = js_getptr(ctx, argv[0]);
+      void* device = js_getptr(ctx, argv[1]);
+      uint32_t queuefamily = 0;
+
+      if(argc > 2)
+        JS_ToUint32(ctx, &queuefamily, argv[2]);
+
+      int supported = glfwGetPhysicalDevicePresentationSupport(
+          (VkInstance)instance, (VkPhysicalDevice)device, queuefamily);
+      ret = JS_NewBool(ctx, supported == GLFW_TRUE);
+      break;
+    }
+
+    case VULKAN_CREATE_WINDOW_SURFACE: {
+      void* instance = js_getptr(ctx, argv[0]);
+      GLFWwindow* window = glfw_window_data2(ctx, argv[1]);
+
+      if(!window)
+        return JS_ThrowTypeError(ctx, "argument 2 must be a Window");
+
+      VkSurfaceKHR surface;
+      VkResult result = glfwCreateWindowSurface(
+          (VkInstance)instance, window, NULL, &surface);
+
+      if(result == VK_SUCCESS) {
+        ret = js_newptr(ctx, (void*)surface);
+      } else {
+        ret = JS_NULL;
+      }
+      break;
+    }
+  }
+
+  return ret;
+}
+
 static JSValue
 glfw_cursor_create(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) {
   GLFWimage* image;
@@ -395,6 +602,21 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
         JS_CFUNC_DEF("createCursor", 2, glfw_cursor_create),
         JS_CFUNC_DEF("createStandardCursor", 1, glfw_cursor_create_std),
         JS_CFUNC_DEF("destroyCursor", 1, glfw_cursor_destroy),
+        JS_CFUNC_MAGIC_DEF("joystickPresent", 1, glfw_joystick, JOYSTICK_PRESENT),
+        JS_CFUNC_MAGIC_DEF("getJoystickAxes", 1, glfw_joystick, JOYSTICK_GET_AXES),
+        JS_CFUNC_MAGIC_DEF("getJoystickButtons", 1, glfw_joystick, JOYSTICK_GET_BUTTONS),
+        JS_CFUNC_MAGIC_DEF("getJoystickHats", 1, glfw_joystick, JOYSTICK_GET_HATS),
+        JS_CFUNC_MAGIC_DEF("getJoystickName", 1, glfw_joystick, JOYSTICK_GET_NAME),
+        JS_CFUNC_MAGIC_DEF("getJoystickGUID", 1, glfw_joystick, JOYSTICK_GET_GUID),
+        JS_CFUNC_MAGIC_DEF("joystickIsGamepad", 1, glfw_joystick, JOYSTICK_IS_GAMEPAD),
+        JS_CFUNC_MAGIC_DEF("updateGamepadMappings", 1, glfw_joystick, GAMEPAD_UPDATE_MAPPINGS),
+        JS_CFUNC_MAGIC_DEF("getGamepadName", 1, glfw_joystick, GAMEPAD_GET_NAME),
+        JS_CFUNC_MAGIC_DEF("getGamepadState", 1, glfw_joystick, GAMEPAD_GET_STATE),
+        JS_CFUNC_MAGIC_DEF("vulkanSupported", 0, glfw_vulkan, VULKAN_SUPPORTED),
+        JS_CFUNC_MAGIC_DEF("getRequiredInstanceExtensions", 0, glfw_vulkan, VULKAN_GET_REQUIRED_EXTENSIONS),
+        JS_CFUNC_MAGIC_DEF("getInstanceProcAddress", 2, glfw_vulkan, VULKAN_GET_INSTANCE_PROC_ADDR),
+        JS_CFUNC_MAGIC_DEF("getPhysicalDevicePresentationSupport", 3, glfw_vulkan, VULKAN_GET_PHYSICAL_DEVICE_PRESENTATION_SUPPORT),
+        JS_CFUNC_MAGIC_DEF("createWindowSurface", 2, glfw_vulkan, VULKAN_CREATE_WINDOW_SURFACE),
         JS_OBJECT_DEF("context", glfw_context_props, countof(glfw_context_props), JS_PROP_CONFIGURABLE),
 #ifdef GLFW_PLATFORM_WAYLAND
         JS_PROP_INT32_DEF("PLATFORM_WAYLAND", GLFW_PLATFORM_WAYLAND, 0),
@@ -591,10 +813,76 @@ glfw_version_to_string(JSContext* ctx, JSValueConst this_val, int argc, JSValueC
   DEFINE_CONSTANT(KEY_RIGHT_ALT)
 
                                                                                                                                               
-  DEFINE_CONSTANT(KEY_RIGHT_SUPER) 
+  DEFINE_CONSTANT(KEY_RIGHT_SUPER)
   DEFINE_CONSTANT(KEY_MENU)
-                                                                                                                                                  
+
   DEFINE_CONSTANT(KEY_LAST)
+
+  // Joystick constants
+  DEFINE_CONSTANT(JOYSTICK_1)
+  DEFINE_CONSTANT(JOYSTICK_2)
+  DEFINE_CONSTANT(JOYSTICK_3)
+  DEFINE_CONSTANT(JOYSTICK_4)
+  DEFINE_CONSTANT(JOYSTICK_5)
+  DEFINE_CONSTANT(JOYSTICK_6)
+  DEFINE_CONSTANT(JOYSTICK_7)
+  DEFINE_CONSTANT(JOYSTICK_8)
+  DEFINE_CONSTANT(JOYSTICK_9)
+  DEFINE_CONSTANT(JOYSTICK_10)
+  DEFINE_CONSTANT(JOYSTICK_11)
+  DEFINE_CONSTANT(JOYSTICK_12)
+  DEFINE_CONSTANT(JOYSTICK_13)
+  DEFINE_CONSTANT(JOYSTICK_14)
+  DEFINE_CONSTANT(JOYSTICK_15)
+  DEFINE_CONSTANT(JOYSTICK_16)
+  DEFINE_CONSTANT(JOYSTICK_LAST)
+
+  // Gamepad button constants
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_A)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_B)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_X)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_Y)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_LEFT_BUMPER)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_RIGHT_BUMPER)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_BACK)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_START)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_GUIDE)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_LEFT_THUMB)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_RIGHT_THUMB)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_DPAD_UP)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_DPAD_RIGHT)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_DPAD_DOWN)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_DPAD_LEFT)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_LAST)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_CROSS)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_CIRCLE)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_SQUARE)
+  DEFINE_CONSTANT(GAMEPAD_BUTTON_TRIANGLE)
+
+  // Gamepad axis constants
+  DEFINE_CONSTANT(GAMEPAD_AXIS_LEFT_X)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_LEFT_Y)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_RIGHT_X)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_RIGHT_Y)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_LEFT_TRIGGER)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_RIGHT_TRIGGER)
+  DEFINE_CONSTANT(GAMEPAD_AXIS_LAST)
+
+  // Hat state constants
+  DEFINE_CONSTANT(HAT_CENTERED)
+  DEFINE_CONSTANT(HAT_UP)
+  DEFINE_CONSTANT(HAT_RIGHT)
+  DEFINE_CONSTANT(HAT_DOWN)
+  DEFINE_CONSTANT(HAT_LEFT)
+  DEFINE_CONSTANT(HAT_RIGHT_UP)
+  DEFINE_CONSTANT(HAT_RIGHT_DOWN)
+  DEFINE_CONSTANT(HAT_LEFT_UP)
+  DEFINE_CONSTANT(HAT_LEFT_DOWN)
+
+  // Client API constants
+  DEFINE_CONSTANT(NO_API)
+  DEFINE_CONSTANT(OPENGL_API)
+  DEFINE_CONSTANT(OPENGL_ES_API)
 
         // CONSTANTS2(DEFINE_CONSTANT),
 };

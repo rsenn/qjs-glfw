@@ -881,6 +881,13 @@ enum {
   SET_INPUT_MODE,
   GET_KEY,
   DESTROY_WINDOW,
+  ICONIFY_WINDOW,
+  RESTORE_WINDOW,
+  MAXIMIZE_WINDOW,
+  SHOW_WINDOW,
+  HIDE_WINDOW,
+  FOCUS_WINDOW,
+  REQUEST_WINDOW_ATTENTION,
 };
 
 static JSValue
@@ -1050,40 +1057,52 @@ glfw_window_functions(JSContext* ctx, JSValueConst this_val, int argc, JSValueCo
       JS_SetOpaque(this_val, NULL);
       break;
     }
+
+    case ICONIFY_WINDOW: {
+      glfwIconifyWindow(window);
+      break;
+    }
+
+    case RESTORE_WINDOW: {
+      glfwRestoreWindow(window);
+      break;
+    }
+
+    case MAXIMIZE_WINDOW: {
+      glfwMaximizeWindow(window);
+      break;
+    }
+
+    case SHOW_WINDOW: {
+      glfwShowWindow(window);
+      break;
+    }
+
+    case HIDE_WINDOW: {
+      glfwHideWindow(window);
+      break;
+    }
+
+    case FOCUS_WINDOW: {
+      glfwFocusWindow(window);
+      break;
+    }
+
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    case REQUEST_WINDOW_ATTENTION: {
+      glfwRequestWindowAttention(window);
+      break;
+    }
+#endif
   }
 
   return ret;
 }
 
-// Generate a few simple methods with macros...because I'm lazy. :O
-#define TRIGGER_FUNCTIONS(V) \
-  V(IconifyWindow, iconify) \
-  V(RestoreWindow, restore) \
-  V(MaximizeWindow, maximize) \
-  V(ShowWindow, show) \
-  V(HideWindow, hide) \
-  V(FocusWindow, focus)
-
-#define MAKE_TRIGGER_METHOD(NativeName, JSName) \
-  static JSValue glfw_window_##JSName(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]) { \
-    GLFWwindow* window = glfw_window_data2(ctx, this_val); \
-    glfw##NativeName(window); \
-    if(!window) \
-      return JS_EXCEPTION; \
-    return JS_UNDEFINED; \
-  }
-TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD)
-#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
-MAKE_TRIGGER_METHOD(RequestWindowAttention, requestAttention)
-#endif
-#undef MAKE_TRIGGER_METHOD
-
 // initialization
 static JSClassDef glfw_window_class_def = {
     .class_name = "Window",
 };
-
-#define MAKE_TRIGGER_METHOD_ENTRY(NativeName, JSName) JS_CFUNC_DEF(#JSName, 0, glfw_window_##JSName),
 
 static const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CGETSET_ENUMERABLE_DEF("id", glfw_window_get_id, NULL),
@@ -1113,14 +1132,17 @@ static const JSCFunctionListEntry glfw_window_proto_funcs[] = {
     JS_CFUNC_MAGIC_DEF("setInputMode", 1, glfw_window_functions, SET_INPUT_MODE),
     JS_CFUNC_MAGIC_DEF("getKey", 1, glfw_window_functions, GET_KEY),
     JS_CFUNC_MAGIC_DEF("destroy", 0, glfw_window_functions, DESTROY_WINDOW),
+    JS_CFUNC_MAGIC_DEF("iconify", 0, glfw_window_functions, ICONIFY_WINDOW),
+    JS_CFUNC_MAGIC_DEF("restore", 0, glfw_window_functions, RESTORE_WINDOW),
+    JS_CFUNC_MAGIC_DEF("maximize", 0, glfw_window_functions, MAXIMIZE_WINDOW),
+    JS_CFUNC_MAGIC_DEF("show", 0, glfw_window_functions, SHOW_WINDOW),
+    JS_CFUNC_MAGIC_DEF("hide", 0, glfw_window_functions, HIDE_WINDOW),
+    JS_CFUNC_MAGIC_DEF("focus", 0, glfw_window_functions, FOCUS_WINDOW),
+#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
+    JS_CFUNC_MAGIC_DEF("requestAttention", 0, glfw_window_functions, REQUEST_WINDOW_ATTENTION),
+#endif
     JS_PROP_STRING_DEF("[Symbol.toStringTag]", "GLFWwindow", JS_PROP_CONFIGURABLE),
 };
-
-static const JSCFunctionListEntry glfw_window_proto_trigfuncs[] = {
-#ifdef HAVE_GLFW_REQUEST_WINDOW_ATTENTION
-    MAKE_TRIGGER_METHOD_ENTRY(RequestWindowAttention, requestAttention)
-#endif
-        TRIGGER_FUNCTIONS(MAKE_TRIGGER_METHOD_ENTRY)};
 
 #define GETSET_HANDLER(name, const) JS_CGETSET_MAGIC_DEF((#name), glfw_window_get_callback, glfw_window_set_callback, CALLBACK_##const)
 
@@ -1144,15 +1166,11 @@ static const JSCFunctionListEntry glfw_window_proto_handlers[] = {
     GETSET_HANDLER(handleDrop, DROP),
 };
 
-#undef MAKE_TRIGGER_METHOD_ENTRY
-
 static const JSCFunctionListEntry glfw_window_funcs[] = {
     JS_CFUNC_DEF("hint", 0, glfw_window_hint),
     JS_CFUNC_DEF("hints", 1, glfw_window_hints),
     JS_CFUNC_DEF("defaultHints", 0, glfw_window_default_hints),
 };
-
-#undef TRIGGER_FUNCTIONS
 
 JSValue
 glfw_window_wrap(JSContext* ctx, GLFWwindow* window) {
@@ -1196,7 +1214,6 @@ glfw_window_init(JSContext* ctx, JSModuleDef* m) {
 
   glfw_window_proto = JS_NewObject(ctx);
   JS_SetPropertyFunctionList(ctx, glfw_window_proto, glfw_window_proto_funcs, countof(glfw_window_proto_funcs));
-  JS_SetPropertyFunctionList(ctx, glfw_window_proto, glfw_window_proto_trigfuncs, countof(glfw_window_proto_trigfuncs));
   JS_SetPropertyFunctionList(ctx, glfw_window_proto, glfw_window_proto_handlers, countof(glfw_window_proto_handlers));
   JS_SetClassProto(ctx, glfw_window_class_id, glfw_window_proto);
 

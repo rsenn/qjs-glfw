@@ -1,11 +1,12 @@
-#ifndef GLFW_MODULE_MAIN
-#define GLFW_MODULE_MAIN 1
+#ifndef QJS_GLFW_MAIN_H
+#define QJS_GLFW_MAIN_H 1
 
 // Include the Emscripten library only if targetting WebAssembly
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 #define GLFW_INCLUDE_ES3
 #endif
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <quickjs.h>
 #include <cutils.h>
