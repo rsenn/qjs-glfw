@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_POSITION
-#define GLFW_MODULE_POSITION 1
+#ifndef QJS_GLFW_POSITION_H
+#define QJS_GLFW_POSITION_H 1
 
 #include "glfw.h"
 typedef struct {

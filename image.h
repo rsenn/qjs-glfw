@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_IMAGE
-#define GLFW_MODULE_IMAGE 1
+#ifndef QJS_GLFW_IMAGE_H
+#define QJS_GLFW_IMAGE_H 1
 
 extern JSClassID glfw_image_class_id;
 extern JSValue glfw_image_proto, glfw_image_class;

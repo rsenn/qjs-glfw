@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_SCALE
-#define GLFW_MODULE_SCALE 1
+#ifndef QJS_GLFW_SCALE_H
+#define QJS_GLFW_SCALE_H 1
 
 typedef struct {
   double x, y;

@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_VIDEO_MODE
-#define GLFW_MODULE_VIDEO_MODE 1
+#ifndef QJS_GLFW_VIDEO_MODE_H
+#define QJS_GLFW_VIDEO_MODE_H 1
 
 extern JSClassID glfw_video_mode_class_id;
 extern JSValue glfw_video_mode_proto, glfw_video_mode_class;

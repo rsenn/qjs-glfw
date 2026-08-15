@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_GAMMA_RAMP
-#define GLFW_MODULE_GAMMA_RAMP 1
+#ifndef QJS_GLFW_GAMMA_RAMP_H
+#define QJS_GLFW_GAMMA_RAMP_H 1
 
 extern JSClassID glfw_gamma_ramp_class_id;
 extern JSValue glfw_gamma_ramp_proto, glfw_gamma_ramp_class;

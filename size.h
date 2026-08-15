@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_SIZE
-#define GLFW_MODULE_SIZE 1
+#ifndef QJS_GLFW_SIZE_H
+#define QJS_GLFW_SIZE_H 1
 
 typedef struct {
   int width, height;

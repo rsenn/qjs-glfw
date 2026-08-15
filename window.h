@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_WINDOW
-#define GLFW_MODULE_WINDOW 1
+#ifndef QJS_GLFW_WINDOW_H
+#define QJS_GLFW_WINDOW_H 1
 
 extern JSClassID glfw_window_class_id;
 extern JSValue glfw_window_proto, glfw_window_class;

@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_WORKAREA
-#define GLFW_MODULE_WORKAREA 1
+#ifndef QJS_GLFW_WORKAREA_H
+#define QJS_GLFW_WORKAREA_H 1
 
 #include "position.h"
 #include "size.h"

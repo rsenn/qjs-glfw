@@ -1,5 +1,5 @@
-#ifndef GLFW_MODULE_MONITOR
-#define GLFW_MODULE_MONITOR 1
+#ifndef QJS_GLFW_MONITOR_H
+#define QJS_GLFW_MONITOR_H 1
 
 extern JSClassID glfw_monitor_class_id;
 extern JSValue glfw_monitor_proto, glfw_monitor_class;
