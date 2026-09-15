@@ -167,6 +167,20 @@ endif(NOT QUICKJS_C_MODULE_DIR)
 
 install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
+# Static counterpart for embedders that want glfw linked directly into their own
+# interpreter binary (e.g. qjsm's EXTERNAL_MODULES) instead of dlopen'd at runtime.
+# Without JS_SHARED_LIBRARY, glfw.h's js_init_module macro expands to
+# js_init_module_glfw, matching the js_init_module_<name> convention EXTERNAL_MODULES
+# expects.
+option(BUILD_STATIC_MODULE "Also build qjs-glfw-static, a static library for linking glfw into another interpreter binary" ON)
+if(BUILD_STATIC_MODULE)
+  add_library(qjs-glfw-static STATIC ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
+  set_target_properties(qjs-glfw-static PROPERTIES OUTPUT_NAME glfw POSITION_INDEPENDENT_CODE ON)
+  target_compile_options(qjs-glfw-static PRIVATE ${MODULE_COMPILE_FLAGS})
+  target_include_directories(qjs-glfw-static PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
+  target_link_libraries(qjs-glfw-static PUBLIC ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
+endif(BUILD_STATIC_MODULE)
+
 # include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pandoc-helper.cmake)
 
 file(GLOB MARKDOWN_DOCS doc/*.md)

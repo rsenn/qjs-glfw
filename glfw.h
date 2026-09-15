@@ -16,7 +16,7 @@
 #define countof(x) (sizeof(x) / sizeof((x)[0]))
 
 #ifndef JS_SHARED_LIBRARY
-#define js_init_module js_init_module_qjsc_glfw
+#define js_init_module js_init_module_glfw
 #endif
 
 #if defined(_WIN32) || defined(__MINGW32__)
