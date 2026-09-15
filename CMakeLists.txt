@@ -9,6 +9,9 @@ set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH TRUE)
 option(BUILD_GLFW OFF "Build GLFW from sources")
 option(USE_GL3W OFF "Use GL3W instead of GLEW")
 
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/QuickJSModule.cmake)
+quickjs_module_options(SHARED_DEFAULT ON STATIC_DEFAULT ON)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/check-flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
@@ -33,11 +36,23 @@ configure_quickjs()
 find_glew()
 
 if(BUILD_GLFW)
-  build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  # GLFW is a static lib linked into both qjs-glfw (a .so) and qjs-glfw-static (a .a
+  # meant for linking into another executable), so it must be built twice: with -fPIC
+  # for the shared module, without for the static one.
+  if(BUILD_SHARED_MODULES)
+    build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} shared ON)
+  endif(BUILD_SHARED_MODULES)
+  if(BUILD_STATIC_MODULES)
+    build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} static OFF)
+  endif(BUILD_STATIC_MODULES)
 
   add_definitions(-DHAVE_GLFW_GET_ERROR -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE -DHAVE_GLFW_GET_MONITOR_WORKAREA -DHAVE_GLFW_GET_WINDOW_OPACITY -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK -DHAVE_GLFW_SET_WINDOW_OPACITY -DHAVE_GLFW_WINDOW_HINT_STRING)
 else(BUILD_GLFW)
   find_glfw()
+  set(GLFW_LIBRARY_DIR_shared ${GLFW_LIBRARY_DIR})
+  set(GLFW_LIBRARY_shared ${GLFW_LIBRARY})
+  set(GLFW_LIBRARY_DIR_static ${GLFW_LIBRARY_DIR})
+  set(GLFW_LIBRARY_static ${GLFW_LIBRARY})
 endif(BUILD_GLFW)
 
 if(USE_GL3W)
@@ -57,7 +72,7 @@ endif(USE_GL3W)
 # message(STATUS "GL3W_INCLUDE_DIR: ${GL3W_INCLUDE_DIR}") message(STATUS "GL3W_LIBRARY: ${GL3W_LIBRARY}") message(STATUS "GLFW_INCLUDE_DIR: ${GLFW_INCLUDE_DIR}") message(STATUS "GLFW_LIBRARY: ${GLFW_LIBRARY}")
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gl3w/include ${GL3W_INCLUDE_DIR} ${GLFW_INCLUDE_DIR} ${QUICKJS_INCLUDE_DIR})
-link_directories(${GL3W_LIBRARY_DIR} ${GLFW_LIBRARY_DIR} ${QUICKJS_LIBRARY_DIR})
+link_directories(${GL3W_LIBRARY_DIR} ${GLFW_LIBRARY_DIR_shared} ${GLFW_LIBRARY_DIR_static} ${QUICKJS_LIBRARY_DIR})
 
 if(WIN32)
   add_definitions(-DGLFW_DLL)
@@ -138,48 +153,61 @@ if(USE_GL3W)
   list(APPEND IMGUI_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/gl3w/src/gl3w.c)
 endif(USE_GL3W)
 
-add_library(qjs-glfw SHARED ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
+link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR_shared} ${GLFW_LIBRARY_DIR_static})
 
-#[[if(USE_GL3W)
-  add_dependencies(qjs-glfw gl3w_gen)
-endif(USE_GL3W)]]
+if(BUILD_SHARED_MODULES)
+  add_library(qjs-glfw SHARED ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
 
-set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS "${MODULE_COMPILE_FLAGS}"
-)
+  #[[if(USE_GL3W)
+    add_dependencies(qjs-glfw gl3w_gen)
+  endif(USE_GL3W)]]
 
-target_compile_options(qjs-glfw PRIVATE ${MODULE_COMPILE_FLAGS})
+  set_target_properties(qjs-glfw PROPERTIES OUTPUT_NAME glfw PREFIX "" # COMPILE_FLAGS "${MODULE_COMPILE_FLAGS}"
+  )
 
-target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
+  target_compile_options(qjs-glfw PRIVATE ${MODULE_COMPILE_FLAGS})
 
-link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR})
+  target_include_directories(qjs-glfw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
 
-# dump(GL3W_LIBRARY_DIR)
+  # dump(GL3W_LIBRARY_DIR)
 
-target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
-target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
+  target_link_libraries(qjs-glfw PRIVATE ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY_shared} ${QUICKJS_LIBRARY})
+  target_compile_definitions(qjs-glfw PRIVATE JS_SHARED_LIBRARY=1)
 
-if(NOT CMAKE_INSTALL_LIBDIR)
-  set(CMAKE_INSTALL_LIBDIR lib)
-endif(NOT CMAKE_INSTALL_LIBDIR)
-if(NOT QUICKJS_C_MODULE_DIR)
-  set(QUICKJS_C_MODULE_DIR "${CMAKE_INSTALL_LIBDIR}/quickjs")
-endif(NOT QUICKJS_C_MODULE_DIR)
+  if(NOT CMAKE_INSTALL_LIBDIR)
+    set(CMAKE_INSTALL_LIBDIR lib)
+  endif(NOT CMAKE_INSTALL_LIBDIR)
+  if(NOT QUICKJS_C_MODULE_DIR)
+    set(QUICKJS_C_MODULE_DIR "${CMAKE_INSTALL_LIBDIR}/quickjs")
+  endif(NOT QUICKJS_C_MODULE_DIR)
 
-install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+  install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endif(BUILD_SHARED_MODULES)
 
 # Static counterpart for embedders that want glfw linked directly into their own
 # interpreter binary (e.g. qjsm's EXTERNAL_MODULES) instead of dlopen'd at runtime.
 # Without JS_SHARED_LIBRARY, glfw.h's js_init_module macro expands to
 # js_init_module_glfw, matching the js_init_module_<name> convention EXTERNAL_MODULES
 # expects.
-option(BUILD_STATIC_MODULE "Also build qjs-glfw-static, a static library for linking glfw into another interpreter binary" ON)
-if(BUILD_STATIC_MODULE)
+if(BUILD_STATIC_MODULES)
   add_library(qjs-glfw-static STATIC ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
-  set_target_properties(qjs-glfw-static PROPERTIES OUTPUT_NAME glfw POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(qjs-glfw-static PROPERTIES
+    PREFIX "" OUTPUT_NAME "quickjs-glfw" SUFFIX ".a"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    POSITION_INDEPENDENT_CODE OFF)
   target_compile_options(qjs-glfw-static PRIVATE ${MODULE_COMPILE_FLAGS})
   target_include_directories(qjs-glfw-static PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/glfw/src)
-  target_link_libraries(qjs-glfw-static PUBLIC ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY} ${QUICKJS_LIBRARY})
-endif(BUILD_STATIC_MODULE)
+  target_link_libraries(qjs-glfw-static PUBLIC ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY_static} ${QUICKJS_LIBRARY})
+
+  # Sidecar for a different top-level project's CMakeLists.txt to include() and pick up
+  # this archive's transitive link dependencies, which a plain .a carries no record of.
+  set(QUICKJS_GLFW_LIBRARIES ${GL3W_LIBRARY} ${GLEW_LIBRARY} ${GLFW_LIBRARY_static} ${QUICKJS_LIBRARY})
+  set(QUICKJS_GLFW_LINK_FLAGS "")
+  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/quickjs-glfw.cmake" "\
+set(QUICKJS_GLFW_LIBRARIES \"${QUICKJS_GLFW_LIBRARIES}\")
+set(QUICKJS_GLFW_LINK_FLAGS \"${QUICKJS_GLFW_LINK_FLAGS}\")
+")
+endif(BUILD_STATIC_MODULES)
 
 # include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pandoc-helper.cmake)
 

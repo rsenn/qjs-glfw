@@ -5,3 +5,15 @@ Bugs discovered while working through TODO.md, not yet fixed.
 - [FIXED] window.c glfw_window_hint(): the string-hint branch called `JS_ToCString(ctx, argv[1])` but
   never `JS_FreeCString`d the result — leaked one string per string-valued hint call. Fixed while
   refactoring the hint-apply logic into `glfw_window_hint_apply` for the Window.hints() feature.
+
+- build-glfw-reclones-past-pinned-commit (cmake/BuildGLFW.cmake): `build_glfw()`'s `ExternalProject_Add`
+  gives `GIT_REPOSITORY` with no `GIT_TAG`/`GIT_COMMIT`, so a `BUILD_GLFW=ON` configure re-clones the
+  `glfw` submodule from upstream's default branch, silently overwriting whatever commit the submodule
+  is actually pinned to (and any local sed patch already applied to it). Confirmed by running a
+  `BUILD_GLFW=ON` build: the submodule ended up checked out at upstream's `master` HEAD instead of the
+  pinned `b00e6a8a`. This predates the shared/static split added for BUILD_SHARED_MODULE/
+  BUILD_STATIC_MODULE (the original single-variant `build_glfw()` call had the same missing GIT_TAG) -
+  it just hadn't been exercised in CI/local testing before.
+
+    cmake -B build -S . -DBUILD_GLFW=ON && cmake --build build -j$(nproc)
+    # then: git -C glfw status  -> shows glfw checked out past its pinned commit
