@@ -55,7 +55,7 @@ image_clone(GLFWimage const* img) {
 
 static void
 image_unref(JSRuntime* rt, void* opaque, void* ptr) {
-  JSObject* obj = opaque;
+  void* obj = opaque;
   JSValue image = JS_MKPTR(JS_TAG_OBJECT, obj);
 
   JS_FreeValueRT(rt, image);

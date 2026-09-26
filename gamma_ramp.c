@@ -48,7 +48,7 @@ glfw_gamma_ramp_constructor(JSContext* ctx, JSValueConst new_target, int argc, J
 
 static void
 gamma_ramp_unref(JSRuntime* rt, void* opaque, void* ptr) {
-  JSObject* obj = opaque;
+  void* obj = opaque;
   JSValue gamma_ramp = JS_MKPTR(JS_TAG_OBJECT, obj);
 
   JS_FreeValueRT(rt, gamma_ramp);
