@@ -109,3 +109,9 @@ FFI bindings** that `import { ... } from 'ffi'` and `dlopen` the GL library at r
 - `js/gui.js` — high-level convenience wrapper (`Screen`, `Window`) built on top of the `glfw` module
 
 These depend on a QuickJS `ffi` module being available and are independent of `glfw.so`.
+
+## Git commits
+
+Omit the `Co-Authored-By: ...` trailer from commit messages. This overrides
+any default attribution line Claude Code would otherwise append.
+

@@ -12,7 +12,9 @@ option(USE_GL3W OFF "Use GL3W instead of GLEW")
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/QuickJSModule.cmake)
 quickjs_module_options(SHARED_DEFAULT ON STATIC_DEFAULT ON)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Compat.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Checks.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/check-flags.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindQuickJS.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseMultiArch.cmake)
@@ -39,12 +41,12 @@ if(BUILD_GLFW)
   # GLFW is a static lib linked into both qjs-glfw (a .so) and qjs-glfw-static (a .a
   # meant for linking into another executable), so it must be built twice: with -fPIC
   # for the shared module, without for the static one.
-  if(BUILD_SHARED_MODULES)
+  if(BUILD_SHARED)
     build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} shared ON)
-  endif(BUILD_SHARED_MODULES)
-  if(BUILD_STATIC_MODULES)
+  endif(BUILD_SHARED)
+  if(BUILD_STATIC)
     build_glfw(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} static OFF)
-  endif(BUILD_STATIC_MODULES)
+  endif(BUILD_STATIC)
 
   add_definitions(-DHAVE_GLFW_GET_ERROR -DHAVE_GLFW_GET_MONITOR_CONTENT_SCALE -DHAVE_GLFW_GET_MONITOR_WORKAREA -DHAVE_GLFW_GET_WINDOW_OPACITY -DHAVE_GLFW_REQUEST_WINDOW_ATTENTION -DHAVE_GLFW_SET_WINDOW_CONTENT_SCALE_CALLBACK -DHAVE_GLFW_SET_WINDOW_MAXIMIZE_CALLBACK -DHAVE_GLFW_SET_WINDOW_OPACITY -DHAVE_GLFW_WINDOW_HINT_STRING)
 else(BUILD_GLFW)
@@ -155,7 +157,7 @@ endif(USE_GL3W)
 
 link_directories(${GL3W_LIBRARY_DIR} ${GLEW_LIBRARY_DIR} ${GLFW_LIBRARY_DIR_shared} ${GLFW_LIBRARY_DIR_static})
 
-if(BUILD_SHARED_MODULES)
+if(BUILD_SHARED)
   add_library(qjs-glfw SHARED ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
 
   #[[if(USE_GL3W)
@@ -182,14 +184,14 @@ if(BUILD_SHARED_MODULES)
   endif(NOT QUICKJS_C_MODULE_DIR)
 
   install(TARGETS qjs-glfw DESTINATION "${QUICKJS_C_MODULE_DIR}" PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endif(BUILD_SHARED_MODULES)
+endif(BUILD_SHARED)
 
 # Static counterpart for embedders that want glfw linked directly into their own
 # interpreter binary (e.g. qjsm's EXTERNAL_MODULES) instead of dlopen'd at runtime.
 # Without JS_SHARED_LIBRARY, glfw.h's js_init_module macro expands to
 # js_init_module_glfw, matching the js_init_module_<name> convention EXTERNAL_MODULES
 # expects.
-if(BUILD_STATIC_MODULES)
+if(BUILD_STATIC)
   add_library(qjs-glfw-static STATIC ${QJS_GLFW_SOURCES} ${GL3W_SOURCE})
   set_target_properties(qjs-glfw-static PROPERTIES
     PREFIX "" OUTPUT_NAME "quickjs-glfw" SUFFIX ".a"
@@ -207,7 +209,7 @@ if(BUILD_STATIC_MODULES)
 set(QUICKJS_GLFW_LIBRARIES \"${QUICKJS_GLFW_LIBRARIES}\")
 set(QUICKJS_GLFW_LINK_FLAGS \"${QUICKJS_GLFW_LINK_FLAGS}\")
 ")
-endif(BUILD_STATIC_MODULES)
+endif(BUILD_STATIC)
 
 # include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pandoc-helper.cmake)
 
