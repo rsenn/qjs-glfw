@@ -36,56 +36,6 @@ macro(quickjs_module_options)
 endmacro()
 
 #
-# get_native_modules <OUTPUT-VARIABLE>
-#
-# Names of the native modules, one per quickjs-<name>.c in the source
-# directory, with '-' written '_': quickjs-child-process.c -> child_process.
-#
-function(get_native_modules OUTVAR)
-  file(GLOB FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/quickjs-*.c")
-
-  set(NAMES "")
-  foreach(FILE ${FILES})
-    string(REGEX REPLACE "^quickjs-(.*)\\.c$" "\\1" NAME "${FILE}")
-    string(REPLACE "-" "_" NAME "${NAME}")
-    list(APPEND NAMES "${NAME}")
-  endforeach(FILE ${FILES})
-
-  list(SORT NAMES)
-  set("${OUTVAR}" "${NAMES}" PARENT_SCOPE)
-endfunction()
-
-#
-# get_compiled_modules <OUTPUT-VARIABLE>
-#
-# Names of the JS modules that can be compiled into a builtin, one per .js
-# file below lib/ without the extension: lib/fsPromises.js -> fsPromises,
-# lib/xml/read.js -> xml/read.
-#
-function(get_compiled_modules OUTVAR)
-  file(GLOB_RECURSE FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/lib" "${CMAKE_CURRENT_SOURCE_DIR}/lib/*.js")
-
-  set(NAMES "")
-  foreach(FILE ${FILES})
-    string(REGEX REPLACE "\\.js$" "" NAME "${FILE}")
-    list(APPEND NAMES "${NAME}")
-  endforeach(FILE ${FILES})
-
-  list(SORT NAMES)
-  set("${OUTVAR}" "${NAMES}" PARENT_SCOPE)
-endfunction()
-
-#
-# module_path <NAME> <OUTVAR>
-#
-# Store the path of NAME inside the precompiled-modules directory
-# (${CMAKE_BINARY_DIR}/modules) in OUTVAR.
-#
-function(module_path NAME OUTVAR)
-  set("${OUTVAR}" "${CMAKE_BINARY_DIR}/modules/${NAME}" PARENT_SCOPE)
-endfunction()
-
-#
 # compile_code <RESULT-VARIABLE> <CODE>
 #
 # Try to compile the C source CODE against QuickJS and store whether it worked
@@ -148,237 +98,6 @@ function(config_module TARGET_NAME)
   if(QUICKJS_MODULE_CFLAGS)
     target_compile_options(${TARGET_NAME} PRIVATE "${QUICKJS_MODULE_CFLAGS}")
   endif(QUICKJS_MODULE_CFLAGS)
-endfunction()
-
-#
-# compile_module <SOURCE>
-#
-# Add a target that compiles the JS module SOURCE to C with qjsc, into OUT
-# (default modules/<name>.c) with the MODULES imports given as -M.
-#
-function(compile_module SOURCE)
-  basename(BASE "${SOURCE}" .js)
-
-  if(COMPILE_MODULE_CNAME)
-    set(BASE "${COMPILE_MODULE_CNAME}")
-  endif(COMPILE_MODULE_CNAME)
-
-  #message(STATUS "Compile QuickJS module '${BASE}.c' from '${SOURCE}'")
-
-  set(ARGLIST "${ARGN}")
-  list(POP_FRONT ARGLIST OUT)
-
-  set(MODULES_DIR "${CMAKE_BINARY_DIR}/modules")
-  set(MODULES_DIR "${MODULES_DIR}" PARENT_SCOPE)
-  file(MAKE_DIRECTORY "${MODULES_DIR}")
-
-  if(OUT AND NOT "${OUT}" STREQUAL "")
-    set(OUTPUT_FILE ${OUT})
-  else(OUT AND NOT "${OUT}" STREQUAL "")
-    set(OUTPUT_FILE "${MODULES_DIR}/${BASE}.c")
-  endif(OUT AND NOT "${OUT}" STREQUAL "")
-
-  list(APPEND COMPILED_MODULES "${OUTPUT_FILE}")
-  list(APPEND COMPILED_TARGETS "qjs-${BASE}-js")
-
-  set(COMPILED_MODULES "${COMPILED_MODULES}" PARENT_SCOPE)
-  set(COMPILED_TARGETS "${COMPILED_TARGETS}" PARENT_SCOPE)
-
-  unset(ADD_MODULES)
-
-  # COMPILE_MODULE_CNAME: C name of the generated data (qjsc -N), default is the file's basename
-  if(COMPILE_MODULE_CNAME)
-    list(APPEND ADD_MODULES -N "qjsc_${COMPILE_MODULE_CNAME}")
-  endif()
-
-  foreach(MOD IN ITEMS ${ARGLIST})
-    list(APPEND ADD_MODULES -M "${MOD}")
-  endforeach(MOD IN ITEMS ${ARGLIST})
-
-  add_custom_target(
-    "qjs-${BASE}-js" ALL
-    BYPRODUCTS "${OUTPUT_FILE}"
-    COMMAND "${QJSC}" ${ADD_MODULES} -v -c -o "${OUTPUT_FILE}" -m "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE}"
-    DEPENDS ${QJSC_DEPS}
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-    COMMENT "Generate ${OUTPUT_FILE} from ${SOURCE} using qjs compiler"
-    SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE}" #DEPENDS qjs-inspect qjs-misc
-  )
-endfunction()
-
-#
-# generate_module_header <SOURCE>
-#
-# Write modules/<name>.h declaring the qjsc_* bytecode symbols in the C file
-# SOURCE, and include the headers of the INCLUDES it shares.
-#
-function(generate_module_header SOURCE)
-  basename(BASE "${SOURCE}" .c)
-  string(REGEX REPLACE "\\.c$" ".h" HEADER "${SOURCE}")
-  string(REGEX REPLACE "-" "_" NAME "${BASE}")
-  #message("generate_module_header SOURCE=${SOURCE}")
-  file(READ "${SOURCE}" CSRC)
-  string(REGEX MATCHALL "qjsc_[0-9A-Za-z_]+" SYMBOLS "${CSRC}")
-  list(FILTER SYMBOLS EXCLUDE REGEX "_size$")
-  list(FILTER SYMBOLS EXCLUDE REGEX "^\\s*$")
-  string(REGEX REPLACE "qjsc_" "" SYMBOLS "${SYMBOLS}")
-  set(S "#include <inttypes.h>\n")
-  set(INCLUDES "${ARGN}")
-  foreach(INCLUDE ${INCLUDES})
-    string(STRIP "${INCLUDE}" INCLUDE)
-    string(REGEX REPLACE "_" "-" FNAME "${INCLUDE}")
-    if(NOT FNAME MATCHES "\\.h$")
-      set(FNAME "${INCLUDE}.h")
-    endif(NOT FNAME MATCHES "\\.h$")
-    set(S "${S}#include \"${FNAME}\"\n")
-  endforeach(INCLUDE ${INCLUDES})
-  #message("INCLUDES: ${INCLUDES}")
-
-  foreach(NAME ${SYMBOLS})
-    if(NOT NAME IN_LIST INCLUDES)
-      set(S "${S}\nextern const uint32_t qjsc_${NAME}_size;\nextern const uint8_t qjsc_${NAME}[];\n")
-    endif()
-  endforeach()
-
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/modules/${BASE}.h" "${S}")
-  #string(REGEX REPLACE "[\\n;]" "\\\\n" SYMBOLS "${SYMBOLS}")
-  #message("Symbols: ${SYMBOLS}")
-endfunction()
-
-#
-# make_module_header <SOURCE>
-#
-# Add a target that regenerates the header of the C module SOURCE by running
-# remake_module() in a cmake script.
-#
-function(make_module_header SOURCE)
-  string(REGEX REPLACE "\\.tmp$" "" BASE2 "${SOURCE}")
-  basename(BASE "${BASE2}" .c)
-  string(REGEX REPLACE "\\.c$" ".h" HEADER "${BASE2}")
-  string(REGEX REPLACE "-" "_" NAME "${BASE}")
-  set(SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/gen-${BASE}-header.cmake")
-  make_script("${SCRIPT}" "message(\"Generating module '${NAME}'\")\nremake_module(${SOURCE})\n"
-              "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Functions.cmake;${CMAKE_CURRENT_SOURCE_DIR}/cmake/QuickJSModule.cmake")
-  add_custom_target(${BASE}.h ALL ${CMAKE_COMMAND} -P ${SCRIPT} DEPENDS ${SOURCE} BYPRODUCTS ${HEADER}
-                    SOURCES ${SOURCE})
-endfunction()
-
-#
-# list_definitions <SOURCE> <OUTVAR>
-#
-# Store the names of the qjsc_* definitions in the C file SOURCE in OUTVAR,
-# leaving out the one named by the extra argument.
-#
-function(list_definitions SOURCE OUTVAR)
-  file(READ "${SOURCE}" CSRC)
-  string(REGEX MATCHALL "qjsc_[0-9A-Za-z_]+" SYMBOLS "${CSRC}")
-  list(FILTER SYMBOLS EXCLUDE REGEX "_size$")
-  string(REGEX REPLACE "qjsc_" "" SYMBOLS "${SYMBOLS}")
-  set(OUT "")
-
-  foreach(DEF ${SYMBOLS})
-    if(ARGN AND NOT "${DEF}" STREQUAL "${ARGN}")
-      list(APPEND OUT "${DEF}")
-    endif(ARGN AND NOT "${DEF}" STREQUAL "${ARGN}")
-  endforeach(DEF ${SYMBOLS})
-
-  set("${OUTVAR}" "${OUT}" PARENT_SCOPE)
-endfunction()
-
-#
-# include_definitions <OUTVAR>
-#
-# Store in OUTVAR an #include line for the header of each definition name
-# given (underscores written as '-').
-#
-function(include_definitions OUTVAR)
-  #print_str("include_definitions(${OUTVAR} ${ARGN})")
-  set(S "")
-  foreach(DEF ${ARGN})
-    string(STRIP "${DEF}" DEF)
-    string(REGEX REPLACE "_" "-" NAME "${DEF}")
-    set(S "${S}#include \"${NAME}.h\"\n")
-  endforeach(DEF ${ARGN})
-
-  #print_str("include_definitions S=${S}")
-  set("${OUTVAR}" "${S}" PARENT_SCOPE)
-endfunction()
-
-#
-# extract_definition <SOURCE> <OUTVAR> <DEF>
-#
-# Store in OUTVAR the qjsc_<DEF> definition (the const data declaration) found
-# in the C file SOURCE.
-#
-function(extract_definition SOURCE OUTVAR DEF)
-  basename(BASE "${SOURCE}" .c)
-  file(READ "${SOURCE}" CSRC)
-  string(REGEX MATCHALL "const[^\n;]*qjsc_${DEF}[[_][^;]*;" DEFINITIONS "${CSRC}")
-  string(REPLACE "\n" "\\n" DEFINITIONS "${DEFINITIONS}")
-  string(REGEX REPLACE ";\\s*;*" ";" DEFINITIONS "${DEFINITIONS}")
-  string(REGEX REPLACE ";;" ";" DEFINITIONS "${DEFINITIONS}")
-  string(REGEX REPLACE "\n" ";\n" DEFINITIONS "${DEFINITIONS}")
-  string(REGEX REPLACE ";;*" ";" DEFINITIONS "${DEFINITIONS}")
-  set(S "")
-
-  foreach(LINE ${DEFINITIONS})
-    if(S STREQUAL "")
-      set(S "${LINE};")
-    else(S STREQUAL "")
-      set(S "${S}\n\n${LINE};")
-    endif(S STREQUAL "")
-  endforeach(LINE ${DEFINITIONS})
-
-  string(REGEX REPLACE "\\\\n" "\\n" S "${S}")
-  set("${OUTVAR}" "${S}\n" PARENT_SCOPE)
-endfunction()
-
-#
-# remake_module <SOURCE>
-#
-# Split the compiled module C file SOURCE into modules/<name>.c and a matching
-# header, so each module's bytecode has its own file.
-#
-function(remake_module SOURCE)
-  basename(BASE "${SOURCE}" .c)
-  string(REGEX REPLACE "-" "_" NAME "${BASE}")
-
-  list_definitions("${SOURCE}" DEFLIST ${NAME})
-  list(REMOVE_ITEM DEFLIST "${NAME}")
-  list(REMOVE_ITEM DEFLIST "${BASE}")
-  list(FILTER DEFLIST EXCLUDE REGEX "^${NAME}$")
-  list(FILTER DEFLIST EXCLUDE REGEX "^${BASE}$")
-
-  #print_str("Included definitions in ${NAME}: ${DEFLIST}")
-
-  include_definitions(INC "${DEFLIST}")
-
-  extract_definition("${SOURCE}" DEF "${NAME}")
-
-  file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/modules")
-
-  file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/modules/${BASE}.c" "#include \"${BASE}.h\"\n\n${DEF}")
-  generate_module_header(${SOURCE} ${DEFLIST})
-
-endfunction()
-
-#
-# make_script <OUTPUT_FILE> <TEXT> <INCLUDES>
-#
-# Write the cmake script OUTPUT_FILE that includes the files INCLUDES and then
-# runs TEXT.
-#
-function(make_script OUTPUT_FILE TEXT INCLUDES)
-  basename(BASE "${SOURCE}" .c)
-  string(REGEX REPLACE "\\.c$" ".h" HEADER "${SOURCE}")
-  string(REGEX REPLACE "-" "_" NAME "${BASE}")
-  set(S "cmake_policy(SET CMP0007 NEW)\n")
-  foreach(INC ${INCLUDES})
-    set(S "${S}\ninclude(${INC})\n")
-  endforeach()
-
-  set(S "${S}\n\n${TEXT}\n")
-  file(WRITE "${OUTPUT_FILE}" "${S}")
 endfunction()
 
 #
@@ -460,8 +179,12 @@ function(make_module FNAME)
 
     target_link_libraries(${TARGET_NAME} PUBLIC ${LIBS} ${QUICKJS_LIBRARY})
 
-    install(TARGETS ${TARGET_NAME} DESTINATION "${QUICKJS_C_MODULE_DIR}"
-            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    # ${VNAME}_NO_INSTALL: the module is built (and loadable from the build tree) but not installed,
+    # e.g. a native module that qjsm has built in
+    if(NOT ${VNAME}_NO_INSTALL)
+      install(TARGETS ${TARGET_NAME} DESTINATION "${QUICKJS_C_MODULE_DIR}"
+              PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+    endif()
 
     config_module(${TARGET_NAME})
 
@@ -564,7 +287,30 @@ function(make_module FNAME)
     # space-joined display string above (for the status message), no longer a
     # proper list.
     set(_module_cmake_libs "${LIBS}")
+    if(DEFINED ${VNAME}_LIBRARIES_static)
+      set(_module_cmake_libs "${${VNAME}_LIBRARIES_static}")
+    endif()
     list(REMOVE_ITEM _module_cmake_libs compiled modules)
+    # an IMPORTED target (a vendored libfoo.a) means nothing in the other configure: its file
+    set(_module_cmake_resolved "")
+    foreach(_lib ${_module_cmake_libs})
+      set(_loc "")
+      if(TARGET "${_lib}")
+        get_target_property(_imported "${_lib}" IMPORTED)
+        if(_imported)
+          get_target_property(_loc "${_lib}" IMPORTED_LOCATION)
+          if(NOT _loc)
+            get_target_property(_loc "${_lib}" IMPORTED_LOCATION_RELEASE)
+          endif()
+        endif()
+      endif()
+      if(_loc)
+        list(APPEND _module_cmake_resolved "${_loc}")
+      else()
+        list(APPEND _module_cmake_resolved "${_lib}")
+      endif()
+    endforeach()
+    set(_module_cmake_libs "${_module_cmake_resolved}")
     list(TRANSFORM _module_cmake_libs REPLACE "^qjs-" "")
     get_target_property(_module_cmake_lib_path "${STATIC_TARGET_NAME}" ARCHIVE_OUTPUT_DIRECTORY)
     if(NOT _module_cmake_lib_path)
@@ -584,3 +330,29 @@ function(make_module FNAME)
   endif(BUILD_STATIC)
 
 endfunction()
+
+if(WASI)
+  set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
+endif(WASI)
+
+# BUILD_SHARED/BUILD_STATIC themselves are declared by this
+# project's own CMakeLists.txt, right after it include()s this file (see
+# quickjs_module_options() above) - not here, so each project can pick its
+# own defaults through that one call site instead of this shared file
+# hardcoding one default for everybody.
+
+if(WIN32 OR MINGW)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+endif(WIN32 OR MINGW)
+
+if(WASI OR WASM OR EMSCRIPTEN OR "${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten")
+  set(LIBRARY_PREFIX "lib")
+  set(LIBRARY_SUFFIX ".a")
+endif(WASI OR WASM OR EMSCRIPTEN OR "${CMAKE_SYSTEM_NAME}" STREQUAL "Emscripten")
+
+if(NOT LIBRARY_PREFIX)
+  set(LIBRARY_PREFIX "${CMAKE_STATIC_LIBRARY_PREFIX}")
+endif(NOT LIBRARY_PREFIX)
+if(NOT LIBRARY_SUFFIX)
+  set(LIBRARY_SUFFIX "${CMAKE_STATIC_LIBRARY_SUFFIX}")
+endif(NOT LIBRARY_SUFFIX)
