@@ -359,6 +359,7 @@ glfw_vulkan(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]
       break;
     }
 
+#ifdef GLFW_INCLUDE_VULKAN
     case VULKAN_GET_INSTANCE_PROC_ADDR: {
       void* instance = js_getptr(ctx, argv[0]);
       const char* procname;
@@ -405,6 +406,14 @@ glfw_vulkan(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst argv[]
       }
       break;
     }
+#else
+    // built without the vulkan headers: glfw3.h declares no Vk* API
+    case VULKAN_GET_INSTANCE_PROC_ADDR:
+    case VULKAN_GET_PHYSICAL_DEVICE_PRESENTATION_SUPPORT:
+    case VULKAN_CREATE_WINDOW_SURFACE: {
+      return JS_ThrowInternalError(ctx, "built without Vulkan headers");
+    }
+#endif
   }
 
   return ret;

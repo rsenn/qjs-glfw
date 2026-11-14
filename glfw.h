@@ -6,8 +6,19 @@
 #include <emscripten/emscripten.h>
 #define GLFW_INCLUDE_ES3
 #endif
+// vulkan headers are optional (absent in e.g. the i686 MinGW sysroot): without them
+// glfw3.h declares the few Vk* types it needs itself
+#if defined(__has_include)
+#if __has_include(<vulkan/vulkan.h>)
 #define GLFW_INCLUDE_VULKAN
+#endif
+#else
+#define GLFW_INCLUDE_VULKAN
+#endif
 #include <GLFW/glfw3.h>
+#ifndef VK_SUCCESS
+#define VK_SUCCESS 0
+#endif
 #include <quickjs.h>
 #include <cutils.h>
 #include <stdio.h>
